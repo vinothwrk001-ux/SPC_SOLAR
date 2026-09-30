@@ -18,6 +18,8 @@ const AdminLayout = () => {
     { name: 'Projects', path: '/admin/projects', icon: <FiBriefcase /> },
     { name: 'Services', path: '/admin/services', icon: <FiSettings /> },
     { name: 'Blogs', path: '/admin/blogs', icon: <FiMessageSquare /> },
+    { name: 'Blog Categories', path: '/admin/categories', icon: <FiFileText /> },
+    { name: 'Blog Tags', path: '/admin/tags', icon: <FiFileText /> },
     { name: 'Testimonials', path: '/admin/testimonials', icon: <FiStar /> },
   ];
 

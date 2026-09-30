@@ -1,69 +1,184 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin } from 'react-icons/fi';
+import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
+import { MdSolarPower } from 'react-icons/md';
+import { Reveal, Stagger, EnergyGrid } from '../motion';
+
+const SOCIAL = [
+  { icon: <FiFacebook size={18} />, href: '#', label: 'Facebook' },
+  { icon: <FiTwitter size={18} />, href: '#', label: 'Twitter' },
+  { icon: <FiInstagram size={18} />, href: '#', label: 'Instagram' },
+  { icon: <FiLinkedin size={18} />, href: '#', label: 'LinkedIn' },
+];
+
+const QUICK_LINKS = [
+  { name: 'Home', path: '/' },
+  { name: 'About Us', path: '/about' },
+  { name: 'Our Projects', path: '/projects' },
+  { name: 'PM Surya Ghar Subsidy', path: '/subsidy' },
+  { name: 'Blog', path: '/blog' },
+];
+
+const SERVICES = [
+  'Residential Solar',
+  'Commercial Solar',
+  'Industrial Solar',
+  'Maintenance & AMC',
+  'Net Metering',
+];
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white pt-12 pb-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div>
-            <span className="font-heading text-2xl font-bold tracking-widest text-white block mb-4">
-              SPC<span className="text-red">SOLAR</span>
-            </span>
-            <p className="text-gray-light font-body text-sm mb-4">
-              Powering your future with sustainable solar energy solutions for residential, commercial, and industrial needs.
-            </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-white hover:text-red transition-colors"><FiFacebook size={20} /></a>
-              <a href="#" className="text-white hover:text-red transition-colors"><FiTwitter size={20} /></a>
-              <a href="#" className="text-white hover:text-red transition-colors"><FiInstagram size={20} /></a>
-              <a href="#" className="text-white hover:text-red transition-colors"><FiLinkedin size={20} /></a>
+    <footer className="bg-black-DEFAULT text-white relative overflow-hidden">
+      {/* Grid overlay */}
+      <EnergyGrid opacity={0.05} color="white" />
+
+      {/* Top red accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red to-transparent" />
+
+      {/* Glow blobs */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-red/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-72 h-72 bg-red/4 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* ---- Main Grid ---- */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pt-16 pb-12">
+          {/* Column 1 — Brand */}
+          <Reveal>
+            <div>
+              <Link to="/" className="flex items-center gap-2.5 mb-5 group w-fit">
+                <span className="text-red">
+                  <MdSolarPower size={26} />
+                </span>
+                <span className="font-heading text-xl tracking-widest text-white uppercase">
+                  SPC<span className="text-red">SOLAR</span>
+                </span>
+              </Link>
+              <p className="text-gray-400 font-body text-sm leading-relaxed mb-6 max-w-xs">
+                Powering India's future with sustainable, certified solar energy solutions for residential, commercial, and industrial needs.
+              </p>
+
+              {/* PM badge */}
+              <div className="inline-flex items-center gap-2 bg-red/10 border border-red/20 px-3 py-1.5 rounded-sm mb-6">
+                <span className="w-2 h-2 rounded-full bg-red animate-pulse flex-shrink-0" />
+                <span className="text-red font-accent font-bold text-xs uppercase tracking-wider">
+                  PM Surya Ghar Authorized
+                </span>
+              </div>
+
+              {/* Social */}
+              <div className="flex gap-3">
+                {SOCIAL.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    aria-label={s.label}
+                    className="w-9 h-9 rounded-sm border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-red hover:bg-red/10 transition-all duration-250"
+                  >
+                    {s.icon}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-          
-          <div>
-            <h4 className="font-heading text-lg mb-4 text-white">Quick Links</h4>
-            <ul className="space-y-2">
-              <li><Link to="/" className="text-gray-light hover:text-white text-sm">Home</Link></li>
-              <li><Link to="/about" className="text-gray-light hover:text-white text-sm">About Us</Link></li>
-              <li><Link to="/projects" className="text-gray-light hover:text-white text-sm">Our Projects</Link></li>
-              <li><Link to="/subsidy" className="text-gray-light hover:text-white text-sm">PM Surya Ghar Subsidy</Link></li>
-              <li><Link to="/blog" className="text-gray-light hover:text-white text-sm">Blog</Link></li>
-            </ul>
-          </div>
+          </Reveal>
 
-          <div>
-            <h4 className="font-heading text-lg mb-4 text-white">Services</h4>
-            <ul className="space-y-2">
-              <li><Link to="/services" className="text-gray-light hover:text-white text-sm">Residential Solar</Link></li>
-              <li><Link to="/services" className="text-gray-light hover:text-white text-sm">Commercial Solar</Link></li>
-              <li><Link to="/services" className="text-gray-light hover:text-white text-sm">Industrial Solar</Link></li>
-              <li><Link to="/services" className="text-gray-light hover:text-white text-sm">Maintenance & Support</Link></li>
-            </ul>
-          </div>
+          {/* Column 2 — Quick Links */}
+          <Reveal delay={0.08}>
+            <div>
+              <h4 className="font-heading text-sm uppercase tracking-widest text-white mb-5 after:block after:w-8 after:h-px after:bg-red after:mt-2">
+                Quick Links
+              </h4>
+              <ul className="space-y-3">
+                {QUICK_LINKS.map((l) => (
+                  <li key={l.name}>
+                    <Link
+                      to={l.path}
+                      className="text-gray-400 hover:text-white text-sm font-body flex items-center gap-2 group transition-colors duration-200"
+                    >
+                      <span className="w-0 h-px bg-red transition-[width] duration-300 group-hover:w-4" />
+                      {l.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
 
-          <div>
-            <h4 className="font-heading text-lg mb-4 text-white">Contact Info</h4>
-            <p className="text-gray-light text-sm mb-2">123 Solar Street, Green City, India</p>
-            <p className="text-gray-light text-sm mb-2">Email: info@spcsolar.com</p>
-            <p className="text-gray-light text-sm mb-4">Phone: +91 98765 43210</p>
-            <a 
-              href="https://wa.me/919876543210" 
-              target="_blank" 
-              rel="noreferrer"
-              className="inline-flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-btn font-accent transition-colors"
-            >
-              <FaWhatsapp size={20} />
-              <span>Chat on WhatsApp</span>
-            </a>
-          </div>
+          {/* Column 3 — Services */}
+          <Reveal delay={0.14}>
+            <div>
+              <h4 className="font-heading text-sm uppercase tracking-widest text-white mb-5 after:block after:w-8 after:h-px after:bg-red after:mt-2">
+                Services
+              </h4>
+              <ul className="space-y-3">
+                {SERVICES.map((s) => (
+                  <li key={s}>
+                    <Link
+                      to="/services"
+                      className="text-gray-400 hover:text-white text-sm font-body flex items-center gap-2 group transition-colors duration-200"
+                    >
+                      <span className="w-0 h-px bg-red transition-[width] duration-300 group-hover:w-4" />
+                      {s}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
+
+          {/* Column 4 — Contact */}
+          <Reveal delay={0.2}>
+            <div>
+              <h4 className="font-heading text-sm uppercase tracking-widest text-white mb-5 after:block after:w-8 after:h-px after:bg-red after:mt-2">
+                Contact
+              </h4>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3 text-gray-400 text-sm font-body">
+                  <FiMapPin size={16} className="text-red flex-shrink-0 mt-0.5" />
+                  <span>123 Solar Street, Green City, India</span>
+                </li>
+                <li>
+                  <a
+                    href="mailto:info@spcsolar.com"
+                    className="flex items-center gap-3 text-gray-400 hover:text-white text-sm font-body transition-colors duration-200"
+                  >
+                    <FiMail size={16} className="text-red flex-shrink-0" />
+                    info@spcsolar.com
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="tel:+919876543210"
+                    className="flex items-center gap-3 text-gray-400 hover:text-white text-sm font-body transition-colors duration-200"
+                  >
+                    <FiPhone size={16} className="text-red flex-shrink-0" />
+                    +91 98765 43210
+                  </a>
+                </li>
+              </ul>
+
+              <a
+                href="https://wa.me/919876543210"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-6 inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5b] text-white px-4 py-2.5 rounded-btn font-accent font-bold text-sm transition-colors duration-250"
+              >
+                <FaWhatsapp size={18} />
+                Chat on WhatsApp
+              </a>
+            </div>
+          </Reveal>
         </div>
 
-        <div className="border-t border-gray-light border-opacity-20 pt-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-light">
-          <p>© 2025 SPC Solar. All rights reserved.</p>
-          <p className="mt-2 md:mt-0 font-accent text-red-light font-semibold">PM Surya Ghar Authorized Installer</p>
+        {/* ---- Bottom Bar ---- */}
+        <div className="border-t border-white/8 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+          <p className="font-body">© {new Date().getFullYear()} SPC Solar. All rights reserved.</p>
+          <div className="flex gap-6 font-body">
+            <a href="#" className="hover:text-white transition-colors duration-200">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors duration-200">Terms</a>
+            <a href="#" className="hover:text-white transition-colors duration-200">Sitemap</a>
+          </div>
         </div>
       </div>
     </footer>

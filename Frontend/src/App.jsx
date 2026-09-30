@@ -9,6 +9,8 @@ import ProjectsPage from './pages/public/ProjectsPage';
 import SubsidyPage from './pages/public/SubsidyPage';
 import BlogPage from './pages/public/BlogPage';
 import BlogDetailPage from './pages/public/BlogDetailPage';
+import BlogCategoryPage from './pages/public/BlogCategoryPage';
+import BlogTagPage from './pages/public/BlogTagPage';
 import ContactPage from './pages/public/ContactPage';
 import QuotationPage from './pages/public/QuotationPage';
 import ScrollToTop from './components/layout/ScrollToTop';
@@ -20,6 +22,11 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminQuotations from './pages/admin/AdminQuotations';
 import AdminProjects from './pages/admin/AdminProjects';
 import AdminBlogs from './pages/admin/AdminBlogs';
+import AdminBlogCreate from './pages/admin/AdminBlogCreate';
+import AdminBlogEdit from './pages/admin/AdminBlogEdit';
+import AdminBlogPreview from './pages/admin/AdminBlogPreview';
+import AdminCategories from './pages/admin/AdminCategories';
+import AdminTags from './pages/admin/AdminTags';
 import AdminServices from './pages/admin/AdminServices';
 import AdminTestimonials from './pages/admin/AdminTestimonials';
 import AdminQuotationMaker from './pages/admin/AdminQuotationMaker';
@@ -40,6 +47,8 @@ function App() {
             <Route path="/subsidy" element={<SubsidyPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<BlogDetailPage />} />
+            <Route path="/blog/category/:slug" element={<BlogCategoryPage />} />
+            <Route path="/blog/tag/:slug" element={<BlogTagPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/quotation" element={<QuotationPage />} />
           </Route>
@@ -52,6 +61,11 @@ function App() {
             <Route path="quotations" element={<AdminQuotations />} />
             <Route path="projects" element={<AdminProjects />} />
             <Route path="blogs" element={<AdminBlogs />} />
+            <Route path="blogs/create" element={<AdminBlogCreate />} />
+            <Route path="blogs/:id/edit" element={<AdminBlogEdit />} />
+            <Route path="blogs/:id/preview" element={<AdminBlogPreview />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="tags" element={<AdminTags />} />
             <Route path="services" element={<AdminServices />} />
             <Route path="testimonials" element={<AdminTestimonials />} />
           </Route>

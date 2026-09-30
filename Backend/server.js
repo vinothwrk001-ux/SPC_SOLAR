@@ -11,19 +11,26 @@ const authRoutes = require('./routes/authRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const blogRoutes = require('./routes/blogRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const tagRoutes = require('./routes/tagRoutes');
 const quotationRoutes = require('./routes/quotationRoutes');
 const testimonialRoutes = require('./routes/testimonialRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
+const { generateSitemap } = require('./utils/sitemapGenerator');
+const { startSchedulerEngine } = require('./utils/schedulerEngine');
 
 const app = express();
 
 // Database Connection
 connectDB();
 
+// Start Background Auto-Scheduler
+startSchedulerEngine();
+
 // Middlewares
 app.use(express.json());
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(cors({ origin: process.env.CLIENT_URL || true, credentials: true }));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" })); // Allow serving images
 app.use(morgan('dev'));
@@ -31,11 +38,21 @@ app.use(morgan('dev'));
 // Static folder for uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Dynamic Sitemap & Robots.txt
+app.get('/sitemap.xml', generateSitemap);
+app.get('/robots.txt', (req, res) => {
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  res.type('text/plain');
+  res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\nSitemap: ${clientUrl}/sitemap.xml`);
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/tags', tagRoutes);
 app.use('/api/quotations', quotationRoutes);
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/contact', contactRoutes);

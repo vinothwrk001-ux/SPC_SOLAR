@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import SEOHead from '../../components/ui/SEOHead';
-import Button from '../../components/ui/Button';
+import PageHero from '../../components/ui/PageHero';
+import { Stagger, Reveal } from '../../components/motion';
+import { motion } from 'framer-motion';
 
 const ProjectsPage = () => {
   const [filter, setFilter] = useState('All');
@@ -17,48 +19,50 @@ const ProjectsPage = () => {
   const filteredProjects = filter === 'All' ? allProjects : allProjects.filter(p => p.type === filter);
 
   return (
-    <div className="bg-bg min-h-screen">
+    <div className="min-h-screen">
       <SEOHead 
         title="Our Solar Projects | SPC Solar" 
         description="Browse through our portfolio of successful residential, commercial, and industrial solar installations."
       />
-      
-      <section className="bg-black py-20 text-center border-b-4 border-red text-white">
-        <div className="max-w-4xl mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-heading mb-4">OUR PROJECTS</h1>
-          <p className="text-xl text-gray-light font-body">
-            Explore our footprint of successfully commissioned solar power plants.
-          </p>
-        </div>
-      </section>
 
-      <section className="py-16">
+      <PageHero
+        label="Portfolio"
+        title="OUR "
+        highlight="PROJECTS"
+        subtitle="Explore our footprint of successfully commissioned solar power plants across India."
+      />
+
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {['All', 'Residential', 'Commercial', 'Industrial'].map(cat => (
-              <button 
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={`px-6 py-2 font-accent font-bold tracking-wider rounded-btn border-2 transition-colors ${
-                  filter === cat 
-                  ? 'bg-red border-red text-white' 
-                  : 'bg-transparent border-gray-light text-gray hover:border-black hover:text-black'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+          <Reveal>
+            <div className="flex flex-wrap justify-center gap-3 mb-12">
+              {['All', 'Residential', 'Commercial', 'Industrial'].map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setFilter(cat)}
+                  className={`px-6 py-2.5 font-accent font-bold text-sm tracking-widest uppercase rounded-btn border-2 transition-all duration-250 ${
+                    filter === cat
+                      ? 'bg-red border-red text-white shadow-red-sm'
+                      : 'bg-transparent border-gray-200 text-gray-500 hover:border-black hover:text-black'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProjects.map((project, index) => (
-              <div key={index} className="bg-white rounded-card overflow-hidden shadow-card border border-gray-light hover:border-red transition-colors group">
+              <div key={index} className="group bg-white rounded-card overflow-hidden shadow-card border border-gray-200 hover:border-red hover:shadow-card-md transition-all duration-350">
                 <div className="relative h-60 overflow-hidden">
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" 
+                  <motion.img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.06 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                   />
                   <div className="absolute top-4 left-4 bg-black text-white text-xs font-accent font-bold px-3 py-1 uppercase rounded-sm">
                     {project.type}
@@ -66,19 +70,20 @@ const ProjectsPage = () => {
                 </div>
                 <div className="p-6">
                   <h3 className="font-heading text-2xl mb-1">{project.title}</h3>
-                  <p className="text-gray text-sm mb-4">{project.location}</p>
-                  
-                  <div className="flex justify-between items-center pt-4 border-t border-gray-light">
-                    <span className="text-sm font-body text-gray">Capacity</span>
+                  <p className="text-gray-400 text-sm mb-4 font-body">{project.location}</p>
+
+                  <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                    <span className="text-xs font-accent text-gray-400 uppercase tracking-wider">Capacity</span>
                     <span className="font-accent font-bold text-red text-lg">{project.capacity}</span>
                   </div>
                 </div>
               </div>
             ))}
-          </div>
+          </Stagger>
 
         </div>
       </section>
+
     </div>
   );
 };

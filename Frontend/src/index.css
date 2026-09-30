@@ -2,12 +2,229 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =============================================
+   SPC SOLAR — GLOBAL DESIGN SYSTEM
+   ============================================= */
+
 @layer base {
+  :root {
+    --color-red: #CC2222;
+    --color-red-dark: #A81B1B;
+    --color-black: #0A0A0A;
+    --color-white: #FFFFFF;
+    --motion-fast: 0.2s;
+    --motion-normal: 0.45s;
+    --motion-slow: 0.9s;
+    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
-    @apply bg-bg text-black font-body antialiased;
+    @apply bg-white text-black font-body antialiased;
+    overflow-x: hidden;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading uppercase tracking-wide text-black;
+    @apply font-heading tracking-wide text-black;
   }
+
+  /* ---- Scrollbar ---- */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-red;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-red-dark;
+  }
+
+  /* ---- Selection ---- */
+  ::selection {
+    background: rgba(204, 34, 34, 0.15);
+    color: #CC2222;
+  }
+
+  /* ---- Focus ---- */
+  *:focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* ---- Section Header Utility ---- */
+  .section-label {
+    @apply text-red font-accent font-bold tracking-widest uppercase text-xs mb-2 block;
+  }
+
+  .section-title {
+    @apply font-heading text-4xl md:text-5xl lg:text-6xl tracking-wide leading-none text-black;
+  }
+
+  .section-subtitle {
+    @apply text-gray-500 font-body text-base max-w-2xl leading-relaxed;
+  }
+
+  /* ---- Red Accent Line ---- */
+  .red-line {
+    @apply block w-12 h-0.5 bg-red mt-4 mb-6;
+  }
+
+  .red-line-center {
+    @apply block w-16 h-0.5 bg-red mx-auto mt-4 mb-6;
+  }
+
+  /* ---- Container ---- */
+  .container-xl {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ---- Skeleton Loader ---- */
+  .skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .skeleton-dark {
+    background: linear-gradient(90deg, #1C1C1C 25%, #282828 50%, #1C1C1C 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* ---- Grid Overlay ---- */
+  .grid-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.04)' stroke-width='1'%3E%3Cpath d='M0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .grid-overlay-light {
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(0,0,0,0.04)' stroke-width='1'%3E%3Cpath d='M0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ---- Energy Line (SVG helper) ---- */
+  .energy-line {
+    stroke: var(--color-red);
+    stroke-dasharray: 8 4;
+    animation: scanLine 3s linear infinite;
+  }
+
+  /* ---- Reading Progress Bar ---- */
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--color-red);
+    transform-origin: left;
+    z-index: 100;
+    transition: none;
+  }
+}
+
+@layer utilities {
+  /* ---- Reduced Motion ---- */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* ---- Text stroke for hero display ---- */
+  .text-stroke {
+    -webkit-text-stroke: 1px #0A0A0A;
+    color: transparent;
+  }
+
+  .text-stroke-white {
+    -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+    color: transparent;
+  }
+
+  /* ---- Prose Blog styles ---- */
+  .blog-prose h2 {
+    @apply font-heading text-2xl text-black mt-10 mb-4;
+  }
+
+  .blog-prose h3 {
+    @apply font-heading text-xl text-black mt-8 mb-3;
+  }
+
+  .blog-prose p {
+    @apply text-gray-700 leading-relaxed mb-5 font-body;
+  }
+
+  .blog-prose ul {
+    @apply list-disc pl-6 mb-5 space-y-2;
+  }
+
+  .blog-prose li {
+    @apply text-gray-700 font-body;
+  }
+
+  .blog-prose blockquote {
+    @apply border-l-4 border-red pl-6 py-2 bg-gray-50 text-gray-700 italic my-6;
+  }
+
+  .blog-prose strong {
+    @apply text-black font-semibold;
+  }
+
+  .blog-prose a {
+    @apply text-red underline hover:no-underline;
+  }
+}
+
+/* =============================================
+   KEYFRAMES
+   ============================================= */
+
+@keyframes energyPulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes scanLine {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes drawLine {
+  from { stroke-dashoffset: 500; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes rotateSlowly {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

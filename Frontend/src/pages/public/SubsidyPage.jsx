@@ -2,24 +2,44 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiCheckCircle, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import SEOHead from '../../components/ui/SEOHead';
+import PageHero from '../../components/ui/PageHero';
 import Button from '../../components/ui/Button';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Reveal, Stagger } from '../../components/motion';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="border border-gray-light rounded-card mb-4 overflow-hidden">
-      <button 
-        onClick={() => setIsOpen(!isOpen)} 
-        className="w-full text-left px-6 py-4 bg-white flex justify-between items-center focus:outline-none"
+    <div className="border border-gray-200 rounded-card mb-3 overflow-hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full text-left px-6 py-4 bg-white flex justify-between items-center focus:outline-none hover:bg-gray-50 transition-colors duration-200"
       >
-        <span className="font-heading text-lg">{question}</span>
-        {isOpen ? <FiChevronUp className="text-red" /> : <FiChevronDown className="text-red" />}
+        <span className="font-heading text-base text-black">{question}</span>
+        <motion.span
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.25 }}
+          className="text-red flex-shrink-0 ml-4"
+        >
+          <FiChevronDown size={18} />
+        </motion.span>
       </button>
-      {isOpen && (
-        <div className="px-6 py-4 bg-surface text-gray text-sm">
-          {answer}
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            key="faq-answer"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="px-6 py-4 bg-gray-50 text-gray-500 text-sm font-body leading-relaxed border-t border-gray-100">
+              {answer}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -37,23 +57,19 @@ const SubsidyPage = () => {
   ];
 
   return (
-    <div className="bg-bg">
-      <SEOHead 
-        title="PM Surya Ghar Muft Bijli Yojana — ₹78,000 Solar Subsidy | SPC Solar" 
+    <div>
+      <SEOHead
+        title="PM Surya Ghar Muft Bijli Yojana — ₹78,000 Solar Subsidy | SPC Solar"
         description="Learn everything about the PM Surya Ghar scheme. Get up to ₹78,000 central subsidy for your rooftop solar installation with SPC Solar."
       />
 
-      {/* Hero */}
-      <section className="bg-white py-20 text-center border-b border-gray-light">
-        <div className="max-w-4xl mx-auto px-4">
-          <h1 className="text-5xl md:text-6xl font-heading text-red mb-6">
-            Get Up to ₹78,000 Solar Subsidy
-          </h1>
-          <p className="text-xl text-gray font-body mb-8">
-            PM Surya Ghar: Muft Bijli Yojana is a historic initiative by the Government of India to empower households with clean energy and free electricity.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        label="Government Initiative"
+        title="PM SURYA GHAR "
+        highlight="SUBSIDY"
+        subtitle="Get up to ₹78,000 central government subsidy for your rooftop solar installation — we handle everything."
+      />
+
 
       {/* What is it & Table */}
       <section className="py-16 bg-surface">

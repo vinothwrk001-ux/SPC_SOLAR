@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import SEOHead from '../../components/ui/SEOHead';
+import PageHero from '../../components/ui/PageHero';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import { Reveal } from '../../components/motion';
+import { FaWhatsapp } from 'react-icons/fa';
 
 const QuotationPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -32,20 +35,18 @@ Please get back to me with a quotation.`;
   };
 
   return (
-    <div className="bg-bg min-h-screen pb-20">
-      <SEOHead 
-        title="Get a Solar Quote | SPC Solar" 
+    <div className="min-h-screen pb-20">
+      <SEOHead
+        title="Get a Solar Quote | SPC Solar"
         description="Request a free solar panel installation quote. Quick and easy submission directly to our WhatsApp."
       />
-      
-      <div className="bg-black py-16 text-center border-b-4 border-red">
-        <div className="max-w-3xl mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-heading text-white mb-4">REQUEST A QUOTE</h1>
-          <p className="text-gray-light font-body text-lg">
-            Fill in your details below and we will get back to you immediately on WhatsApp with a customized solar proposal.
-          </p>
-        </div>
-      </div>
+
+      <PageHero
+        label="Free Quotation"
+        title="REQUEST A "
+        highlight="QUOTE"
+        subtitle="Fill in your details below. We'll send a customized solar proposal directly to your WhatsApp — instantly."
+      />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <div className="bg-white p-8 rounded-card shadow-card border border-gray-light">

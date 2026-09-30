@@ -1,29 +1,56 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { AnimatedCounter } from '../motion';
+
+const STATS = [
+  { value: '25', suffix: ' Yrs', label: 'Performance Warranty' },
+  { value: '', raw: 'Tier 1', label: 'Solar Panels' },
+  { value: '', raw: '24/7', label: 'Maintenance Support' },
+  { value: '78', prefix: '₹', suffix: 'K', label: 'Max Gov Subsidy' },
+];
 
 const StatsBar = () => {
   return (
-    <div className="bg-red py-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center text-center space-y-4 md:space-y-0 text-white">
-          <div>
-            <h4 className="font-accent text-3xl font-bold">25 Yrs</h4>
-            <p className="font-heading uppercase tracking-wider text-sm mt-1">Performance Warranty</p>
-          </div>
-          <div className="hidden md:block w-px h-10 bg-white/30"></div>
-          <div>
-            <h4 className="font-accent text-3xl font-bold">Tier 1</h4>
-            <p className="font-heading uppercase tracking-wider text-sm mt-1">Solar Panels</p>
-          </div>
-          <div className="hidden md:block w-px h-10 bg-white/30"></div>
-          <div>
-            <h4 className="font-accent text-3xl font-bold">24/7</h4>
-            <p className="font-heading uppercase tracking-wider text-sm mt-1">Maintenance Support</p>
-          </div>
-          <div className="hidden md:block w-px h-10 bg-white/30"></div>
-          <div>
-            <h4 className="font-accent text-3xl font-bold">₹78,000</h4>
-            <p className="font-heading uppercase tracking-wider text-sm mt-1">Max Gov Subsidy</p>
-          </div>
+    <div className="bg-red relative overflow-hidden">
+      {/* Scan line animation */}
+      <motion.div
+        className="absolute inset-y-0 w-32 bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none"
+        animate={{ x: ['-200px', '120vw'] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'linear', repeatDelay: 3 }}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <div className="flex flex-col md:flex-row justify-between items-center text-center gap-6 md:gap-0 text-white">
+          {STATS.map((stat, i) => (
+            <React.Fragment key={stat.label}>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+              >
+                <div className="font-accent text-3xl font-bold leading-none mb-1">
+                  {stat.raw ? (
+                    stat.raw
+                  ) : (
+                    <AnimatedCounter
+                      target={stat.value}
+                      prefix={stat.prefix || ''}
+                      suffix={stat.suffix || ''}
+                      duration={1.5}
+                    />
+                  )}
+                </div>
+                <p className="font-heading uppercase tracking-wider text-xs text-white/80 mt-1">
+                  {stat.label}
+                </p>
+              </motion.div>
+
+              {/* Divider (not after last) */}
+              {i < STATS.length - 1 && (
+                <div className="hidden md:block w-px h-10 bg-white/20" />
+              )}
+            </React.Fragment>
+          ))}
         </div>
       </div>
     </div>
