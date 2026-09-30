@@ -1,0 +1,64 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import HomePage from './pages/public/HomePage';
+import AboutPage from './pages/public/AboutPage';
+import ServicesPage from './pages/public/ServicesPage';
+import ProjectsPage from './pages/public/ProjectsPage';
+import SubsidyPage from './pages/public/SubsidyPage';
+import BlogPage from './pages/public/BlogPage';
+import BlogDetailPage from './pages/public/BlogDetailPage';
+import ContactPage from './pages/public/ContactPage';
+import QuotationPage from './pages/public/QuotationPage';
+import ScrollToTop from './components/layout/ScrollToTop';
+
+import { AuthProvider } from './context/AuthContext';
+import AdminLayout from './components/layout/AdminLayout';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminQuotations from './pages/admin/AdminQuotations';
+import AdminProjects from './pages/admin/AdminProjects';
+import AdminBlogs from './pages/admin/AdminBlogs';
+import AdminServices from './pages/admin/AdminServices';
+import AdminTestimonials from './pages/admin/AdminTestimonials';
+import AdminQuotationMaker from './pages/admin/AdminQuotationMaker';
+import PublicLayout from './components/layout/PublicLayout';
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          {/* Public Routes */}
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/subsidy" element={<SubsidyPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:slug" element={<BlogDetailPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/quotation" element={<QuotationPage />} />
+          </Route>
+          
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="quotation-maker" element={<AdminQuotationMaker />} />
+            <Route path="quotations" element={<AdminQuotations />} />
+            <Route path="projects" element={<AdminProjects />} />
+            <Route path="blogs" element={<AdminBlogs />} />
+            <Route path="services" element={<AdminServices />} />
+            <Route path="testimonials" element={<AdminTestimonials />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;
