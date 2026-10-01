@@ -290,7 +290,7 @@ I want to book a free site consultation!`;
               <h2 className="text-xl font-bold text-gray-900">Required System Size</h2>
 
               {calcResult && (
-                <div className="grid grid-cols-2 gap-4 bg-gray-50/70 p-6 rounded-2xl border border-gray-100 text-center">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50/70 p-6 rounded-2xl border border-gray-100 text-center">
                   {/* System Size */}
                   <div className="space-y-1 border-r border-gray-200 pr-2">
                     <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-gray-500 uppercase">
@@ -335,7 +335,7 @@ I want to book a free site consultation!`;
                   </p>
 
                   {/* Monthly, Yearly, Lifetime 3-Col Grid */}
-                  <div className="grid grid-cols-3 gap-2 text-center divide-x divide-gray-200 bg-gray-50/70 p-4 sm:p-6 rounded-2xl border border-gray-100">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 text-center sm:divide-x divide-y sm:divide-y-0 divide-gray-200 bg-gray-50/70 p-4 sm:p-6 rounded-2xl border border-gray-100">
                     <div className="px-1">
                       <span className="text-xs font-semibold text-gray-500 block mb-1">Monthly*</span>
                       <span className="text-lg sm:text-xl font-extrabold text-gray-900">
@@ -368,7 +368,7 @@ I want to book a free site consultation!`;
                   <FiAward /> Additional Financial & Environmental Impact
                 </h3>
                 
-                <div className="grid grid-cols-2 gap-4 text-sm font-medium border-t border-blue-900 pt-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 text-sm font-medium border-t border-blue-900 pt-3">
                   <div>
                     <span className="text-xs text-blue-300 block">Est. Net Investment:</span>
                     <span className="text-lg font-bold text-white">₹{calcResult.netCost?.toLocaleString()}</span>
@@ -379,7 +379,7 @@ I want to book a free site consultation!`;
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 text-sm font-medium border-t border-blue-900 pt-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 text-sm font-medium border-t border-blue-900 pt-3">
                   <div>
                     <span className="text-xs text-blue-300 block">CO₂ Reduced / Year:</span>
                     <span className="text-base font-bold text-green-400">{calcResult.co2ReducedTons} Metric Tons</span>

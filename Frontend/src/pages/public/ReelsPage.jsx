@@ -148,7 +148,7 @@ const ReelsPage = () => {
           <span>Home</span>
         </Link>
 
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar max-w-[60%] px-2">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar max-w-[60%] px-2 snap-x snap-mandatory touch-pan-x">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
@@ -156,7 +156,7 @@ const ReelsPage = () => {
                 setSelectedCategory(cat);
                 setCurrentIndex(0);
               }}
-              className={`px-3 py-1 rounded-full text-xs font-accent font-semibold transition-all whitespace-nowrap ${
+              className={`px-3 py-1 rounded-full text-xs font-accent font-semibold transition-all whitespace-nowrap snap-center ${
                 selectedCategory === cat
                   ? 'bg-red text-white shadow-lg shadow-red/30'
                   : 'bg-white/10 text-white/70 hover:bg-white/20'

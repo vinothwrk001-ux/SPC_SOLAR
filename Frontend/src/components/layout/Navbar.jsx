@@ -116,6 +116,11 @@ const Navbar = () => {
                 Solar Calculator
               </Button>
             </Link>
+            <Link to="/admin/login">
+              <Button variant="outline-white" size="sm">
+                Login
+              </Button>
+            </Link>
           </div>
 
           {/* ---- HAMBURGER ---- */}
@@ -174,10 +179,15 @@ const Navbar = () => {
                 </motion.div>
               ))}
 
-              <motion.div variants={mobileNavItem} custom={LINKS.length} className="mt-4">
-                <Link to="/quotation" onClick={() => setIsOpen(false)}>
-                  <Button size="lg" icon={<FiArrowRight />}>
+              <motion.div variants={mobileNavItem} custom={LINKS.length} className="mt-4 flex flex-col gap-4 w-full">
+                <Link to="/quotation" onClick={() => setIsOpen(false)} className="w-full">
+                  <Button size="lg" className="w-full" icon={<FiArrowRight />}>
                     Get Free Quote
+                  </Button>
+                </Link>
+                <Link to="/admin/login" onClick={() => setIsOpen(false)} className="w-full">
+                  <Button variant="outline-white" size="lg" className="w-full">
+                    Login
                   </Button>
                 </Link>
               </motion.div>

@@ -158,7 +158,7 @@ const HeroSection = () => {
                 initial={{ y: '110%', opacity: 0 }}
                 animate={{ y: '0%', opacity: 1 }}
                 transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                className="font-heading text-5xl lg:text-6xl leading-none text-white uppercase"
+                className="font-heading text-4xl md:text-5xl lg:text-6xl leading-none text-white uppercase"
               >
                 POWER
               </motion.h1>
@@ -168,7 +168,7 @@ const HeroSection = () => {
                 initial={{ y: '110%', opacity: 0 }}
                 animate={{ y: '0%', opacity: 1 }}
                 transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
-                className="font-heading text-5xl lg:text-6xl leading-none text-white uppercase"
+                className="font-heading text-4xl md:text-5xl lg:text-6xl leading-none text-white uppercase"
               >
                 YOUR{' '}
                 <span className="text-red">FUTURE</span>
@@ -179,7 +179,7 @@ const HeroSection = () => {
                 initial={{ y: '110%', opacity: 0 }}
                 animate={{ y: '0%', opacity: 1 }}
                 transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.26 }}
-                className="font-heading text-5xl lg:text-6xl leading-none text-white/20 uppercase text-stroke-white"
+                className="font-heading text-4xl md:text-5xl lg:text-6xl leading-none text-white/20 uppercase text-stroke-white"
               >
                 WITH SOLAR
               </motion.h1>
@@ -244,7 +244,7 @@ const HeroSection = () => {
             </motion.div>
 
             {/* Stats grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {STATS.map((stat, i) => (
                 <motion.div
                   key={stat.label}
