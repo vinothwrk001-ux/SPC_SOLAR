@@ -1,22 +1,46 @@
 const mongoose = require('mongoose');
 
 const quotationSchema = new mongoose.Schema({
-  name: String,
-  phone: String,
+  name: { type: String, required: true },
+  phone: { type: String, required: true },
   email: String,
   location: String,
   state: String,
-  monthlyBill: Number,
-  connectionType: String,
+  propertyType: { type: String, default: 'Residential' },
+  roofType: { type: String, default: 'RCC' },
   roofArea: Number,
-  phase: String,
+  connectionType: { type: String, default: 'On Grid' },
+  phase: { type: String, default: 'Single' },
+  
+  // Inputs from calculator
+  inputType: { type: String, enum: ['bill', 'consumption', 'both'], default: 'bill' },
+  monthlyBill: Number,
+  monthlyConsumption: Number,
+  effectiveTariff: Number,
+  solarCoverage: { type: Number, default: 100 },
+  
+  // Output parameters
   recommendedKW: Number,
+  panelModel: String,
+  panelWattage: Number,
+  panelCount: Number,
+  inverterModel: String,
+  
+  dailyGeneration: Number,
+  monthlyGeneration: Number,
+  annualGeneration: Number,
+  
   estimatedCost: Number,
   centralSubsidy: Number,
   netCost: Number,
   monthlySavings: Number,
+  annualSavings: Number,
   roiYears: Number,
-  annualGeneration: Number,
+  roofWarning: { type: Boolean, default: false },
+
+  // Auditability Snapshot (Version + All configuration parameters active at quotation time)
+  calculationSnapshot: { type: Object },
+
   pdfUrl: String,
   status: { type: String, default: 'New' },
   adminNotes: String,

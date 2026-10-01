@@ -6,6 +6,7 @@ import ServicesSection from '../../components/home/ServicesSection';
 import ProjectsPreview from '../../components/home/ProjectsPreview';
 import WhyChooseUs from '../../components/home/WhyChooseUs';
 import SubsidyBanner from '../../components/home/SubsidyBanner';
+import ReelCarousel from '../../components/reels/ReelCarousel';
 import TestimonialsSection from '../../components/home/TestimonialsSection';
 import CTABanner from '../../components/home/CTABanner';
 
@@ -21,6 +22,7 @@ const HomePage = () => {
       <ServicesSection />
       <ProjectsPreview />
       <WhyChooseUs />
+      <ReelCarousel />
       <SubsidyBanner />
       <TestimonialsSection />
       <CTABanner />

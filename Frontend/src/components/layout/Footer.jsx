@@ -14,6 +14,8 @@ const SOCIAL = [
 
 const QUICK_LINKS = [
   { name: 'Home', path: '/' },
+  { name: 'Solar Reels', path: '/#reels' },
+  { name: 'Solar Calculator', path: '/quotation' },
   { name: 'About Us', path: '/about' },
   { name: 'Our Projects', path: '/projects' },
   { name: 'PM Surya Ghar Subsidy', path: '/subsidy' },

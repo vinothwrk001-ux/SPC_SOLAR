@@ -8,6 +8,8 @@ import { mobileMenuVariants, mobileNavItem } from '../../animations/variants';
 
 const LINKS = [
   { name: 'Home', path: '/' },
+  { name: 'Reels', path: '/#reels' },
+  { name: 'Calculator', path: '/quotation' },
   { name: 'About', path: '/about' },
   { name: 'Services', path: '/services' },
   { name: 'Projects', path: '/projects' },
@@ -36,6 +38,18 @@ const Navbar = () => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
+
+  const handleLinkClick = (link) => {
+    if (link.path.includes('#reels')) {
+      if (location.pathname === '/') {
+        const el = document.getElementById('reels');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
+    setIsOpen(false);
+  };
 
   const isActive = (path) =>
     path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
@@ -73,11 +87,17 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`relative font-accent font-semibold text-sm tracking-wide uppercase transition-colors duration-200 group ${
+                onClick={() => handleLinkClick(link)}
+                className={`relative font-accent font-semibold text-sm tracking-wide uppercase transition-colors duration-200 group flex items-center gap-1.5 ${
                   isActive(link.path) ? 'text-red' : 'text-white/80 hover:text-white'
                 }`}
               >
                 {link.name}
+                {link.isNew && (
+                  <span className="bg-red text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                    NEW
+                  </span>
+                )}
                 <motion.span
                   className="absolute -bottom-1 left-0 h-px bg-red"
                   initial={false}
@@ -93,7 +113,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-4">
             <Link to="/quotation">
               <Button size="sm" icon={<FiArrowRight size={14} />}>
-                Free Quote
+                Solar Calculator
               </Button>
             </Link>
           </div>

@@ -13,12 +13,15 @@ import BlogCategoryPage from './pages/public/BlogCategoryPage';
 import BlogTagPage from './pages/public/BlogTagPage';
 import ContactPage from './pages/public/ContactPage';
 import QuotationPage from './pages/public/QuotationPage';
+import ReelsPage from './pages/public/ReelsPage';
 import ScrollToTop from './components/layout/ScrollToTop';
 
 import { AuthProvider } from './context/AuthContext';
 import AdminLayout from './components/layout/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminSolarCalculatorConfig from './pages/admin/AdminSolarCalculatorConfig';
+import AdminReelsPage from './pages/admin/AdminReelsPage';
 import AdminQuotations from './pages/admin/AdminQuotations';
 import AdminProjects from './pages/admin/AdminProjects';
 import AdminBlogs from './pages/admin/AdminBlogs';
@@ -41,6 +44,7 @@ function App() {
           {/* Public Routes */}
           <Route element={<PublicLayout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/reels" element={<ReelsPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
@@ -57,6 +61,8 @@ function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="reels" element={<AdminReelsPage />} />
+            <Route path="solar-calculator" element={<AdminSolarCalculatorConfig />} />
             <Route path="quotation-maker" element={<AdminQuotationMaker />} />
             <Route path="quotations" element={<AdminQuotations />} />
             <Route path="projects" element={<AdminProjects />} />

@@ -16,6 +16,8 @@ const tagRoutes = require('./routes/tagRoutes');
 const quotationRoutes = require('./routes/quotationRoutes');
 const testimonialRoutes = require('./routes/testimonialRoutes');
 const contactRoutes = require('./routes/contactRoutes');
+const solarCalculatorRoutes = require('./routes/solarCalculatorRoutes');
+const reelRoutes = require('./routes/reelRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const { generateSitemap } = require('./utils/sitemapGenerator');
 const { startSchedulerEngine } = require('./utils/schedulerEngine');
@@ -56,6 +58,8 @@ app.use('/api/tags', tagRoutes);
 app.use('/api/quotations', quotationRoutes);
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/solar-calculator', solarCalculatorRoutes);
+app.use('/api/reels', reelRoutes);
 
 // Error Middleware
 app.use(errorHandler);

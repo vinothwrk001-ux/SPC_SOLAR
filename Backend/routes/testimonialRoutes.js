@@ -1,9 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { getTestimonials, getTestimonialById, createTestimonial, updateTestimonial, deleteTestimonial } = require('../controllers/' + 'testimonialController');
+const {
+  getApprovedTestimonials,
+  submitCustomerReview,
+  getAllTestimonialsAdmin,
+  createAdminTestimonial,
+  updateTestimonialStatus,
+  deleteTestimonial
+} = require('../controllers/testimonialController');
 const { protect } = require('../middleware/authMiddleware');
 
-router.route('/').get(getTestimonials).post(protect, createTestimonial);
-router.route('/:id').get(getTestimonialById).put(protect, updateTestimonial).delete(protect, deleteTestimonial);
+// Public endpoints
+router.get('/', getApprovedTestimonials);
+router.post('/submit', submitCustomerReview);
+
+// Admin endpoints (Protected)
+router.get('/admin/all', protect, getAllTestimonialsAdmin);
+router.post('/admin', protect, createAdminTestimonial);
+router.put('/admin/:id/status', protect, updateTestimonialStatus);
+router.delete('/admin/:id', protect, deleteTestimonial);
 
 module.exports = router;
