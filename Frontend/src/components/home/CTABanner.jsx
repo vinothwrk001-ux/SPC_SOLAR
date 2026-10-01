@@ -7,7 +7,7 @@ import { FiArrowRight, FiPhone } from 'react-icons/fi';
 
 const CTABanner = () => {
   return (
-    <section className="py-28 bg-black-DEFAULT text-center relative overflow-hidden">
+    <section className="py-28 bg-black text-center relative overflow-hidden">
       <EnergyGrid opacity={0.05} color="white" />
 
       {/* Red glow blobs */}

@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
-import { MdSolarPower } from 'react-icons/md';
 import { Reveal, Stagger, EnergyGrid } from '../motion';
+import Logo from '../../assets/Logo.png';
 
 const SOCIAL = [
   { icon: <FiFacebook size={18} />, href: '#', label: 'Facebook' },
@@ -30,7 +30,7 @@ const SERVICES = [
 
 const Footer = () => {
   return (
-    <footer className="bg-black-DEFAULT text-white relative overflow-hidden">
+    <footer className="bg-black text-white relative overflow-hidden">
       {/* Grid overlay */}
       <EnergyGrid opacity={0.05} color="white" />
 
@@ -47,13 +47,8 @@ const Footer = () => {
           {/* Column 1 — Brand */}
           <Reveal>
             <div>
-              <Link to="/" className="flex items-center gap-2.5 mb-5 group w-fit">
-                <span className="text-red">
-                  <MdSolarPower size={26} />
-                </span>
-                <span className="font-heading text-xl tracking-widest text-white uppercase">
-                  SPC<span className="text-red">SOLAR</span>
-                </span>
+              <Link to="/" className="flex items-center mb-5 group w-fit">
+                <img src={Logo} alt="SPC Solar Logo" className="h-12 w-auto object-contain" />
               </Link>
               <p className="text-gray-400 font-body text-sm leading-relaxed mb-6 max-w-xs">
                 Powering India's future with sustainable, certified solar energy solutions for residential, commercial, and industrial needs.

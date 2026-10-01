@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { FiMenu, FiX, FiArrowRight } from 'react-icons/fi';
-import { MdSolarPower } from 'react-icons/md';
 import Button from '../ui/Button';
+import Logo from '../../assets/Logo.png';
 import { mobileMenuVariants, mobileNavItem } from '../../animations/variants';
 
 const LINKS = [
@@ -46,15 +46,15 @@ const Navbar = () => {
         animate={scrolled ? 'scrolled' : 'top'}
         variants={{
           top: {
-            backgroundColor: 'rgba(10,10,10,0.0)',
-            backdropFilter: 'blur(0px)',
-            borderBottomColor: 'rgba(255,255,255,0)',
+            backgroundColor: '#0a0a0a',
+            backdropFilter: 'none',
+            borderBottomColor: 'rgba(255,255,255,0.1)',
             height: '80px',
           },
           scrolled: {
-            backgroundColor: 'rgba(10,10,10,0.96)',
-            backdropFilter: 'blur(14px)',
-            borderBottomColor: 'rgba(255,255,255,0.06)',
+            backgroundColor: '#0a0a0a',
+            backdropFilter: 'none',
+            borderBottomColor: 'rgba(255,255,255,0.1)',
             height: '64px',
           },
         }}
@@ -63,17 +63,8 @@ const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
           {/* ---- LOGO ---- */}
-          <Link to="/" className="flex items-center gap-2.5 flex-shrink-0 group">
-            <motion.div
-              whileHover={{ rotate: 15 }}
-              transition={{ duration: 0.3 }}
-              className="text-red"
-            >
-              <MdSolarPower size={28} />
-            </motion.div>
-            <span className="font-heading text-xl font-900 tracking-widest text-white uppercase">
-              SPC<span className="text-red">SOLAR</span>
-            </span>
+          <Link to="/" className="flex items-center flex-shrink-0 group">
+            <img src={Logo} alt="SPC Solar Logo" className="h-10 md:h-12 w-auto object-contain" />
           </Link>
 
           {/* ---- DESKTOP LINKS ---- */}
@@ -138,7 +129,7 @@ const Navbar = () => {
             initial="closed"
             animate="open"
             exit="closed"
-            className="fixed inset-0 z-40 bg-black-DEFAULT md:hidden flex flex-col justify-center items-center"
+            className="fixed inset-0 z-40 bg-black md:hidden flex flex-col justify-center items-center"
             style={{ top: 0 }}
           >
             {/* Grid overlay */}

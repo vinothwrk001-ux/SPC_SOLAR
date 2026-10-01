@@ -87,7 +87,7 @@ const ServicesPage = () => {
                 <div className={`flex flex-col lg:flex-row gap-12 items-center ${isReversed ? 'lg:flex-row-reverse' : ''}`}>
                   {/* Visual card */}
                   <div className="w-full lg:w-5/12 flex-shrink-0">
-                    <div className="relative bg-black-DEFAULT rounded-card p-12 text-center overflow-hidden">
+                    <div className="relative bg-black rounded-card p-12 text-center overflow-hidden">
                       <EnergyGrid opacity={0.06} color="white" />
                       <div className="relative">
                         {/* Number */}

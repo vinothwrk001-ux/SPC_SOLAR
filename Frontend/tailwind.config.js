@@ -41,9 +41,9 @@ export default {
         },
       },
       fontFamily: {
-        heading: ['"Barlow Condensed"', 'sans-serif'],
+        heading: ['Poppins', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
-        accent: ['Barlow', 'sans-serif'],
+        accent: ['Poppins', 'sans-serif'],
         mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
       },
       fontSize: {

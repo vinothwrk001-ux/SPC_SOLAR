@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut } from 'react-icons/fi';
+import Logo from '../../assets/Logo.png';
 
 const AdminLayout = () => {
   const { admin, logout } = useAuth();
@@ -27,10 +28,11 @@ const AdminLayout = () => {
     <div className="flex h-screen bg-surface">
       {/* Sidebar */}
       <div className="w-64 bg-black text-white flex flex-col h-full overflow-y-auto">
-        <div className="p-6 border-b border-gray-800">
-          <Link to="/" className="font-heading text-2xl font-bold tracking-widest text-white">
-            SPC<span className="text-red">SOLAR</span> <span className="text-xs uppercase text-gray-light">Admin</span>
+        <div className="p-6 border-b border-gray-800 flex items-center gap-3">
+          <Link to="/" className="flex items-center">
+            <img src={Logo} alt="SPC Solar Logo" className="h-8 w-auto object-contain" />
           </Link>
+          <span className="text-xs uppercase text-gray-light">Admin</span>
         </div>
         
         <nav className="flex-1 py-4">

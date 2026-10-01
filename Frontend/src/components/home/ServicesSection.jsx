@@ -56,7 +56,7 @@ const ServicesSection = () => {
         </Reveal>
 
         {/* Cards grid */}
-        <Stagger stagger={0.1}>
+        <Stagger stagger={0.1} className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {SERVICES.map((service) => {
             const Icon = service.icon;
             return (

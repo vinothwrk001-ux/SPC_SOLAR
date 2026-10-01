@@ -106,7 +106,7 @@ const HeroSection = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
-    <section ref={ref} className="relative min-h-screen flex items-center bg-black-DEFAULT overflow-hidden">
+    <section ref={ref} className="relative min-h-screen flex items-center bg-black overflow-hidden">
       {/* ---- Background Image with parallax ---- */}
       <motion.div
         style={{ y: bgY }}
@@ -134,7 +134,7 @@ const HeroSection = () => {
       {/* ---- Content ---- */}
       <motion.div
         style={{ y: textY, opacity }}
-        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-32 pt-40"
+        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-16 pt-24"
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* LEFT */}
@@ -158,7 +158,7 @@ const HeroSection = () => {
                 initial={{ y: '110%', opacity: 0 }}
                 animate={{ y: '0%', opacity: 1 }}
                 transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                className="font-heading text-6xl lg:text-8xl leading-none text-white uppercase"
+                className="font-heading text-5xl lg:text-6xl leading-none text-white uppercase"
               >
                 POWER
               </motion.h1>
@@ -168,7 +168,7 @@ const HeroSection = () => {
                 initial={{ y: '110%', opacity: 0 }}
                 animate={{ y: '0%', opacity: 1 }}
                 transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
-                className="font-heading text-6xl lg:text-8xl leading-none text-white uppercase"
+                className="font-heading text-5xl lg:text-6xl leading-none text-white uppercase"
               >
                 YOUR{' '}
                 <span className="text-red">FUTURE</span>
@@ -179,7 +179,7 @@ const HeroSection = () => {
                 initial={{ y: '110%', opacity: 0 }}
                 animate={{ y: '0%', opacity: 1 }}
                 transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.26 }}
-                className="font-heading text-6xl lg:text-8xl leading-none text-white/20 uppercase text-stroke-white"
+                className="font-heading text-5xl lg:text-6xl leading-none text-white/20 uppercase text-stroke-white"
               >
                 WITH SOLAR
               </motion.h1>
@@ -238,7 +238,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
               animate={{ opacity: 1, scale: 1, rotateY: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-              className="w-full max-w-md mx-auto mb-10"
+              className="w-full max-w-md mx-auto mb-6"
             >
               <SolarPanelGraphic />
             </motion.div>

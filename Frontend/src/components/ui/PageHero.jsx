@@ -11,7 +11,7 @@ const PageHero = ({ label, title, highlight, subtitle, children }) => {
   const titleParts = highlight ? title.split(highlight) : [title];
 
   return (
-    <section className="relative bg-black-DEFAULT text-white pt-32 pb-20 overflow-hidden">
+    <section className="relative bg-black text-white pt-32 pb-20 overflow-hidden">
       <EnergyGrid opacity={0.05} color="white" />
 
       {/* Glow */}

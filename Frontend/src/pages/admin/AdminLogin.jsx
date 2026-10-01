@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import SEOHead from '../../components/ui/SEOHead';
+import Logo from '../../assets/Logo.png';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -29,10 +30,8 @@ const AdminLogin = () => {
       <SEOHead title="Admin Login | SPC Solar" description="SPC Solar Admin Portal Login" />
       
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-card shadow-card border border-gray-light border-t-4 border-t-red">
-        <div className="text-center">
-          <span className="font-heading text-3xl font-bold tracking-widest text-black">
-            SPC<span className="text-red">SOLAR</span>
-          </span>
+        <div className="flex flex-col items-center text-center">
+          <img src={Logo} alt="SPC Solar Logo" className="h-16 w-auto object-contain" />
           <h2 className="mt-6 text-2xl font-heading text-gray">Admin Portal Login</h2>
         </div>
         
