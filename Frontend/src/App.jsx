@@ -17,9 +17,15 @@ import ReelsPage from './pages/public/ReelsPage';
 import ScrollToTop from './components/layout/ScrollToTop';
 
 import { AuthProvider } from './context/AuthContext';
+import { UserAuthProvider } from './context/UserAuthContext';
+import UserLoginPage from './pages/public/UserLoginPage';
+import UserRegisterPage from './pages/public/UserRegisterPage';
+import UserDashboardPage from './pages/public/UserDashboardPage';
+import UserProtectedRoute from './components/auth/UserProtectedRoute';
 import AdminLayout from './components/layout/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminCouponsPage from './pages/admin/AdminCouponsPage';
 import AdminSolarCalculatorConfig from './pages/admin/AdminSolarCalculatorConfig';
 import AdminReelsPage from './pages/admin/AdminReelsPage';
 import AdminQuotations from './pages/admin/AdminQuotations';
@@ -38,45 +44,60 @@ import PublicLayout from './components/layout/PublicLayout';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          {/* Public Routes */}
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/reels" element={<ReelsPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/projects" element={<ProjectsPage />} />
-            <Route path="/subsidy" element={<SubsidyPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:slug" element={<BlogDetailPage />} />
-            <Route path="/blog/category/:slug" element={<BlogCategoryPage />} />
-            <Route path="/blog/tag/:slug" element={<BlogTagPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/quotation" element={<QuotationPage />} />
-          </Route>
-          
-          {/* Admin Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="reels" element={<AdminReelsPage />} />
-            <Route path="solar-calculator" element={<AdminSolarCalculatorConfig />} />
-            <Route path="quotation-maker" element={<AdminQuotationMaker />} />
-            <Route path="quotations" element={<AdminQuotations />} />
-            <Route path="projects" element={<AdminProjects />} />
-            <Route path="blogs" element={<AdminBlogs />} />
-            <Route path="blogs/create" element={<AdminBlogCreate />} />
-            <Route path="blogs/:id/edit" element={<AdminBlogEdit />} />
-            <Route path="blogs/:id/preview" element={<AdminBlogPreview />} />
-            <Route path="categories" element={<AdminCategories />} />
-            <Route path="tags" element={<AdminTags />} />
-            <Route path="services" element={<AdminServices />} />
-            <Route path="testimonials" element={<AdminTestimonials />} />
-          </Route>
-        </Routes>
-      </Router>
+      <UserAuthProvider>
+        <Router>
+          <ScrollToTop />
+          <Routes>
+            {/* Public Routes */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/reels" element={<ReelsPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/subsidy" element={<SubsidyPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogDetailPage />} />
+              <Route path="/blog/category/:slug" element={<BlogCategoryPage />} />
+              <Route path="/blog/tag/:slug" element={<BlogTagPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/quotation" element={<QuotationPage />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <UserProtectedRoute>
+                    <UserDashboardPage />
+                  </UserProtectedRoute>
+                }
+              />
+            </Route>
+
+            {/* Customer Auth Routes */}
+            <Route path="/login" element={<UserLoginPage />} />
+            <Route path="/register" element={<UserRegisterPage />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="coupons" element={<AdminCouponsPage />} />
+              <Route path="reels" element={<AdminReelsPage />} />
+              <Route path="solar-calculator" element={<AdminSolarCalculatorConfig />} />
+              <Route path="quotation-maker" element={<AdminQuotationMaker />} />
+              <Route path="quotations" element={<AdminQuotations />} />
+              <Route path="projects" element={<AdminProjects />} />
+              <Route path="blogs" element={<AdminBlogs />} />
+              <Route path="blogs/create" element={<AdminBlogCreate />} />
+              <Route path="blogs/:id/edit" element={<AdminBlogEdit />} />
+              <Route path="blogs/:id/preview" element={<AdminBlogPreview />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="tags" element={<AdminTags />} />
+              <Route path="services" element={<AdminServices />} />
+              <Route path="testimonials" element={<AdminTestimonials />} />
+            </Route>
+          </Routes>
+        </Router>
+      </UserAuthProvider>
     </AuthProvider>
   );
 }

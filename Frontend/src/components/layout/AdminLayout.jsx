@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiX, FiTag } from 'react-icons/fi';
 import Logo from '../../assets/Logo.png';
 
 const AdminLayout = () => {
@@ -15,6 +15,7 @@ const AdminLayout = () => {
 
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: <FiHome /> },
+    { name: 'Welcome Coupons', path: '/admin/coupons', icon: <FiTag /> },
     { name: 'Solar Reels', path: '/admin/reels', icon: <FiVideo /> },
     { name: 'Solar Calculator Settings', path: '/admin/solar-calculator', icon: <FiSettings /> },
     { name: 'Quotation Maker', path: '/admin/quotation-maker', icon: <FiFileText /> },

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const quotationSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   name: { type: String, required: true },
   phone: { type: String, required: true },
   email: String,
@@ -32,6 +33,11 @@ const quotationSchema = new mongoose.Schema({
   
   estimatedCost: Number,
   centralSubsidy: Number,
+  couponDiscount: { type: Number, default: 0 },
+  appliedCoupon: {
+    code: String,
+    discountAmount: Number,
+  },
   netCost: Number,
   monthlySavings: Number,
   annualSavings: Number,

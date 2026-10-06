@@ -2,6 +2,7 @@ const SolarCalculatorConfig = require('../models/SolarCalculatorConfig');
 const SolarPanel = require('../models/SolarPanel');
 const SolarInverter = require('../models/SolarInverter');
 const Quotation = require('../models/Quotation');
+const User = require('../models/User');
 const { getActiveConfig, calculateSolar } = require('../services/solarCalculatorService');
 
 // --- PUBLIC APIS ---
@@ -65,14 +66,42 @@ const createCalculatorLead = async (req, res) => {
       roofArea,
       connectionType,
       phase,
-      calculationResult
+      calculationResult,
+      appliedCoupon,
+      couponDiscount,
+      netCost
     } = req.body;
 
     if (!name || !phone) {
       return res.status(400).json({ message: 'Name and Phone are required' });
     }
 
+    let userId = req.user ? req.user._id : undefined;
+
+    // If unauthenticated, try to find an existing user with matching email or phone
+    if (!userId) {
+      try {
+        const query = [];
+        if (email) query.push({ email: email.toLowerCase().trim() });
+        if (phone) query.push({ phone: phone.trim() });
+        if (query.length > 0) {
+          const matchedUser = await User.findOne({ $or: query });
+          if (matchedUser) {
+            userId = matchedUser._id;
+          }
+        }
+      } catch (err) {
+        console.warn('User matching error:', err.message);
+      }
+    }
+
+    const discount = Number(couponDiscount) || 0;
+    const computedNetCost = netCost !== undefined 
+      ? Number(netCost) 
+      : (calculationResult?.netCost ? Math.max(0, calculationResult.netCost - discount) : calculationResult?.netCost);
+
     const leadData = {
+      user: userId,
       name,
       phone,
       email,
@@ -101,7 +130,9 @@ const createCalculatorLead = async (req, res) => {
 
       estimatedCost: calculationResult?.estimatedCost,
       centralSubsidy: calculationResult?.centralSubsidy,
-      netCost: calculationResult?.netCost,
+      couponDiscount: discount,
+      appliedCoupon: appliedCoupon || (discount > 0 ? { discountAmount: discount } : undefined),
+      netCost: computedNetCost,
       monthlySavings: calculationResult?.monthlySavings,
       annualSavings: calculationResult?.annualSavings,
       roiYears: calculationResult?.roiYears,

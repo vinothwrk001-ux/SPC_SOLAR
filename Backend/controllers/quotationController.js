@@ -21,7 +21,11 @@ const getQuotationById = async (req, res) => {
 
 const createQuotation = async (req, res) => {
   try {
-    const data = new Quotation(req.body);
+    const payload = { ...req.body };
+    if (req.user && !payload.user) {
+      payload.user = req.user._id;
+    }
+    const data = new Quotation(payload);
     const savedData = await data.save();
     res.status(201).json(savedData);
   } catch (error) {

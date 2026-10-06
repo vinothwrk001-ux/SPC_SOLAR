@@ -8,6 +8,8 @@ const connectDB = require('./config/db');
 
 // Route imports
 const authRoutes = require('./routes/authRoutes');
+const userAuthRoutes = require('./routes/userAuthRoutes');
+const couponRoutes = require('./routes/couponRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const blogRoutes = require('./routes/blogRoutes');
@@ -51,6 +53,8 @@ app.get('/robots.txt', (req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userAuthRoutes);
+app.use('/api/coupon', couponRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/blogs', blogRoutes);

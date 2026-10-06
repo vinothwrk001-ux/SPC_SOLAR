@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import SEOHead from '../../components/ui/SEOHead';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
@@ -6,6 +7,7 @@ import Card from '../../components/ui/Card';
 import Modal from '../../components/ui/Modal';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import { useUserAuth } from '../../context/UserAuthContext';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { 
@@ -19,7 +21,9 @@ import {
   FiDownload, 
   FiMaximize2, 
   FiAward,
-  FiTrendingUp
+  FiTrendingUp,
+  FiGift,
+  FiTag
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 
@@ -61,10 +65,28 @@ const QuotationPage = () => {
   });
   const [submittingLead, setSubmittingLead] = useState(false);
   const [leadSuccess, setLeadSuccess] = useState(false);
+  const { user } = useUserAuth();
 
   useEffect(() => {
     fetchPublicConfig();
   }, []);
+
+  // Auto-fill consultation form with logged-in user profile
+  useEffect(() => {
+    if (user) {
+      setLeadForm((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone,
+        location: user.address?.city || prev.location,
+        state: user.address?.state || prev.state,
+      }));
+      if (user.address?.city) {
+        setCityLocation(user.address.city);
+      }
+    }
+  }, [user]);
 
   const fetchPublicConfig = async () => {
     try {
@@ -120,6 +142,10 @@ const QuotationPage = () => {
     }
   };
 
+  const userCoupon = user?.coupon?.status === 'Active' ? user.coupon : null;
+  const couponDiscount = userCoupon ? (userCoupon.discountAmount || 1000) : 0;
+  const finalNetCost = calcResult ? Math.max(0, (calcResult.netCost || 0) - couponDiscount) : 0;
+
   const handleLeadSubmit = async (e) => {
     e.preventDefault();
     if (!leadForm.name || !leadForm.phone) {
@@ -132,10 +158,13 @@ const QuotationPage = () => {
       await api.post('/solar-calculator/leads', {
         ...leadForm,
         monthlyBill: billValue,
-        calculationResult: calcResult
+        calculationResult: calcResult,
+        appliedCoupon: userCoupon ? { code: userCoupon.code, discountAmount: couponDiscount } : undefined,
+        couponDiscount: couponDiscount,
+        netCost: userCoupon ? finalNetCost : calcResult?.netCost,
       });
       setLeadSuccess(true);
-      toast.success('Your free consultation request has been submitted!');
+      toast.success('Your free consultation request has been submitted with your welcome voucher!');
     } catch (error) {
       toast.error('Failed to submit consultation request');
     } finally {
@@ -163,21 +192,39 @@ const QuotationPage = () => {
     doc.text(`Monthly Electricity Bill: Rs. ${billValue.toLocaleString()}`, 15, 50);
     doc.text(`Date: ${new Date().toLocaleDateString()}`, 145, 38);
 
+    const pdfTableBody = [
+      ['Required System Size', `${calcResult.systemSizeKW} kW`],
+      ['Required Roof Area', `${calcResult.requiredRoofArea} sq. ft.`],
+      ['Panel Configuration', `${calcResult.panelCount} × ${calcResult.panelWattage}W Tier 1 Panels`],
+      ['Estimated Monthly Solar Savings', `Rs. ${calcResult.monthlySavings?.toLocaleString()}`],
+      ['Estimated Yearly Solar Savings', `Rs. ${calcResult.yearlySavings?.toLocaleString()}`],
+      ['Estimated 25-Year Lifetime Savings', `Rs. ${calcResult.lifetimeSavings?.toLocaleString()}`],
+      ['Turnkey Investment Cost', `Rs. ${calcResult.estimatedCost?.toLocaleString()}`],
+      ['PM Surya Ghar Subsidy', `- Rs. ${calcResult.centralSubsidy?.toLocaleString()}`],
+    ];
+
+    if (userCoupon) {
+      pdfTableBody.push([
+        'Welcome Installation Voucher',
+        `- Rs. ${couponDiscount.toLocaleString()} (Voucher: ${userCoupon.code})`
+      ]);
+      pdfTableBody.push([
+        'Net Cost to Customer',
+        `Rs. ${finalNetCost.toLocaleString()} (After Subsidy & Installation Voucher)`
+      ]);
+    } else {
+      pdfTableBody.push([
+        'Net Cost to Customer',
+        `Rs. ${calcResult.netCost?.toLocaleString()}`
+      ]);
+    }
+
+    pdfTableBody.push(['Estimated Payback (ROI)', `${calcResult.roiYears} Years`]);
+
     doc.autoTable({
       startY: 58,
       head: [['System Parameter', 'Specification Output']],
-      body: [
-        ['Required System Size', `${calcResult.systemSizeKW} kW`],
-        ['Required Roof Area', `${calcResult.requiredRoofArea} sq. ft.`],
-        ['Panel Configuration', `${calcResult.panelCount} × ${calcResult.panelWattage}W Tier 1 Panels`],
-        ['Estimated Monthly Solar Savings', `Rs. ${calcResult.monthlySavings?.toLocaleString()}`],
-        ['Estimated Yearly Solar Savings', `Rs. ${calcResult.yearlySavings?.toLocaleString()}`],
-        ['Estimated 25-Year Lifetime Savings', `Rs. ${calcResult.lifetimeSavings?.toLocaleString()}`],
-        ['Turnkey Investment Cost', `Rs. ${calcResult.estimatedCost?.toLocaleString()}`],
-        ['PM Surya Ghar Subsidy', `- Rs. ${calcResult.centralSubsidy?.toLocaleString()}`],
-        ['Net Cost to Customer', `Rs. ${calcResult.netCost?.toLocaleString()}`],
-        ['Estimated Payback (ROI)', `${calcResult.roiYears} Years`]
-      ],
+      body: pdfTableBody,
       headStyles: { fillColor: [37, 99, 235] },
       alternateRowStyles: { fillColor: [245, 247, 250] }
     });
@@ -234,8 +281,17 @@ I want to book a free site consultation!`;
 
               {/* Promo Banner */}
               <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-xl flex items-center justify-between text-sm">
-                 <span><FiAward className="inline mr-2 text-blue-600" /><strong>Login to Request Quotation</strong> & get up to ₹1000 OFF Coupon Code!</span>
-                 <a href="/admin/login" className="text-blue-600 font-bold underline whitespace-nowrap ml-2">Login Now</a>
+                {user ? (
+                  <>
+                    <span><FiAward className="inline mr-2 text-blue-600" /><strong>Logged in as {user.name}</strong> • Estimates will be saved to your account.</span>
+                    <Link to="/dashboard" className="text-blue-600 font-bold underline whitespace-nowrap ml-2">My Quotes</Link>
+                  </>
+                ) : (
+                  <>
+                    <span><FiAward className="inline mr-2 text-blue-600" /><strong>Sign In to Save Quotation</strong> & get up to ₹1,000 off installation charges!</span>
+                    <Link to="/login" className="text-blue-600 font-bold underline whitespace-nowrap ml-2">Sign In</Link>
+                  </>
+                )}
               </div>
               
               {/* Avg Electricity Bill Slider */}
@@ -367,21 +423,100 @@ I want to book a free site consultation!`;
               )}
             </div>
 
+            {/* Welcome Voucher Promotion or Applied Badge */}
+            {calcResult && (
+              userCoupon ? (
+                <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2.5 bg-amber-500/20 text-amber-500 rounded-xl flex-shrink-0 mt-0.5">
+                      <FiGift className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-accent font-bold uppercase tracking-wider text-amber-600 bg-amber-100 px-2.5 py-0.5 rounded-full">
+                          Welcome Voucher Active
+                        </span>
+                        <span className="font-mono text-xs font-extrabold text-gray-800 bg-white border border-amber-300 px-2 py-0.5 rounded">
+                          {userCoupon.code}
+                        </span>
+                      </div>
+                      <p className="text-sm font-bold text-gray-900 mt-1">
+                        ₹{couponDiscount.toLocaleString()} Installation Discount Applied
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        Amount will be directly deducted from your turnkey installation invoice after site setup.
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-extrabold text-green-600 sm:text-right whitespace-nowrap">
+                    - ₹{couponDiscount.toLocaleString()} OFF
+                  </span>
+                </div>
+              ) : !user ? (
+                <div className="bg-gradient-to-r from-red/5 via-amber-500/10 to-white border border-amber-400/40 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2.5 bg-red/10 text-red rounded-xl flex-shrink-0 mt-0.5">
+                      <FiTag className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-accent font-bold uppercase tracking-wider text-red">
+                        New Customer Special Voucher
+                      </span>
+                      <p className="text-sm font-bold text-gray-900 mt-0.5">
+                        Get ₹1,000 OFF on Your Rooftop Solar Installation
+                      </p>
+                      <p className="text-xs text-gray-600 mt-0.5">
+                        Sign up or log in to claim your welcome voucher code.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Link
+                      to="/register"
+                      className="px-4 py-2 bg-red hover:bg-red-dark text-white text-xs font-accent font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm"
+                    >
+                      Claim Voucher
+                    </Link>
+                    <Link
+                      to="/login"
+                      className="px-3 py-2 bg-white hover:bg-gray-100 text-gray-700 text-xs font-accent font-semibold uppercase tracking-wider rounded-xl border border-gray-200 transition-all"
+                    >
+                      Sign In
+                    </Link>
+                  </div>
+                </div>
+              ) : null
+            )}
+
             {/* Environmental & Financial Metrics Accordion / Highlights */}
             {calcResult && (
               <div className="bg-blue-950 text-white p-6 rounded-2xl shadow-md space-y-4">
                 <h3 className="text-base font-bold flex items-center gap-2 text-blue-300">
-                  <FiAward /> Additional Financial & Environmental Impact
+                  <FiAward /> Turnkey Financial Breakdown & Impact
                 </h3>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 text-sm font-medium border-t border-blue-900 pt-3">
-                  <div>
-                    <span className="text-xs text-blue-300 block">Est. Net Investment:</span>
-                    <span className="text-lg font-bold text-white">₹{calcResult.netCost?.toLocaleString()}</span>
+                <div className="space-y-2 text-xs font-medium border-t border-blue-900/80 pt-3">
+                  <div className="flex items-center justify-between text-blue-200">
+                    <span>Turnkey Project Cost:</span>
+                    <span className="font-semibold text-white">₹{calcResult.estimatedCost?.toLocaleString()}</span>
                   </div>
-                  <div>
-                    <span className="text-xs text-blue-300 block">Payback Period (ROI):</span>
-                    <span className="text-lg font-bold text-white">{calcResult.roiYears} Years</span>
+                  <div className="flex items-center justify-between text-blue-200">
+                    <span>PM Surya Ghar Central Subsidy:</span>
+                    <span className="font-semibold text-green-400">- ₹{calcResult.centralSubsidy?.toLocaleString()}</span>
+                  </div>
+                  {userCoupon && (
+                    <div className="flex items-center justify-between text-amber-300 font-semibold">
+                      <span>Welcome Voucher Discount ({userCoupon.code}):</span>
+                      <span>- ₹{couponDiscount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between text-sm font-bold border-t border-blue-900/60 pt-2 text-white">
+                    <span>Net Customer Investment:</span>
+                    <span className="text-lg text-amber-300">₹{(userCoupon ? finalNetCost : calcResult.netCost)?.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-blue-300 pt-1">
+                    <span>Payback Period (ROI):</span>
+                    <span className="font-bold text-white">{calcResult.roiYears} Years</span>
                   </div>
                 </div>
 
@@ -474,6 +609,16 @@ I want to book a free site consultation!`;
               value={leadForm.location}
               onChange={(e) => setLeadForm({ ...leadForm, location: e.target.value })}
             />
+
+            {userCoupon && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs flex items-center justify-between text-amber-900">
+                <div className="flex items-center gap-2">
+                  <FiGift className="text-amber-600 w-4 h-4 flex-shrink-0" />
+                  <span>Welcome Voucher: <strong className="font-mono">{userCoupon.code}</strong></span>
+                </div>
+                <span className="font-bold text-green-700">-₹{couponDiscount.toLocaleString()} (Installation Discount)</span>
+              </div>
+            )}
 
             <Button
               type="submit"

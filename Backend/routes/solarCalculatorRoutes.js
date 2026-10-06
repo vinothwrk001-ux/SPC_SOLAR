@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/authMiddleware');
+const { optionalUser } = require('../middleware/userAuthMiddleware');
 const {
   getPublicConfig,
   performCalculation,
@@ -20,7 +21,7 @@ const {
 // Public endpoints
 router.get('/config', getPublicConfig);
 router.post('/calculate', performCalculation);
-router.post('/leads', createCalculatorLead);
+router.post('/leads', optionalUser, createCalculatorLead);
 
 // Admin endpoints (Protected)
 router.get('/admin/config', protect, getAdminConfig);
