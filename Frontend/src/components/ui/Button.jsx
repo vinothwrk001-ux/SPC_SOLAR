@@ -35,6 +35,10 @@ const Button = ({ children, variant = 'primary', size = 'md', className = '', ic
       'hover:bg-red hover:text-white',
     ].join(' '),
     ghost: 'bg-transparent text-red hover:bg-red-muted border-2 border-transparent',
+    white: [
+      'bg-white text-black border-2 border-white',
+      'hover:bg-gray-100 hover:border-gray-100',
+    ].join(' '),
   };
 
   return (

@@ -3,7 +3,7 @@ import { FiShield, FiTrendingUp, FiTool, FiSun, FiAward, FiUsers } from 'react-i
 import { Reveal, Stagger, EnergyGrid } from '../motion';
 
 const REASONS = [
-  { icon: FiShield, title: 'Premium Quality', desc: 'Tier-1 panels & inverters with 25-year performance warranty guaranteed.' },
+  { icon: FiShield, title: 'Premium Quality', desc: 'Tier-1 panels & inverters with 30-year performance warranty guaranteed.' },
   { icon: FiTrendingUp, title: 'High ROI', desc: 'System designed for maximum generation — payback in 3–5 years.' },
   { icon: FiSun, title: 'Govt Subsidy', desc: 'End-to-end support for PM Surya Ghar scheme — up to ₹78,000.' },
   { icon: FiTool, title: 'Expert Installation', desc: 'Installed by MNRE-certified and experienced engineers.' },

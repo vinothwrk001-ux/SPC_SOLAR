@@ -37,7 +37,7 @@ const QuotationPage = () => {
     defaultBillAmount: 6900,
     baseTariff: 8.5,
     roofAreaSqFtPerKW: 60,
-    guaranteeBadgeText: 'We offer 25-year performance warranty with GoodZero™ Solar Protection',
+    guaranteeBadgeText: 'We offer 30-year performance warranty with GoodZero™ Solar Protection',
     disclaimerText: 'Figures shown are estimates based on configured parameters.'
   });
 
@@ -231,6 +231,12 @@ I want to book a free site consultation!`;
             
             {/* Input Card */}
             <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+
+              {/* Promo Banner */}
+              <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-xl flex items-center justify-between text-sm">
+                 <span><FiAward className="inline mr-2 text-blue-600" /><strong>Login to Request Quotation</strong> & get up to ₹1000 OFF Coupon Code!</span>
+                 <a href="/admin/login" className="text-blue-600 font-bold underline whitespace-nowrap ml-2">Login Now</a>
+              </div>
               
               {/* Avg Electricity Bill Slider */}
               <div className="space-y-4 pt-2">

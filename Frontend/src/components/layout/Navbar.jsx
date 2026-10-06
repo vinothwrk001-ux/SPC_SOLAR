@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-
 import { FiMenu, FiX, FiArrowRight } from 'react-icons/fi';
 import Button from '../ui/Button';
 import Logo from '../../assets/Logo.png';
+import LeadCaptureModal from './LeadCaptureModal';
 import { mobileMenuVariants, mobileNavItem } from '../../animations/variants';
 
 const LINKS = [
@@ -20,6 +21,7 @@ const LINKS = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { scrollY } = useScroll();
@@ -75,14 +77,14 @@ const Navbar = () => {
         transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
         className="fixed top-0 left-0 right-0 z-50 border-b"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 h-full flex items-center justify-between">
           {/* ---- LOGO ---- */}
           <Link to="/" className="flex items-center flex-shrink-0 group">
             <img src={Logo} alt="SPC Solar Logo" className="h-10 md:h-12 w-auto object-contain" />
           </Link>
 
           {/* ---- DESKTOP LINKS ---- */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-4 xl:gap-8">
             {LINKS.map((link) => (
               <Link
                 key={link.name}
@@ -110,23 +112,24 @@ const Navbar = () => {
           </div>
 
           {/* ---- CTA ---- */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3 xl:gap-4">
+            <Button variant="outline-white" size="sm" onClick={() => setIsLeadModalOpen(true)} className="whitespace-nowrap">
+              Request Quote
+            </Button>
             <Link to="/quotation">
-              <Button size="sm" icon={<FiArrowRight size={14} />}>
+              <Button size="sm" icon={<FiArrowRight size={14} />} className="whitespace-nowrap">
                 Solar Calculator
               </Button>
             </Link>
-            <Link to="/admin/login">
-              <Button variant="outline-white" size="sm">
-                Login
-              </Button>
+            <Link to="/admin/login" className="text-white/40 hover:text-white text-[10px] uppercase tracking-widest ml-2 font-accent font-bold transition-colors">
+              Admin
             </Link>
           </div>
 
           {/* ---- HAMBURGER ---- */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-white p-1 focus:outline-none"
+            className="lg:hidden text-white p-1 focus:outline-none"
             aria-label={isOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isOpen}
           >
@@ -154,7 +157,7 @@ const Navbar = () => {
             initial="closed"
             animate="open"
             exit="closed"
-            className="fixed inset-0 z-40 bg-black md:hidden flex flex-col justify-center items-center"
+            className="fixed inset-0 z-40 bg-black lg:hidden flex flex-col justify-center items-center"
             style={{ top: 0 }}
           >
             {/* Grid overlay */}
@@ -180,21 +183,24 @@ const Navbar = () => {
               ))}
 
               <motion.div variants={mobileNavItem} custom={LINKS.length} className="mt-4 flex flex-col gap-4 w-full">
+                <Button variant="white" size="lg" className="w-full" onClick={() => { setIsOpen(false); setIsLeadModalOpen(true); }}>
+                  Request Quote
+                </Button>
                 <Link to="/quotation" onClick={() => setIsOpen(false)} className="w-full">
-                  <Button size="lg" className="w-full" icon={<FiArrowRight />}>
-                    Get Free Quote
+                  <Button variant="primary" size="lg" className="w-full" icon={<FiArrowRight />}>
+                    Solar Calculator
                   </Button>
                 </Link>
-                <Link to="/admin/login" onClick={() => setIsOpen(false)} className="w-full">
-                  <Button variant="outline-white" size="lg" className="w-full">
-                    Login
-                  </Button>
+                <Link to="/admin/login" onClick={() => setIsOpen(false)} className="text-center text-white/40 mt-4 text-xs font-accent tracking-widest uppercase">
+                  Admin Login
                 </Link>
               </motion.div>
             </nav>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LeadCaptureModal isOpen={isLeadModalOpen} onClose={() => setIsLeadModalOpen(false)} />
     </>
   );
 };

@@ -10,9 +10,11 @@ import api from '../../services/api';
 import toast from 'react-hot-toast';
 
 const CONTACT_INFO = [
-  { icon: FiMapPin, label: 'Office Address', value: '123 Solar Street, Green City, India 400001' },
-  { icon: FiPhone, label: 'Phone Number', value: '+91 98765 43210', href: 'tel:+919876543210' },
-  { icon: FiMail, label: 'Email Address', value: 'info@spcsolar.com', href: 'mailto:info@spcsolar.com' },
+  { icon: FiMapPin, label: 'Office Address', value: 'No-115-117, Easwari Towers, Devanga High School Road, RS Puram, Coimbatore - 641002.' },
+  { icon: FiPhone, label: 'Phone Number 1', value: '+91 84896 44044', href: 'tel:+918489644044' },
+  { icon: FiPhone, label: 'Phone Number 2', value: '+91 84897 44044', href: 'tel:+918489744044' },
+  { icon: FiPhone, label: 'Office Number', value: '+91 80987 44044', href: 'tel:+918098744044' },
+  { icon: FiMail, label: 'Email Address', value: 'spctechnologycoimbatore@gmail.com', href: 'mailto:spctechnologycoimbatore@gmail.com' },
 ];
 
 const ContactPage = () => {

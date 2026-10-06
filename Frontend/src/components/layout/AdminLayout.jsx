@@ -28,17 +28,17 @@ const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-surface">
+    <div className="flex h-screen print:h-auto print:block bg-surface">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 z-40 md:hidden print:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-black text-white flex flex-col h-full overflow-y-auto transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-black text-white flex flex-col h-full overflow-y-auto transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden`}>
         <div className="p-6 border-b border-gray-800 flex items-center gap-3">
           <Link to="/" className="flex items-center">
             <img src={Logo} alt="SPC Solar Logo" className="h-8 w-auto object-contain" />
@@ -78,8 +78,8 @@ const AdminLayout = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden w-full">
-        <header className="bg-white shadow-sm h-16 flex items-center px-4 md:px-8 justify-between border-b border-gray-light">
+      <div className="flex-1 flex flex-col overflow-hidden print:overflow-visible w-full print:block">
+        <header className="bg-white shadow-sm h-16 flex items-center px-4 md:px-8 justify-between border-b border-gray-light print:hidden">
           <div className="flex items-center gap-4">
             <button 
               className="md:hidden text-gray-700 hover:text-red transition-colors"
@@ -98,7 +98,7 @@ const AdminLayout = () => {
           </div>
         </header>
         
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-surface p-4 md:p-8">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto print:overflow-visible bg-surface p-4 md:p-8 print:p-0 print:bg-white">
           <Outlet />
         </main>
       </div>

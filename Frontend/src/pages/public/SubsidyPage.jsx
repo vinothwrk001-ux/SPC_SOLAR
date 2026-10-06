@@ -71,45 +71,65 @@ const SubsidyPage = () => {
       />
 
 
-      {/* What is it & Table */}
+      {/* Scheme Overview */}
       <section className="py-16 bg-surface">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-heading mb-4">Scheme Overview</h2>
-            <p className="text-gray mb-6 leading-relaxed">
+            <p className="text-gray-600 mb-6 leading-relaxed">
               Launched to promote sustainable energy, the PM Surya Ghar scheme aims to provide up to 300 units of free electricity every month to 1 crore households. By installing a rooftop solar system, you not only reduce your electricity bill to zero but also contribute to a greener nation. The government provides substantial financial assistance directly to your bank account.
             </p>
-          </div>
-          <div>
-            <div className="bg-white p-6 rounded-card shadow-card border-t-4 border-t-red">
-              <h3 className="text-xl font-heading mb-4 text-center">Central Subsidy Structure</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b border-gray-light text-black">
-                      <th className="py-3 px-4 font-accent">System Size</th>
-                      <th className="py-3 px-4 font-accent">Subsidy Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-gray text-sm">
-                    <tr className="border-b border-gray-light">
-                      <td className="py-3 px-4">Up to 2 kW</td>
-                      <td className="py-3 px-4 font-bold text-black">₹30,000 per kW</td>
-                    </tr>
-                    <tr className="border-b border-gray-light bg-surface">
-                      <td className="py-3 px-4">2 kW – 3 kW</td>
-                      <td className="py-3 px-4 font-bold text-black">₹18,000 for the extra kW</td>
-                    </tr>
-                    <tr>
-                      <td className="py-3 px-4">Above 3 kW</td>
-                      <td className="py-3 px-4 font-bold text-red">₹78,000 (Maximum Cap)</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
         </div>
+      </section>
+
+      {/* Detailed Price List Table */}
+      <section className="py-16 bg-white">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-10">
+               <h2 className="text-3xl md:text-4xl font-heading text-black">1KW to 10KW DCR Module Solar Power Plant Price List</h2>
+               <p className="text-red text-xl font-bold mt-2 uppercase tracking-wide">PM Surya Ghar : Muft Bijli Yojana</p>
+            </div>
+            
+            <div className="overflow-x-auto bg-white rounded-card shadow-card-md border border-gray-200">
+                <table className="w-full text-center border-collapse">
+                   <thead className="bg-gray-50">
+                      <tr>
+                         <th className="py-5 px-4 font-heading text-red border-r border-b-2 border-gray-200 align-middle text-lg" rowSpan="2">SOLAR<br/>POWER</th>
+                         <th className="py-3 px-4 font-heading text-red border-r border-b border-gray-200" colSpan="2">MONO CRYSTALLINE PANEL</th>
+                         <th className="py-5 px-4 font-heading text-red border-b-2 border-gray-200 align-middle text-lg" rowSpan="2">BALANCE<br/>AMOUNT</th>
+                      </tr>
+                      <tr>
+                         <th className="py-3 px-4 font-heading text-sm text-red border-r border-b-2 border-gray-200">TOTAL AMOUNT</th>
+                         <th className="py-3 px-4 font-heading text-sm text-red border-r border-b-2 border-gray-200">GOVERNMENT SUBSIDY</th>
+                      </tr>
+                   </thead>
+                   <tbody className="text-gray-800 text-lg">
+                      {[
+                         { kw: '1 KW', total: '₹ 1,02,000', sub: '₹ 30,000', bal: '₹ 72,000' },
+                         { kw: '2 KW', total: '₹ 1,80,000', sub: '₹ 60,000', bal: '₹ 1,20,000' },
+                         { kw: '3 KW', total: '₹ 2,28,000', sub: '₹ 78,000', bal: '₹ 1,50,000' },
+                         { kw: '4 KW', total: '₹ 2,75,000', sub: '₹ 78,000', bal: '₹ 1,97,000' },
+                         { kw: '5 KW', total: '₹ 3,34,500', sub: '₹ 78,000', bal: '₹ 2,56,500' },
+                         { kw: '6 KW', total: '₹ 3,95,500', sub: '₹ 78,000', bal: '₹ 3,17,500' },
+                         { kw: '7 KW', total: '₹ 4,54,000', sub: '₹ 78,000', bal: '₹ 3,76,000' },
+                         { kw: '8 KW', total: '₹ 5,14,200', sub: '₹ 78,000', bal: '₹ 4,36,200' },
+                         { kw: '9 KW', total: '₹ 5,62,900', sub: '₹ 78,000', bal: '₹ 4,84,900' },
+                         { kw: '10 KW', total: '₹ 6,20,000', sub: '₹ 78,000', bal: '₹ 5,42,000' }
+                      ].map((row, idx) => (
+                         <tr key={idx} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                            <td className="py-4 px-4 font-bold border-r border-gray-200 text-red">{row.kw}</td>
+                            <td className="py-4 px-4 border-r border-gray-200 font-semibold">{row.total}</td>
+                            <td className="py-4 px-4 border-r border-gray-200 font-semibold">{row.sub}</td>
+                            <td className="py-4 px-4 font-bold text-black">{row.bal}</td>
+                         </tr>
+                      ))}
+                   </tbody>
+                </table>
+            </div>
+            
+            <div className="mt-8 flex flex-col justify-center items-center gap-2 bg-gray-50 p-6 rounded-card border border-gray-200 text-center text-gray-700">
+               <p><strong>Note:</strong> Domestic System: Subsidy Included | Commercial System: No Subsidy | Applicable GST: 5%</p>
+            </div>
+         </div>
       </section>
 
       {/* Eligibility & Documents */}

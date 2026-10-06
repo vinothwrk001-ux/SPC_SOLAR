@@ -7,9 +7,7 @@ import Logo from '../../assets/Logo.png';
 
 const SOCIAL = [
   { icon: <FiFacebook size={18} />, href: '#', label: 'Facebook' },
-  { icon: <FiTwitter size={18} />, href: '#', label: 'Twitter' },
-  { icon: <FiInstagram size={18} />, href: '#', label: 'Instagram' },
-  { icon: <FiLinkedin size={18} />, href: '#', label: 'LinkedIn' },
+  { icon: <FiInstagram size={18} />, href: 'https://instagram.com/spc_coimbatore', label: 'Instagram' },
 ];
 
 const QUICK_LINKS = [
@@ -133,30 +131,48 @@ const Footer = () => {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3 text-gray-400 text-sm font-body">
                   <FiMapPin size={16} className="text-red flex-shrink-0 mt-0.5" />
-                  <span>123 Solar Street, Green City, India</span>
+                  <span>No-115-117, Easwari Towers, Devanga High School Road, RS Puram, Coimbatore - 641002.</span>
                 </li>
                 <li>
                   <a
-                    href="mailto:info@spcsolar.com"
+                    href="mailto:spctechnologycoimbatore@gmail.com"
                     className="flex items-center gap-3 text-gray-400 hover:text-white text-sm font-body transition-colors duration-200"
                   >
                     <FiMail size={16} className="text-red flex-shrink-0" />
-                    info@spcsolar.com
+                    spctechnologycoimbatore@gmail.com
                   </a>
                 </li>
                 <li>
                   <a
-                    href="tel:+919876543210"
+                    href="tel:+918489644044"
                     className="flex items-center gap-3 text-gray-400 hover:text-white text-sm font-body transition-colors duration-200"
                   >
                     <FiPhone size={16} className="text-red flex-shrink-0" />
-                    +91 98765 43210
+                    +91 84896 44044
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="tel:+918489744044"
+                    className="flex items-center gap-3 text-gray-400 hover:text-white text-sm font-body transition-colors duration-200"
+                  >
+                    <FiPhone size={16} className="text-red flex-shrink-0" />
+                    +91 84897 44044
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="tel:+918098744044"
+                    className="flex items-center gap-3 text-gray-400 hover:text-white text-sm font-body transition-colors duration-200"
+                  >
+                    <FiPhone size={16} className="text-red flex-shrink-0" />
+                    +91 80987 44044 (Office)
                   </a>
                 </li>
               </ul>
 
               <a
-                href="https://wa.me/919876543210"
+                href="https://wa.me/918489644044"
                 target="_blank"
                 rel="noreferrer"
                 className="mt-6 inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5b] text-white px-4 py-2.5 rounded-btn font-accent font-bold text-sm transition-colors duration-250"

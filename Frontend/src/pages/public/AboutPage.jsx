@@ -12,8 +12,8 @@ const CORE_VALUES = [
 ];
 
 const STATS = [
-  { value: '10', suffix: '+', label: 'Years Experience' },
-  { value: '500', suffix: '+', label: 'Projects Delivered' },
+  { value: '2010', suffix: '', label: 'Since' },
+  { value: '1000', suffix: '+', label: 'Projects Completed' },
   { value: '12', suffix: ' MW', label: 'Installed Capacity' },
   { value: '100', suffix: '%', label: 'Client Satisfaction' },
 ];
@@ -43,13 +43,13 @@ const AboutPage = () => {
               <span className="red-line" />
               <p className="text-gray-500 font-body leading-relaxed mb-5">
                 Founded with a vision to make solar energy accessible to every household and business,
-                SPC Solar has grown into a trusted name in the renewable energy sector. We believe that
+                SPC Solar has grown into a trusted name in the renewable energy sector since 2010. Led by Managing Directors Pavan Karthik M.M and Benny Wilson V, we believe that
                 the transition to green energy should be seamless, profitable, and uncompromising in quality.
               </p>
               <p className="text-gray-500 font-body leading-relaxed">
                 As an authorized installer for the PM Surya Ghar scheme and an MNRE-approved vendor,
                 we adhere strictly to government guidelines to bring you the best subsidies and highest-quality
-                Tier-1 solar systems.
+                Tier-1 solar systems. We also hold an exclusive tie-up with Adani for premium components.
               </p>
             </div>
           </Reveal>

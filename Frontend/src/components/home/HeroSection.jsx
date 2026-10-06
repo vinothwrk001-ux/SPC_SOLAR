@@ -92,7 +92,7 @@ const SolarPanelGraphic = () => (
 );
 
 const STATS = [
-  { value: '500', suffix: '+', label: 'Installations' },
+  { value: '1000', suffix: '+', label: 'Installations' },
   { value: '12', suffix: ' MW+', label: 'Installed' },
   { value: '10', suffix: '+', label: 'States Served' },
   { value: '100', suffix: '%', label: 'Happy Clients' },
