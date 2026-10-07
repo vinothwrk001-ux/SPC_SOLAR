@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiX, FiTag } from 'react-icons/fi';
+import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiX, FiTag, FiImage } from 'react-icons/fi';
 import Logo from '../../assets/Logo.png';
 
 const AdminLayout = () => {
@@ -26,6 +26,8 @@ const AdminLayout = () => {
     { name: 'Blog Categories', path: '/admin/categories', icon: <FiFileText /> },
     { name: 'Blog Tags', path: '/admin/tags', icon: <FiFileText /> },
     { name: 'Testimonials', path: '/admin/testimonials', icon: <FiStar /> },
+    { name: 'Gallery Components', path: '/admin/gallery-components', icon: <FiImage /> },
+    { name: 'Home Banner', path: '/admin/home-banner', icon: <FiImage /> },
   ];
 
   return (

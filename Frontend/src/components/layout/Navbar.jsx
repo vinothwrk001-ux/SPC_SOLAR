@@ -17,6 +17,7 @@ const LINKS = [
   { name: 'Projects', path: '/projects' },
   { name: 'Subsidy', path: '/subsidy' },
   { name: 'Blog', path: '/blog' },
+  { name: 'Gallery', path: '/components' },
   { name: 'Contact', path: '/contact' },
 ];
 
@@ -163,22 +164,7 @@ const Navbar = () => {
                   </button>
                 </div>
               </div>
-            ) : (
-              <div className="flex items-center gap-3 ml-1">
-                <Link
-                  to="/login"
-                  className="text-white/80 hover:text-white text-xs uppercase tracking-wider font-accent font-bold transition-colors flex items-center gap-1.5"
-                >
-                  <FiUser className="text-red w-3.5 h-3.5" /> Sign In
-                </Link>
-                <Link
-                  to="/register"
-                  className="text-white/40 hover:text-white text-xs uppercase tracking-wider font-accent font-medium transition-colors"
-                >
-                  Register
-                </Link>
-              </div>
-            )}
+            ) : null}
 
             <Link to="/admin/login" className="text-white/30 hover:text-white text-[10px] uppercase tracking-widest ml-1 font-accent font-bold transition-colors" title="Admin Portal">
               Admin

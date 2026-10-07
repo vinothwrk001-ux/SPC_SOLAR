@@ -12,6 +12,7 @@ import BlogDetailPage from './pages/public/BlogDetailPage';
 import BlogCategoryPage from './pages/public/BlogCategoryPage';
 import BlogTagPage from './pages/public/BlogTagPage';
 import ContactPage from './pages/public/ContactPage';
+import ComponentsGalleryPage from './pages/public/ComponentsGalleryPage';
 import QuotationPage from './pages/public/QuotationPage';
 import ReelsPage from './pages/public/ReelsPage';
 import ScrollToTop from './components/layout/ScrollToTop';
@@ -39,6 +40,8 @@ import AdminTags from './pages/admin/AdminTags';
 import AdminServices from './pages/admin/AdminServices';
 import AdminTestimonials from './pages/admin/AdminTestimonials';
 import AdminQuotationMaker from './pages/admin/AdminQuotationMaker';
+import AdminGalleryComponents from './pages/admin/AdminGalleryComponents';
+import AdminHomeBanner from './pages/admin/AdminHomeBanner';
 import PublicLayout from './components/layout/PublicLayout';
 
 function App() {
@@ -61,6 +64,7 @@ function App() {
               <Route path="/blog/category/:slug" element={<BlogCategoryPage />} />
               <Route path="/blog/tag/:slug" element={<BlogTagPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/components" element={<ComponentsGalleryPage />} />
               <Route path="/quotation" element={<QuotationPage />} />
               <Route
                 path="/dashboard"
@@ -94,6 +98,8 @@ function App() {
               <Route path="tags" element={<AdminTags />} />
               <Route path="services" element={<AdminServices />} />
               <Route path="testimonials" element={<AdminTestimonials />} />
+              <Route path="gallery-components" element={<AdminGalleryComponents />} />
+              <Route path="home-banner" element={<AdminHomeBanner />} />
             </Route>
           </Routes>
         </Router>

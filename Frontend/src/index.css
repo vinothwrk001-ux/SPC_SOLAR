@@ -78,6 +78,28 @@
     @apply text-gray-500 font-body text-base max-w-2xl leading-relaxed;
   }
 
+  /* ---- Heading Accent System ---- */
+  .heading-accent {
+    display: block;
+    width: fit-content;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.02em;
+    margin-bottom: 40px;
+    padding-left: 20px;
+    padding-bottom: 10px;
+    
+    /* Left Red Accent */
+    border-left: 4px solid #ef4444;
+    
+    /* Layered Bottom Border */
+    border-bottom: 2px solid #fee2e2;
+    background-image: linear-gradient(to right, #ef4444, #b91c1c);
+    background-size: 40% 4px;
+    background-position: bottom left;
+    background-repeat: no-repeat;
+  }
+
   /* ---- Red Accent Line ---- */
   .red-line {
     @apply block w-12 h-0.5 bg-red mt-4 mb-6;
@@ -131,6 +153,20 @@
     transform-origin: left;
     z-index: 100;
     transition: none;
+  }
+  /* ---- Visibility & Contrast Fixes for Dark Backgrounds ---- */
+  section[class~="bg-black"] {
+    color: #ffffff;
+  }
+
+  section[class~="bg-black"] h2, 
+  section[class~="bg-black"] p, 
+  section[class~="bg-black"] span {
+    color: #ffffff;
+  }
+
+  section[class~="bg-black"] .text-red {
+    color: #ff4d4d;
   }
 }
 
@@ -189,20 +225,6 @@
     @apply text-red underline hover:no-underline;
   }
 
-  /* ---- Visibility & Contrast Fixes for Dark Backgrounds ---- */
-  section.bg-black {
-    color: #ffffff;
-  }
-
-  section.bg-black h2, 
-  section.bg-black p, 
-  section.bg-black span {
-    color: #ffffff;
-  }
-
-  section.bg-black .text-red {
-    color: #ff4d4d;
-  }
 }
 
 /* =============================================

@@ -12,6 +12,8 @@ const SOCIAL = [
 
 const QUICK_LINKS = [
   { name: 'Home', path: '/' },
+  { name: 'Services', path: '/services' },
+  { name: 'Gallery', path: '/components' },
   { name: 'Solar Reels', path: '/#reels' },
   { name: 'Solar Calculator', path: '/quotation' },
   { name: 'About Us', path: '/about' },

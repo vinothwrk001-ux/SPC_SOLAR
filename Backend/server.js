@@ -21,6 +21,8 @@ const contactRoutes = require('./routes/contactRoutes');
 const solarCalculatorRoutes = require('./routes/solarCalculatorRoutes');
 const reelRoutes = require('./routes/reelRoutes');
 const leadRoutes = require('./routes/leadRoutes');
+const galleryComponentRoutes = require('./routes/galleryComponentRoutes');
+const bannerRoutes = require('./routes/bannerRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const { generateSitemap } = require('./utils/sitemapGenerator');
 const { startSchedulerEngine } = require('./utils/schedulerEngine');
@@ -66,6 +68,8 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/solar-calculator', solarCalculatorRoutes);
 app.use('/api/reels', reelRoutes);
 app.use('/api/leads', leadRoutes);
+app.use('/api/gallery-components', galleryComponentRoutes);
+app.use('/api/banner', bannerRoutes);
 
 // Error Middleware
 app.use(errorHandler);
