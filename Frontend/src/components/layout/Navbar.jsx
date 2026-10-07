@@ -6,7 +6,6 @@ import Button from '../ui/Button';
 import Logo from '../../assets/Logo.png';
 import LeadCaptureModal from './LeadCaptureModal';
 import { mobileMenuVariants, mobileNavItem } from '../../animations/variants';
-import { useUserAuth } from '../../context/UserAuthContext';
 
 const LINKS = [
   { name: 'Home', path: '/' },
@@ -25,7 +24,6 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { user, logout } = useUserAuth();
   const location = useLocation();
   const { scrollY } = useScroll();
 
@@ -37,6 +35,13 @@ const Navbar = () => {
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
+
+  // Global event listener for triggering lead quotation modal from any CTA button
+  useEffect(() => {
+    const handleOpenModal = () => setIsLeadModalOpen(true);
+    window.addEventListener('open-lead-modal', handleOpenModal);
+    return () => window.removeEventListener('open-lead-modal', handleOpenModal);
+  }, []);
 
   // Prevent body scroll when mobile menu open
   useEffect(() => {
@@ -125,47 +130,6 @@ const Navbar = () => {
               </Button>
             </Link>
 
-            {/* Customer Account Pill / Login */}
-            {user ? (
-              <div className="relative group ml-1">
-                <Link
-                  to="/dashboard"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-white text-xs font-accent font-semibold transition-all"
-                >
-                  <span className="w-5 h-5 rounded-full bg-red flex items-center justify-center text-[10px] text-white font-bold">
-                    {user.name?.charAt(0).toUpperCase()}
-                  </span>
-                  <span className="max-w-[80px] truncate">{user.name?.split(' ')[0]}</span>
-                </Link>
-
-                {/* Dropdown Menu on hover */}
-                <div className="absolute right-0 mt-2 w-48 bg-[#141414] border border-white/15 rounded-xl shadow-2xl py-1.5 hidden group-hover:block z-50">
-                  <div className="px-4 py-2 border-b border-white/10">
-                    <p className="text-[11px] text-white/50 uppercase font-accent">Signed in as</p>
-                    <p className="text-xs text-white font-semibold truncate">{user.email}</p>
-                  </div>
-                  <Link
-                    to="/dashboard"
-                    className="flex items-center gap-2 px-4 py-2 text-xs text-white/80 hover:text-white hover:bg-white/5 transition-colors"
-                  >
-                    <FiUser className="text-red" /> My Dashboard
-                  </Link>
-                  <Link
-                    to="/quotation"
-                    className="flex items-center gap-2 px-4 py-2 text-xs text-white/80 hover:text-white hover:bg-white/5 transition-colors"
-                  >
-                    <FiArrowRight className="text-red" /> New Solar Quote
-                  </Link>
-                  <button
-                    onClick={logout}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-xs text-red hover:bg-red/10 text-left border-t border-white/10 transition-colors mt-1"
-                  >
-                    <FiLogOut /> Sign Out
-                  </button>
-                </div>
-              </div>
-            ) : null}
-
             <Link to="/admin/login" className="text-white/30 hover:text-white text-[10px] uppercase tracking-widest ml-1 font-accent font-bold transition-colors" title="Admin Portal">
               Admin
             </Link>
@@ -202,23 +166,23 @@ const Navbar = () => {
             initial="closed"
             animate="open"
             exit="closed"
-            className="fixed inset-0 z-40 bg-black lg:hidden flex flex-col justify-center items-center"
+            className="fixed inset-0 z-40 bg-black lg:hidden flex flex-col overflow-y-auto no-scrollbar"
             style={{ top: 0 }}
           >
-            {/* Grid overlay */}
+            {/* Background elements */}
             <div className="absolute inset-0 grid-overlay pointer-events-none" />
 
             {/* Red blobs */}
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red/8 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-red/6 rounded-full blur-3xl pointer-events-none" />
 
-            <nav className="relative flex flex-col items-center gap-8 w-full px-8">
+            <nav className="relative flex flex-col items-center gap-5 sm:gap-6 w-full px-6 min-h-full pt-28 pb-12">
               {LINKS.map((link, i) => (
                 <motion.div key={link.name} variants={mobileNavItem} custom={i}>
                   <Link
                     to={link.path}
                     onClick={() => setIsOpen(false)}
-                    className={`font-heading text-4xl uppercase tracking-wider transition-colors ${
+                    className={`font-heading text-2xl sm:text-3xl uppercase tracking-wider transition-colors ${
                       isActive(link.path) ? 'text-red' : 'text-white hover:text-red'
                     }`}
                   >
@@ -227,7 +191,7 @@ const Navbar = () => {
                 </motion.div>
               ))}
 
-              <motion.div variants={mobileNavItem} custom={LINKS.length} className="mt-4 flex flex-col gap-3 w-full">
+              <motion.div variants={mobileNavItem} custom={LINKS.length} className="mt-6 flex flex-col gap-3 w-full max-w-sm mx-auto">
                 <Button variant="white" size="lg" className="w-full" onClick={() => { setIsOpen(false); setIsLeadModalOpen(true); }}>
                   Request Quote
                 </Button>
@@ -236,44 +200,6 @@ const Navbar = () => {
                     Solar Calculator
                   </Button>
                 </Link>
-
-                {user ? (
-                  <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
-                    <Link
-                      to="/dashboard"
-                      onClick={() => setIsOpen(false)}
-                      className="w-full py-3 px-4 bg-white/10 text-white rounded-xl font-accent font-bold uppercase text-center text-sm flex items-center justify-center gap-2"
-                    >
-                      <FiUser className="text-red" /> My Solar Dashboard ({user.name.split(' ')[0]})
-                    </Link>
-                    <button
-                      onClick={() => {
-                        logout();
-                        setIsOpen(false);
-                      }}
-                      className="text-center text-red text-xs font-accent tracking-wider uppercase py-2"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3 pt-2">
-                    <Link
-                      to="/login"
-                      onClick={() => setIsOpen(false)}
-                      className="flex-1 py-3 px-4 bg-red text-white rounded-xl font-accent font-bold uppercase text-center text-sm"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      to="/register"
-                      onClick={() => setIsOpen(false)}
-                      className="flex-1 py-3 px-4 bg-white/10 text-white rounded-xl font-accent font-bold uppercase text-center text-sm"
-                    >
-                      Register
-                    </Link>
-                  </div>
-                )}
 
                 <Link to="/admin/login" onClick={() => setIsOpen(false)} className="text-center text-white/30 mt-2 text-xs font-accent tracking-widest uppercase">
                   Admin Login

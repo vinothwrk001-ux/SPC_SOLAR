@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiX, FiTag, FiImage } from 'react-icons/fi';
+import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiX, FiTag, FiImage, FiUsers, FiGift } from 'react-icons/fi';
 import Logo from '../../assets/Logo.png';
 
 const AdminLayout = () => {
@@ -15,6 +15,7 @@ const AdminLayout = () => {
 
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: <FiHome /> },
+    { name: 'Customer Leads', path: '/admin/leads', icon: <FiUsers /> },
     { name: 'Welcome Coupons', path: '/admin/coupons', icon: <FiTag /> },
     { name: 'Solar Reels', path: '/admin/reels', icon: <FiVideo /> },
     { name: 'Solar Calculator Settings', path: '/admin/solar-calculator', icon: <FiSettings /> },
@@ -90,12 +91,12 @@ const AdminLayout = () => {
             >
               <FiMenu size={24} />
             </button>
-            <h2 className="font-heading text-xl text-black truncate max-w-[200px] md:max-w-none">
+            <h2 className="font-heading text-lg md:text-xl text-black truncate max-w-[140px] sm:max-w-[200px] md:max-w-none">
               {navItems.find(i => i.path === location.pathname)?.name || 'Admin Panel'}
             </h2>
           </div>
           <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray font-body">
+            <div className="hidden sm:block text-sm text-gray font-body">
               Welcome, <span className="font-bold text-black">{admin.username || 'Admin'}</span>
             </div>
           </div>

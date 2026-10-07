@@ -6,6 +6,7 @@ const { protect } = require('../middleware/authMiddleware'); // assuming admin a
 const {
   getGalleryComponents,
   createGalleryComponent,
+  createBatchGalleryComponents,
   deleteGalleryComponent,
   updateGalleryComponent
 } = require('../controllers/GalleryComponentController');
@@ -13,6 +14,9 @@ const {
 router.route('/')
   .get(getGalleryComponents)
   .post(protect, upload.single('image'), createGalleryComponent);
+
+router.route('/batch')
+  .post(protect, upload.array('images', 50), createBatchGalleryComponents);
 
 router.route('/:id')
   .put(protect, upload.single('image'), updateGalleryComponent)

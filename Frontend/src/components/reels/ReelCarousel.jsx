@@ -17,6 +17,13 @@ const ReelCarousel = () => {
   const [loading, setLoading] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
 
+  const getMediaUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    if (url.startsWith('/uploads')) return `http://localhost:5000${url}`;
+    return `http://localhost:5000/uploads/${url}`;
+  };
+
   // In-Page Fullscreen Modal State
   const [activeReelIndex, setActiveReelIndex] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -89,6 +96,20 @@ const ReelCarousel = () => {
           setIsPlaying(false);
         }
       }
+    }
+  };
+
+  const handleNextModal = (e) => {
+    e?.stopPropagation();
+    if (activeReelIndex !== null && activeReelIndex < reels.length - 1) {
+      setActiveReelIndex((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevModal = (e) => {
+    e?.stopPropagation();
+    if (activeReelIndex !== null && activeReelIndex > 0) {
+      setActiveReelIndex((prev) => prev - 1);
     }
   };
 
@@ -179,13 +200,13 @@ const ReelCarousel = () => {
                     {/* Video / Thumbnail */}
                     {reel.thumbnailUrl ? (
                       <img
-                        src={reel.thumbnailUrl}
+                        src={getMediaUrl(reel.thumbnailUrl)}
                         alt={reel.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                     ) : (
                       <video
-                        src={reel.videoUrl}
+                        src={getMediaUrl(reel.videoUrl)}
                         muted
                         loop
                         playsInline
@@ -279,14 +300,32 @@ const ReelCarousel = () => {
 
             {/* Main Video Area */}
             <div className="relative flex-1 w-full h-full flex items-center justify-center">
+              {/* Left/Right Navigation Buttons (Outside Video) */}
+              {activeReelIndex > 0 && (
+                <button
+                  onClick={handlePrevModal}
+                  className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white transition-all shadow-xl"
+                >
+                  <FiChevronLeft size={28} />
+                </button>
+              )}
+              {activeReelIndex < reels.length - 1 && (
+                <button
+                  onClick={handleNextModal}
+                  className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white transition-all shadow-xl"
+                >
+                  <FiChevronRight size={28} />
+                </button>
+              )}
+
               <div 
                 onClick={handleTogglePlay}
                 className="relative w-full h-full max-w-md mx-auto overflow-hidden bg-black flex items-center justify-center cursor-pointer"
               >
                 <video
                   ref={(el) => (videoRefs.current[activeReel._id] = el)}
-                  src={activeReel.videoUrl}
-                  poster={activeReel.thumbnailUrl}
+                  src={getMediaUrl(activeReel.videoUrl)}
+                  poster={activeReel.thumbnailUrl ? getMediaUrl(activeReel.thumbnailUrl) : undefined}
                   autoPlay
                   loop
                   playsInline

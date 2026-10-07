@@ -13,7 +13,7 @@ const REASONS = [
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-24 bg-black relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-black relative overflow-hidden">
       <EnergyGrid opacity={0.05} color="white" />
 
       {/* Red glow */}
@@ -27,7 +27,7 @@ const WhyChooseUs = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <Reveal>
-          <div className="text-center mb-20">
+          <div className="text-center mb-12 md:mb-20">
             <span className="section-label">Our Advantage</span>
             <h2 className="section-title">
               WHY CHOOSE{' '}
@@ -50,7 +50,7 @@ const WhyChooseUs = () => {
                 className="group relative bg-white/3 border border-white/8 rounded-card p-7 hover:border-red/30 hover:bg-white/5 transition-all duration-350 overflow-hidden"
               >
                 {/* Index */}
-                <span className="absolute top-4 right-5 font-heading text-5xl text-black select-none pointer-events-none">
+                <span className="absolute top-4 right-5 font-heading text-5xl text-white/5 select-none pointer-events-none">
                   0{index + 1}
                 </span>
 
@@ -61,7 +61,7 @@ const WhyChooseUs = () => {
 
                 {/* Content */}
                 <h3 className="font-heading text-xl text-red mb-2">{reason.title}</h3>
-                <p className="text-black text-sm font-body leading-relaxed">{reason.desc}</p>
+                <p className="text-gray-400 text-sm font-body leading-relaxed">{reason.desc}</p>
 
                 {/* Bottom line */}
                 <div className="absolute bottom-0 left-0 h-px w-0 bg-red group-hover:w-full transition-[width] duration-500 ease-out" />

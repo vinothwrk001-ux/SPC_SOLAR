@@ -17,8 +17,8 @@ const galleryComponentSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['Components', 'Solar Systems'],
       default: 'Components',
+      trim: true,
     },
     isActive: {
       type: Boolean,

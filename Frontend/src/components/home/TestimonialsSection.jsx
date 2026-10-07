@@ -67,13 +67,13 @@ const TestimonialsSection = () => {
   const currentItem = testimonials[active];
 
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-white relative overflow-hidden">
       {/* Diagonal red accent */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red/30 via-red to-red/30" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="text-center mb-12">
+          <div className="text-center mb-10 md:mb-12">
             <span className="section-label">Client Stories</span>
             <h2 className="section-title">
               WHAT OUR <span className="text-red">CLIENTS SAY</span>
@@ -103,7 +103,7 @@ const TestimonialsSection = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="bg-gray-50 border border-gray-200 rounded-card p-10 md:p-14 text-center max-w-3xl mx-auto shadow-sm"
+                className="bg-gray-50 border border-gray-200 rounded-card p-6 sm:p-10 md:p-14 text-center max-w-3xl mx-auto shadow-sm"
               >
                 {/* Stars */}
                 <div className="flex justify-center gap-1 mb-6">
@@ -113,7 +113,7 @@ const TestimonialsSection = () => {
                 </div>
 
                 {/* Quote */}
-                <blockquote className="font-body text-gray-700 text-lg leading-relaxed italic mb-8">
+                <blockquote className="font-body text-gray-700 text-base md:text-lg leading-relaxed italic mb-8">
                   "{currentItem.review}"
                 </blockquote>
 

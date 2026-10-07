@@ -20,13 +20,43 @@ const StatsBar = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-        <div className="flex flex-col md:flex-row justify-between items-center text-center gap-6 md:gap-0 text-white">
+        {/* Mobile View (Grid) */}
+        <div className="grid grid-cols-2 gap-8 text-center text-white md:hidden">
           {STATS.map((stat, i) => (
-            <React.Fragment key={stat.label}>
+            <motion.div
+              key={`mobile-${stat.label}`}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+            >
+              <div className="font-accent text-3xl font-bold leading-none mb-1">
+                {stat.raw ? (
+                  stat.raw
+                ) : (
+                  <AnimatedCounter
+                    target={stat.value}
+                    prefix={stat.prefix || ''}
+                    suffix={stat.suffix || ''}
+                    duration={1.5}
+                  />
+                )}
+              </div>
+              <p className="font-heading uppercase tracking-wider text-xs text-white/80 mt-1">
+                {stat.label}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Desktop View (Flex with Dividers) */}
+        <div className="hidden md:flex justify-between items-center text-center text-white w-full">
+          {STATS.map((stat, i) => (
+            <React.Fragment key={`desktop-${stat.label}`}>
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="flex-1"
               >
                 <div className="font-accent text-3xl font-bold leading-none mb-1">
                   {stat.raw ? (
@@ -47,7 +77,7 @@ const StatsBar = () => {
 
               {/* Divider (not after last) */}
               {i < STATS.length - 1 && (
-                <div className="hidden md:block w-px h-10 bg-white/20" />
+                <div className="w-px h-10 bg-white/20 mx-4" />
               )}
             </React.Fragment>
           ))}

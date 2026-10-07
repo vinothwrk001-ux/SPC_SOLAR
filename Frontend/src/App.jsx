@@ -18,11 +18,6 @@ import ReelsPage from './pages/public/ReelsPage';
 import ScrollToTop from './components/layout/ScrollToTop';
 
 import { AuthProvider } from './context/AuthContext';
-import { UserAuthProvider } from './context/UserAuthContext';
-import UserLoginPage from './pages/public/UserLoginPage';
-import UserRegisterPage from './pages/public/UserRegisterPage';
-import UserDashboardPage from './pages/public/UserDashboardPage';
-import UserProtectedRoute from './components/auth/UserProtectedRoute';
 import AdminLayout from './components/layout/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -42,12 +37,12 @@ import AdminTestimonials from './pages/admin/AdminTestimonials';
 import AdminQuotationMaker from './pages/admin/AdminQuotationMaker';
 import AdminGalleryComponents from './pages/admin/AdminGalleryComponents';
 import AdminHomeBanner from './pages/admin/AdminHomeBanner';
+import AdminLeads from './pages/admin/AdminLeads';
 import PublicLayout from './components/layout/PublicLayout';
 
 function App() {
   return (
     <AuthProvider>
-      <UserAuthProvider>
         <Router>
           <ScrollToTop />
           <Routes>
@@ -66,24 +61,13 @@ function App() {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/components" element={<ComponentsGalleryPage />} />
               <Route path="/quotation" element={<QuotationPage />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <UserProtectedRoute>
-                    <UserDashboardPage />
-                  </UserProtectedRoute>
-                }
-              />
             </Route>
 
-            {/* Customer Auth Routes */}
-            <Route path="/login" element={<UserLoginPage />} />
-            <Route path="/register" element={<UserRegisterPage />} />
-            
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="leads" element={<AdminLeads />} />
               <Route path="coupons" element={<AdminCouponsPage />} />
               <Route path="reels" element={<AdminReelsPage />} />
               <Route path="solar-calculator" element={<AdminSolarCalculatorConfig />} />
@@ -103,7 +87,6 @@ function App() {
             </Route>
           </Routes>
         </Router>
-      </UserAuthProvider>
     </AuthProvider>
   );
 }

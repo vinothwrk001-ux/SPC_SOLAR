@@ -33,6 +33,13 @@ const ReelsPage = () => {
 
   const videoRefs = useRef({});
 
+  const getMediaUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    if (url.startsWith('/uploads')) return `http://localhost:5000${url}`;
+    return `http://localhost:5000/uploads/${url}`;
+  };
+
   // Fetch reels from API
   useEffect(() => {
     const fetchReels = async () => {
@@ -200,8 +207,8 @@ const ReelsPage = () => {
           >
             <video
               ref={(el) => (videoRefs.current[currentReel._id] = el)}
-              src={currentReel.videoUrl}
-              poster={currentReel.thumbnailUrl}
+              src={getMediaUrl(currentReel.videoUrl)}
+              poster={currentReel.thumbnailUrl ? getMediaUrl(currentReel.thumbnailUrl) : undefined}
               loop
               playsInline
               className="w-full h-full object-cover"

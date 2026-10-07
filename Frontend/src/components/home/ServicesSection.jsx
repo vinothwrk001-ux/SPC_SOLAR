@@ -37,13 +37,13 @@ const SERVICES = [
 
 const ServicesSection = () => {
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-white relative overflow-hidden">
       <EnergyGrid opacity={0.04} color="black" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <Reveal>
-          <div className="mb-20">
+          <div className="mb-12 md:mb-20">
             <span className="section-label">What We Offer</span>
             <h2 className="section-title">
               OUR <span className="text-red">SERVICES</span>

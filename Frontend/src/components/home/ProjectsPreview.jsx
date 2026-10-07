@@ -31,7 +31,7 @@ const PROJECTS = [
 
 const ProjectsPreview = () => {
   return (
-    <section className="py-24 bg-gray-50 relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-gray-50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <Reveal>
@@ -55,7 +55,7 @@ const ProjectsPreview = () => {
         </Reveal>
 
         {/* Project cards */}
-        <Stagger stagger={0.1}>
+        <Stagger stagger={0.1} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {PROJECTS.map((project) => (
             <div key={project.title} className="group relative overflow-hidden rounded-card shadow-card cursor-pointer">
               {/* Image */}

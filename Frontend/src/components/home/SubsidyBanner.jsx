@@ -48,9 +48,9 @@ const SubsidyBanner = () => {
             </div>
 
             {/* Right */}
-            <div className="flex-shrink-0">
-              <Link to="/subsidy">
-                <Button variant="outline-white" size="lg" icon={<FiArrowRight />}>
+            <div className="flex-shrink-0 w-full lg:w-auto mt-2 lg:mt-0">
+              <Link to="/subsidy" className="block w-full">
+                <Button variant="outline-white" size="lg" className="w-full justify-center" icon={<FiArrowRight />}>
                   Know More
                 </Button>
               </Link>

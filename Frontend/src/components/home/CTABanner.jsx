@@ -7,7 +7,7 @@ import { FiArrowRight, FiPhone } from 'react-icons/fi';
 
 const CTABanner = () => {
   return (
-    <section className="py-28 bg-black text-center relative overflow-hidden">
+    <section className="py-16 md:py-28 bg-black text-center relative overflow-hidden">
       <EnergyGrid opacity={0.05} color="white" />
 
       {/* Red glow blobs */}
@@ -44,13 +44,13 @@ const CTABanner = () => {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/quotation">
-              <Button size="lg" icon={<FiArrowRight />}>
+            <Link to="/quotation" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full justify-center" icon={<FiArrowRight />}>
                 Get Free Quotation
               </Button>
             </Link>
-            <a href="tel:+919876543210">
-              <Button variant="outline-white" size="lg" icon={<FiPhone size={16} />}>
+            <a href="tel:+919876543210" className="w-full sm:w-auto">
+              <Button variant="outline-white" size="lg" className="w-full justify-center" icon={<FiPhone size={16} />}>
                 Call Us Now
               </Button>
             </a>

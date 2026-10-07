@@ -41,6 +41,66 @@ exports.createGalleryComponent = async (req, res) => {
   }
 };
 
+// @desc    Create multiple gallery components in batch
+// @route   POST /api/gallery-components/batch
+// @access  Private/Admin
+exports.createBatchGalleryComponents = async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: 'Please upload at least one image' });
+    }
+
+    const { category, defaultTitle, defaultDescription } = req.body;
+    let itemsData = [];
+    if (req.body.items) {
+      try {
+        itemsData = typeof req.body.items === 'string' ? JSON.parse(req.body.items) : req.body.items;
+      } catch (e) {
+        itemsData = [];
+      }
+    }
+
+    const createdComponents = [];
+
+    for (let i = 0; i < req.files.length; i++) {
+      const file = req.files[i];
+      const customMeta = itemsData[i] || {};
+      
+      const fallbackTitle = file.originalname
+        ? file.originalname.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
+        : `Image ${i + 1}`;
+
+      const finalTitle = (customMeta.title && customMeta.title.trim())
+        ? customMeta.title.trim()
+        : (defaultTitle ? (req.files.length > 1 ? `${defaultTitle} - ${i + 1}` : defaultTitle) : fallbackTitle);
+      
+      const finalDescription = (customMeta.description !== undefined && customMeta.description !== null)
+        ? customMeta.description
+        : (defaultDescription || '');
+      
+      const finalCategory = customMeta.category?.trim() || category?.trim() || 'Components';
+      const imageUrl = `/uploads/${file.filename}`;
+
+      const component = new GalleryComponent({
+        title: finalTitle,
+        description: finalDescription,
+        category: finalCategory,
+        imageUrl,
+      });
+
+      const saved = await component.save();
+      createdComponents.push(saved);
+    }
+
+    res.status(201).json({
+      message: `Successfully uploaded ${createdComponents.length} images`,
+      components: createdComponents
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error during batch upload', error: error.message });
+  }
+};
+
 // @desc    Delete a gallery component
 // @route   DELETE /api/gallery-components/:id
 // @access  Private/Admin
