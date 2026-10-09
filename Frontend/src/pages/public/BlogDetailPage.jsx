@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useSearchParams } from 'react-router-dom';
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
 import SEOHead from '../../components/ui/SEOHead';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { blogService } from '../../services/blogService';
-import { formatDate, sanitizeHTML, generateArticleSchema, generateFAQSchema } from '../../utils/blogHelpers';
+import { formatDate, sanitizeHTML, generateArticleSchema, generateFAQSchema, getImageUrl } from '../../utils/blogHelpers';
 import toast from 'react-hot-toast';
 import {
   FiArrowLeft,
@@ -17,11 +17,14 @@ import {
   FiList,
   FiChevronDown,
   FiChevronUp,
-  FiArrowRight
+  FiArrowRight,
+  FiEye
 } from 'react-icons/fi';
-import { FaWhatsapp, FaLinkedin, FaFacebook, FaTwitter } from 'react-icons/fa';
+import { FaWhatsapp, FaLinkedin, FaFacebook, FaTwitter, FaTelegramPlane } from 'react-icons/fa';
+import { FaXTwitter } from 'react-icons/fa6';
 
 const BlogDetailPage = () => {
+  const navigate = useNavigate();
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
   const isPreview = searchParams.get('preview') === 'true';
@@ -107,197 +110,184 @@ const BlogDetailPage = () => {
       )}
 
       {/* Main Container */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        {/* Breadcrumb Navigation */}
-        <nav className="flex items-center space-x-2 text-xs font-accent text-gray mb-6 flex-wrap">
-          <Link to="/" className="hover:text-red">Home</Link>
-          <span>/</span>
-          <Link to="/blog" className="hover:text-red">Blog</Link>
-          <span>/</span>
-          <span className="text-black font-semibold truncate max-w-xs">{blog.title}</span>
-        </nav>
-
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-28">
         {/* Category & Title Header */}
-        <div className="space-y-4 mb-6">
-          <span className="bg-red text-white text-xs font-accent font-bold px-3 py-1 uppercase tracking-wider rounded-sm inline-block">
-            {blog.category}
-          </span>
-
-          <h1 className="text-3xl md:text-5xl font-heading leading-tight text-black">{blog.title}</h1>
-          {blog.subtitle && <p className="text-xl text-gray font-body">{blog.subtitle}</p>}
+        <div className="mb-8 relative">
+          <div className="flex items-start gap-3 sm:gap-4 mb-4">
+            <button
+              type="button"
+              onClick={() => {
+                if (window.history.length > 1) {
+                  navigate(-1);
+                } else {
+                  navigate('/blog');
+                }
+              }}
+              className="lg:absolute lg:-left-16 xl:-left-20 2xl:-left-24 lg:top-1.5 mt-1 lg:mt-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-gray-200 bg-white text-gray-700 hover:text-red hover:border-red hover:bg-red-50 transition-all shadow-sm flex items-center justify-center flex-shrink-0 cursor-pointer group z-10"
+              title="Go Back"
+              aria-label="Back"
+            >
+              <FiArrowLeft size={22} className="group-hover:-translate-x-0.5 transition-transform" />
+            </button>
+            <h1 className="text-3xl md:text-[42px] font-bold leading-tight text-[#1A1A1A] flex-1">
+              {blog.title}
+            </h1>
+          </div>
 
           {/* Author & Meta Row */}
-          <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-gray font-accent border-y border-gray-light py-3 my-4">
-            <div className="flex items-center space-x-4">
-              <span className="flex items-center font-semibold text-black">
-                <FiUser className="mr-1.5 text-red" /> {blog.author?.name || 'SPC Solar Expert'}
-              </span>
-              <span>•</span>
-              <span className="flex items-center">
-                <FiCalendar className="mr-1.5 text-red" /> {formatDate(blog.publishedAt || blog.createdAt)}
-              </span>
-              <span>•</span>
-              <span className="flex items-center">
-                <FiClock className="mr-1.5 text-red" /> {blog.readingTime || 3} min read
-              </span>
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6 border-b border-gray-100 pb-4">
+            <div className="flex items-center">
+              <img
+                src={blog.author?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(blog.author?.name || 'SPC Solar')}&background=0D8ABC&color=fff`}
+                alt={blog.author?.name}
+                className="w-8 h-8 rounded-full mr-2"
+              />
+              <span className="font-bold text-[#1A1A1A] mr-2">{blog.author?.name || 'SPC Solar Expert'}</span>
+              <span>Created: {formatDate(blog.createdAt)} | Updated: {formatDate(blog.updatedAt || blog.publishedAt)}</span>
             </div>
-
-            {/* Social Share Icons */}
-            <div className="flex items-center space-x-3 text-black">
-              <span className="text-xs font-accent font-bold text-gray uppercase">Share:</span>
-              <a
-                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(blog.title + ' ' + currentUrl)}`}
-                target="_blank"
-                rel="noreferrer"
-                className="text-green-600 hover:scale-110 transition-transform"
-                title="Share on WhatsApp"
-              >
-                <FaWhatsapp size={18} />
-              </a>
-              <a
-                href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(blog.title)}`}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-400 hover:scale-110 transition-transform"
-                title="Share on Twitter"
-              >
-                <FaTwitter size={18} />
-              </a>
-              <a
-                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-700 hover:scale-110 transition-transform"
-                title="Share on LinkedIn"
-              >
-                <FaLinkedin size={18} />
-              </a>
-              <button onClick={handleCopyLink} className="text-gray hover:text-black" title="Copy Article Link">
-                <FiCopy size={18} />
-              </button>
+            <div className="flex items-center gap-4 ml-auto lg:ml-0">
+              <span className="flex items-center">
+                <FiEye className="mr-1.5" /> {blog.views || 0} Reads
+              </span>
+              <span className="flex items-center">
+                <FiClock className="mr-1.5" /> {blog.readingTime || 3} mins
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Featured Image */}
-        {blog.featuredImage?.url && (
-          <div className="mb-10">
-            <img
-              src={blog.featuredImage.url}
-              alt={blog.featuredImage.alt || blog.title}
-              className="w-full h-[420px] object-cover rounded-card shadow-card border border-gray-light"
-            />
-          </div>
-        )}
-
-        {/* Table of Contents (TOC) */}
-        {blog.toc && blog.toc.length > 0 && (
-          <Card className="p-6 mb-10 bg-surface border-l-4 border-l-red">
-            <h3 className="font-heading text-lg mb-3 flex items-center text-black">
-              <FiList className="mr-2 text-red" /> TABLE OF CONTENTS
-            </h3>
-            <ul className="space-y-2 text-sm font-body text-gray">
-              {blog.toc.map((item, idx) => (
-                <li key={idx} className={item.level === 3 ? 'ml-4' : ''}>
-                  <a
-                    href={`#${item.id}`}
-                    className="hover:text-red hover:underline transition-colors block"
-                  >
-                    {item.text}
+        <div className="flex flex-col lg:flex-row gap-10">
+          {/* Left Column (Sidebar) */}
+          <div className="lg:w-1/4 flex-shrink-0 order-2 lg:order-1">
+            <div className="sticky top-24 space-y-8">
+              {/* Share on */}
+              <div>
+                <h4 className="text-sm text-gray-500 mb-3">Share on</h4>
+                <div className="flex flex-wrap gap-2">
+                  <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition">
+                    <FaFacebook size={14} />
                   </a>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        )}
+                  <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(blog.title + ' ' + currentUrl)}`} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-100 transition">
+                    <FaWhatsapp size={14} />
+                  </a>
+                  <a href={`https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(blog.title)}`} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-blue-50 text-blue-400 flex items-center justify-center hover:bg-blue-100 transition">
+                    <FaTelegramPlane size={14} />
+                  </a>
+                  <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(blog.title)}`} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-gray-100 text-gray-800 flex items-center justify-center hover:bg-gray-200 transition">
+                    <FaXTwitter size={14} />
+                  </a>
+                  <button onClick={handleCopyLink} className="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition">
+                    <FiCopy size={14} />
+                  </button>
+                </div>
+              </div>
 
-        {/* Main Body Content */}
-        <div
-          className="prose prose-lg max-w-none text-black font-body leading-relaxed space-y-6 prose-headings:font-heading prose-headings:text-black prose-a:text-red prose-blockquote:border-l-4 prose-blockquote:border-red prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray"
-          dangerouslySetInnerHTML={{ __html: sanitizeHTML(blog.content) }}
-        />
-
-        {/* FAQ Section */}
-        {blog.faq && blog.faq.length > 0 && (
-          <div className="mt-14 pt-8 border-t border-gray-light space-y-6">
-            <h3 className="text-2xl font-heading text-black">FREQUENTLY ASKED QUESTIONS</h3>
-            <div className="space-y-4">
-              {blog.faq.map((faq, index) => (
-                <Card
-                  key={index}
-                  className="p-4 cursor-pointer hover:border-red transition-colors"
-                  onClick={() => toggleFaq(index)}
-                >
-                  <div className="flex justify-between items-center font-heading text-lg text-black">
-                    <span>{faq.question}</span>
-                    {openFaqIndex === index ? <FiChevronUp className="text-red" /> : <FiChevronDown />}
-                  </div>
-                  {openFaqIndex === index && (
-                    <div className="mt-3 text-sm text-gray font-body leading-relaxed pt-2 border-t border-gray-light">
-                      {faq.answer}
-                    </div>
-                  )}
-                </Card>
-              ))}
+              {/* In this article (TOC) */}
+              {blog.toc && blog.toc.length > 0 && (
+                <div className="bg-[#F4F6FB] p-5 rounded-lg">
+                  <h4 className="font-bold text-[#1A1A1A] mb-4 flex items-center">
+                    <span className="mr-2">-</span> In this article
+                  </h4>
+                  <ul className="space-y-3 text-sm text-[#1A1A1A]">
+                    {blog.toc.map((item, idx) => (
+                      <li key={idx} className={item.level === 3 ? 'ml-4 list-disc list-inside' : 'list-disc list-inside'}>
+                        <a href={`#${item.id}`} className="hover:text-blue-600 transition-colors">
+                          {item.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
-        )}
 
-        {/* Author Bio Card */}
-        <Card className="p-6 mt-12 bg-surface flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
-          <div className="w-16 h-16 rounded-full bg-red text-white flex items-center justify-center font-heading text-2xl font-bold flex-shrink-0">
-            {blog.author?.name ? blog.author.name.charAt(0) : 'S'}
-          </div>
-          <div>
-            <h4 className="font-heading text-lg text-black">{blog.author?.name || 'SPC Solar Team'}</h4>
-            <p className="text-xs text-red font-accent font-bold uppercase mb-1">Solar Energy Specialist</p>
-            <p className="text-xs text-gray font-body leading-relaxed">
-              {blog.author?.bio || 'Consultant and engineer with expertise in commercial & residential solar power installations, net metering policies, and government rooftop subsidies.'}
-            </p>
-          </div>
-        </Card>
+          {/* Right Column (Content) */}
+          <div className="lg:w-3/4 order-1 lg:order-2">
+            {/* Main Image */}
+            <div className="mb-8 rounded-lg overflow-hidden">
+              <img
+                src={getImageUrl(blog.mainImage?.url || blog.featuredImage?.url) || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?auto=format&fit=crop&q=80&w=1200'}
+                alt={blog.mainImage?.alt || blog.featuredImage?.alt || blog.title}
+                className="w-full h-auto object-cover"
+              />
+            </div>
 
-        {/* Related Articles */}
-        {blog.relatedBlogs && blog.relatedBlogs.length > 0 && (
-          <div className="mt-16 pt-8 border-t border-gray-light space-y-6">
-            <h3 className="text-2xl font-heading text-black">RELATED ARTICLES</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {blog.relatedBlogs.map((rel) => (
-                <Card key={rel._id} className="p-0 overflow-hidden flex flex-col h-full border border-gray-light hover:border-red">
-                  {rel.featuredImage?.url && (
-                    <img src={rel.featuredImage.url} alt={rel.title} className="w-full h-36 object-cover" />
-                  )}
-                  <div className="p-4 flex flex-col flex-grow">
-                    <span className="text-[10px] text-red font-accent font-bold uppercase">{rel.category}</span>
-                    <h4 className="font-heading text-sm font-bold line-clamp-2 mt-1 mb-2">
-                      <Link to={`/blog/${rel.slug}`} className="hover:text-red">
-                        {rel.title}
-                      </Link>
-                    </h4>
-                    <Link
-                      to={`/blog/${rel.slug}`}
-                      className="mt-auto inline-flex items-center text-xs font-accent font-bold text-black hover:text-red uppercase tracking-wider"
+            {/* Body Content */}
+            <div
+              className="prose prose-lg max-w-none text-gray-700 font-sans leading-relaxed space-y-6 prose-headings:font-bold prose-headings:text-[#1A1A1A] prose-a:text-blue-600 prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600"
+              dangerouslySetInnerHTML={{ __html: sanitizeHTML(blog.content) }}
+            />
+
+            {/* FAQ Section */}
+            {blog.faq && blog.faq.length > 0 && (
+              <div className="mt-14 pt-8 border-t border-gray-200 space-y-6">
+                <h3 className="text-2xl font-bold text-[#1A1A1A]">FREQUENTLY ASKED QUESTIONS</h3>
+                <div className="space-y-4">
+                  {blog.faq.map((faq, index) => (
+                    <Card
+                      key={index}
+                      className="p-4 cursor-pointer hover:border-gray-400 transition-colors shadow-sm"
+                      onClick={() => toggleFaq(index)}
                     >
-                      Read Guide <FiArrowRight className="ml-1" />
-                    </Link>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
+                      <div className="flex justify-between items-center font-bold text-lg text-[#1A1A1A]">
+                        <span>{faq.question}</span>
+                        {openFaqIndex === index ? <FiChevronUp className="text-gray-500" /> : <FiChevronDown className="text-gray-500" />}
+                      </div>
+                      {openFaqIndex === index && (
+                        <div className="mt-3 text-sm text-gray-600 leading-relaxed pt-2 border-t border-gray-100">
+                          {faq.answer}
+                        </div>
+                      )}
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
 
-        {/* CTA Banner */}
-        <div className="mt-16 p-8 bg-black text-white rounded-card text-center space-y-4 border-b-4 border-b-red shadow-card">
-          <h3 className="text-2xl font-heading">Ready to Switch to Solar Energy?</h3>
-          <p className="text-gray-light text-sm max-w-xl mx-auto">
-            Get an instant customized quote for your home or business with maximum government subsidy benefits.
-          </p>
-          <Link to="/quotation" className="inline-block">
-            <Button variant="primary" className="px-8 py-3 text-sm">
-              Calculate Solar Savings
-            </Button>
-          </Link>
+            {/* Author Bio Card */}
+            <div className="p-6 mt-12 bg-gray-50 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 rounded-lg border border-gray-200">
+              <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+                <img
+                  src={blog.author?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(blog.author?.name || 'SPC Solar')}&background=0D8ABC&color=fff`}
+                  alt={blog.author?.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h4 className="font-bold text-lg text-[#1A1A1A]">{blog.author?.name || 'SPC Solar Team'}</h4>
+                <p className="text-xs text-blue-600 font-bold uppercase mb-1">Solar Energy Specialist</p>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  {blog.author?.bio || 'Consultant and engineer with expertise in commercial & residential solar power installations, net metering policies, and government rooftop subsidies.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Related Articles */}
+            {blog.relatedBlogs && blog.relatedBlogs.length > 0 && (
+              <div className="mt-16 pt-8 border-t border-gray-200 space-y-6">
+                <h3 className="text-2xl font-bold text-[#1A1A1A]">RELATED ARTICLES</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {blog.relatedBlogs.map((rel) => (
+                    <Link to={`/blog/${rel.slug}`} key={rel._id} className="group flex flex-col bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
+                      {rel.featuredImage?.url && (
+                        <img src={getImageUrl(rel.featuredImage.url)} alt={rel.title} className="w-full h-40 object-cover" />
+                      )}
+                      <div className="p-4 flex flex-col flex-grow">
+                        <span className="text-[10px] text-blue-600 font-bold uppercase mb-1">{rel.category}</span>
+                        <h4 className="font-bold text-sm text-[#1A1A1A] line-clamp-2 mt-1 mb-2 group-hover:text-blue-600 transition-colors">
+                          {rel.title}
+                        </h4>
+                        <span className="mt-auto inline-flex items-center text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          Read Guide <FiArrowRight className="ml-1" />
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

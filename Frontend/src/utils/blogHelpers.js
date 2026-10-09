@@ -27,6 +27,25 @@ export const sanitizeHTML = (content) => {
   });
 };
 
+export const getImageUrl = (url) => {
+  if (!url) return null;
+  if (url.startsWith('http') || url.startsWith('data:')) return url;
+  
+  // Assuming the backend is running on the API URL minus '/api'
+  const backendUrl = import.meta.env.VITE_API_URL 
+    ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') 
+    : 'http://localhost:5000';
+    
+  if (url.startsWith('/uploads/')) {
+     return `${backendUrl}${url}`;
+  }
+  
+  // If it's just a filename like 'hybrid.png' or '/assets/...'
+  if (url.startsWith('/assets/')) return url;
+  
+  return `${backendUrl}/uploads/${url.startsWith('/') ? url.slice(1) : url}`;
+};
+
 export const generateArticleSchema = (blog, siteUrl = 'http://localhost:5173') => {
   if (!blog) return null;
   const canonical = blog.seo?.canonicalUrl || `${siteUrl}/blog/${blog.slug}`;

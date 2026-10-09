@@ -209,6 +209,8 @@ const createBlog = async (req, res) => {
       content,
       contentFormat,
       featuredImage,
+      thumbnailImage,
+      mainImage,
       author,
       category,
       tags,
@@ -245,6 +247,8 @@ const createBlog = async (req, res) => {
       content: sanitizedContent,
       contentFormat: contentFormat || 'HTML',
       featuredImage: featuredImage || {},
+      thumbnailImage: thumbnailImage || {},
+      mainImage: mainImage || {},
       author: author || { name: req.admin?.username || 'SPC Solar Admin' },
       category: category || 'Solar Basics',
       tags: Array.isArray(tags) ? tags : [],
@@ -287,6 +291,8 @@ const updateBlog = async (req, res) => {
       content,
       contentFormat,
       featuredImage,
+      thumbnailImage,
+      mainImage,
       author,
       category,
       tags,
@@ -324,6 +330,8 @@ const updateBlog = async (req, res) => {
 
     if (contentFormat) blog.contentFormat = contentFormat;
     if (featuredImage) blog.featuredImage = featuredImage;
+    if (thumbnailImage) blog.thumbnailImage = thumbnailImage;
+    if (mainImage) blog.mainImage = mainImage;
     if (author) blog.author = author;
     if (category) blog.category = category;
     if (tags) blog.tags = tags;

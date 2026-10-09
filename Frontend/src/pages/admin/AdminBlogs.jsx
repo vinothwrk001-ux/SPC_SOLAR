@@ -6,7 +6,7 @@ import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import toast from 'react-hot-toast';
 import { FiFileText as FiBlogIcon, FiPlus as PlusIcon, FiEye as EyeIcon, FiEdit2 as EditIcon, FiTrash2 as TrashIcon, FiCopy as CopyIcon, FiCalendar as CalendarIcon, FiArchive as ArchiveIcon, FiCheckCircle as CheckIcon, FiSearch as SearchIcon, FiClock as ClockIcon, FiTrendingUp as ViewsIcon } from 'react-icons/fi';
-import { formatDate } from '../../utils/blogHelpers';
+import { formatDate, getImageUrl } from '../../utils/blogHelpers';
 
 const AdminBlogs = () => {
   const navigate = useNavigate();
@@ -256,7 +256,7 @@ const AdminBlogs = () => {
                     {/* Thumbnail */}
                     <td className="py-3 px-4">
                       <img
-                        src={b.featuredImage?.url || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=150'}
+                        src={getImageUrl(b.featuredImage?.url) || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=150'}
                         alt={b.title}
                         className="w-14 h-10 object-cover rounded border border-gray-light"
                       />

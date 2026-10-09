@@ -2,9 +2,22 @@ const Category = require('../models/Category');
 const Blog = require('../models/Blog');
 const { slugify } = require('../utils/blogUtils');
 
+const DEFAULT_CATEGORIES = [
+  { name: 'Government Schemes', slug: 'government-schemes', description: 'PM Surya Ghar scheme, TANGEDCO subsidies and policy updates.' },
+  { name: 'Solar Basics', slug: 'solar-basics', description: 'Beginner guides on how solar panels, inverters and net metering work.' },
+  { name: 'Residential Solar', slug: 'residential-solar', description: 'Rooftop solar installations and cost guides for homes and villas.' },
+  { name: 'Commercial Solar', slug: 'commercial-solar', description: 'Rooftop solar solutions for businesses, industries, and institutions.' },
+  { name: 'Solar Maintenance', slug: 'solar-maintenance', description: 'Panel cleaning, inverter health checks, and preventive maintenance.' },
+  { name: 'Subsidies & Net Metering', slug: 'subsidies-net-metering', description: 'Net metering guidelines, DISCOM approvals, and tariff rules.' }
+];
+
 const getCategories = async (req, res) => {
   try {
-    const categories = await Category.find().sort({ name: 1 });
+    let categories = await Category.find().sort({ name: 1 });
+    if (!categories || categories.length === 0) {
+      await Category.insertMany(DEFAULT_CATEGORIES);
+      categories = await Category.find().sort({ name: 1 });
+    }
     res.json(categories);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -16,6 +16,16 @@ const blogSchema = new mongoose.Schema(
       width: { type: Number, default: 1200 },
       height: { type: Number, default: 630 }
     },
+    thumbnailImage: {
+      url: { type: String, default: '' },
+      publicId: { type: String, default: '' },
+      alt: { type: String, default: 'Blog thumbnail image' },
+    },
+    mainImage: {
+      url: { type: String, default: '' },
+      publicId: { type: String, default: '' },
+      alt: { type: String, default: 'Blog main image' },
+    },
 
     author: {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },

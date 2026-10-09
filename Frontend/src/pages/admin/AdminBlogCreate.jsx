@@ -31,6 +31,16 @@ const AdminBlogCreate = () => {
   const [featuredImageAlt, setFeaturedImageAlt] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
 
+  // Thumbnail Image
+  const [thumbnailImageUrl, setThumbnailImageUrl] = useState('');
+  const [thumbnailImageAlt, setThumbnailImageAlt] = useState('');
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
+
+  // Main Image
+  const [mainImageUrl, setMainImageUrl] = useState('');
+  const [mainImageAlt, setMainImageAlt] = useState('');
+  const [uploadingMainImage, setUploadingMainImage] = useState(false);
+
   // Author
   const [authorName, setAuthorName] = useState('SPC Solar Expert');
 
@@ -100,6 +110,46 @@ const AdminBlogCreate = () => {
     }
   };
 
+  const handleThumbnailUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      setUploadingThumbnail(true);
+      const res = await blogService.uploadImage(formData);
+      setThumbnailImageUrl(res.url);
+      setThumbnailImageAlt(res.alt || title);
+      toast.success('Thumbnail uploaded successfully!');
+    } catch (error) {
+      toast.error('Thumbnail upload failed');
+    } finally {
+      setUploadingThumbnail(false);
+    }
+  };
+
+  const handleMainImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      setUploadingMainImage(true);
+      const res = await blogService.uploadImage(formData);
+      setMainImageUrl(res.url);
+      setMainImageAlt(res.alt || title);
+      toast.success('Main image uploaded successfully!');
+    } catch (error) {
+      toast.error('Main image upload failed');
+    } finally {
+      setUploadingMainImage(false);
+    }
+  };
+
   // Content formatting helpers
   const insertFormatting = (tagStart, tagEnd = '') => {
     setContent((prev) => prev + `${tagStart}${tagEnd}`);
@@ -144,6 +194,14 @@ const AdminBlogCreate = () => {
       featuredImage: {
         url: featuredImageUrl,
         alt: featuredImageAlt || title
+      },
+      thumbnailImage: {
+        url: thumbnailImageUrl,
+        alt: thumbnailImageAlt || title
+      },
+      mainImage: {
+        url: mainImageUrl,
+        alt: mainImageAlt || title
       },
       author: {
         name: authorName
@@ -330,7 +388,7 @@ const AdminBlogCreate = () => {
 
           {/* Featured Image */}
           <Card className="p-6 space-y-4">
-            <h3 className="font-heading text-lg">Featured Image</h3>
+            <h3 className="font-heading text-lg">Featured Image (Fallback)</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
               <div>
                 <label className="block text-sm font-semibold mb-1">Image URL</label>
@@ -359,6 +417,78 @@ const AdminBlogCreate = () => {
                 {featuredImageUrl && (
                   <img
                     src={featuredImageUrl}
+                    alt="Preview"
+                    className="w-full h-32 object-cover rounded mt-2 border border-gray-light"
+                  />
+                )}
+              </div>
+            </div>
+
+            <h3 className="font-heading text-lg mt-6">Thumbnail Image (For Blog Grid)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Thumbnail Image URL</label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-light p-2.5 rounded focus:outline-none focus:border-red text-sm"
+                  value={thumbnailImageUrl}
+                  onChange={(e) => setThumbnailImageUrl(e.target.value)}
+                  placeholder="https://... or click upload"
+                />
+                <div className="mt-2">
+                  <label className="cursor-pointer inline-flex items-center text-xs font-accent font-bold bg-surface border border-gray-light px-3 py-2 rounded hover:bg-gray-200">
+                    <FiUpload className="mr-1.5" />
+                    {uploadingThumbnail ? 'Uploading...' : 'Upload Thumbnail'}
+                    <input type="file" accept="image/*" className="hidden" onChange={handleThumbnailUpload} />
+                  </label>
+                </div>
+              </div>
+              <div>
+                <Input
+                  label="Alt Text"
+                  value={thumbnailImageAlt}
+                  onChange={(e) => setThumbnailImageAlt(e.target.value)}
+                  placeholder="Description of the thumbnail"
+                />
+                {thumbnailImageUrl && (
+                  <img
+                    src={thumbnailImageUrl}
+                    alt="Preview"
+                    className="w-full h-32 object-cover rounded mt-2 border border-gray-light"
+                  />
+                )}
+              </div>
+            </div>
+
+            <h3 className="font-heading text-lg mt-6">Main Image (Inside Blog Article)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Main Image URL</label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-light p-2.5 rounded focus:outline-none focus:border-red text-sm"
+                  value={mainImageUrl}
+                  onChange={(e) => setMainImageUrl(e.target.value)}
+                  placeholder="https://... or click upload"
+                />
+                <div className="mt-2">
+                  <label className="cursor-pointer inline-flex items-center text-xs font-accent font-bold bg-surface border border-gray-light px-3 py-2 rounded hover:bg-gray-200">
+                    <FiUpload className="mr-1.5" />
+                    {uploadingMainImage ? 'Uploading...' : 'Upload Main Image'}
+                    <input type="file" accept="image/*" className="hidden" onChange={handleMainImageUpload} />
+                  </label>
+                </div>
+              </div>
+              <div>
+                <Input
+                  label="Alt Text"
+                  value={mainImageAlt}
+                  onChange={(e) => setMainImageAlt(e.target.value)}
+                  placeholder="Description of the main image"
+                />
+                {mainImageUrl && (
+                  <img
+                    src={mainImageUrl}
                     alt="Preview"
                     className="w-full h-32 object-cover rounded mt-2 border border-gray-light"
                   />

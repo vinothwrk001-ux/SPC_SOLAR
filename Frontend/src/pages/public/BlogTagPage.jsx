@@ -4,6 +4,7 @@ import { blogService } from '../../services/blogService';
 import SEOHead from '../../components/ui/SEOHead';
 import Card from '../../components/ui/Card';
 import { FiArrowLeft, FiClock, FiArrowRight } from 'react-icons/fi';
+import { getImageUrl } from '../../utils/blogHelpers';
 
 const BlogTagPage = () => {
   const { slug } = useParams();
@@ -26,7 +27,7 @@ const BlogTagPage = () => {
   }, [slug]);
 
   return (
-    <div className="bg-bg min-h-screen py-12">
+    <div className="bg-bg min-h-screen pt-28 pb-12">
       <SEOHead title={`Articles tagged with #${slug} | SPC Solar`} description={`Browse all articles tagged with #${slug}`} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,7 +49,7 @@ const BlogTagPage = () => {
             {blogs.map((b) => (
               <Card key={b._id} className="flex flex-col p-0 overflow-hidden h-full border border-gray-light">
                 <Link to={`/blog/${b.slug}`}>
-                  <img src={b.featuredImage?.url || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=800'} alt={b.title} className="w-full h-48 object-cover" />
+                  <img src={getImageUrl(b.featuredImage?.url) || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=800'} alt={b.title} className="w-full h-48 object-cover" />
                 </Link>
                 <div className="p-6 flex flex-col flex-grow">
                   <span className="text-xs text-red font-accent font-bold uppercase mb-2">{b.category}</span>
