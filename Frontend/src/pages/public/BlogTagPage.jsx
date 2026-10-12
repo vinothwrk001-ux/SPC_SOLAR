@@ -41,15 +41,42 @@ const BlogTagPage = () => {
         </div>
 
         {loading ? (
-          <div className="py-12 text-center text-gray">Loading tagged articles...</div>
-        ) : blogs.length === 0 ? (
-          <div className="py-12 text-center text-gray">No articles found for this tag.</div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((idx) => (
+              <div key={idx} className="flex flex-col bg-white rounded-xl overflow-hidden border border-gray-light shadow-sm animate-pulse">
+                <div className="w-full aspect-[16/9] md:aspect-auto md:h-48 bg-gray-200" />
+                <div className="p-6 flex flex-col flex-grow space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-1/4" />
+                  <div className="h-6 bg-gray-200 rounded w-5/6" />
+                  <div className="h-4 bg-gray-200 rounded w-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : !blogs || blogs.length === 0 ? (
+          <div className="py-16 text-center bg-white rounded-xl border border-gray-light">
+            <h3 className="text-lg font-bold mb-2">No articles found for this tag</h3>
+            <p className="text-gray text-sm mb-4">Try exploring other categories or browse all articles.</p>
+            <Link to="/blog" className="inline-block px-4 py-2 bg-black text-white text-xs font-bold uppercase rounded">
+              View All Articles
+            </Link>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {blogs.map((b) => (
-              <Card key={b._id} className="flex flex-col p-0 overflow-hidden h-full border border-gray-light">
+              <Card key={b._id} className="flex flex-col p-0 overflow-hidden h-full border border-gray-light hover:shadow-md transition-shadow">
                 <Link to={`/blog/${b.slug}`}>
-                  <img src={getImageUrl(b.featuredImage?.url) || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=800'} alt={b.title} className="w-full h-48 object-cover" />
+                  <img
+                    src={getImageUrl(b.thumbnailImage?.url || b.featuredImage?.url) || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=800'}
+                    alt={b.title}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=800';
+                    }}
+                    className="w-full aspect-[16/9] md:aspect-auto md:h-48 object-cover object-top"
+                  />
                 </Link>
                 <div className="p-6 flex flex-col flex-grow">
                   <span className="text-xs text-red font-accent font-bold uppercase mb-2">{b.category}</span>

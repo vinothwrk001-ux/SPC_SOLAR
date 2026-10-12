@@ -34,19 +34,21 @@ const AboutPage = () => {
       />
 
       {/* Story & Mission */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+      <section className="py-10 sm:py-16 md:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
           <Reveal variant="slideLeft">
             <div>
               <span className="section-label">Who We Are</span>
-              <h2 className="section-title mb-4">Our Journey</h2>
-              <span className="red-line" />
-              <p className="text-gray-500 font-body leading-relaxed mb-5">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-heading tracking-wide leading-tight md:leading-none text-black mb-3 md:mb-4">
+                Our Journey
+              </h2>
+              <span className="red-line mb-3 md:mb-4" />
+              <p className="text-xs sm:text-sm md:text-base text-gray-500 font-body leading-relaxed mb-3.5 md:mb-5">
                 Founded with a vision to make solar energy accessible to every household and business,
                 SPC Solar has grown into a trusted name in the renewable energy sector since 2010. Led by Managing Directors Pavan Karthik M.M and Benny Wilson V, we believe that
                 the transition to green energy should be seamless, profitable, and uncompromising in quality.
               </p>
-              <p className="text-gray-500 font-body leading-relaxed">
+              <p className="text-xs sm:text-sm md:text-base text-gray-500 font-body leading-relaxed">
                 As an authorized installer for the PM Surya Ghar scheme and an MNRE-approved vendor,
                 we adhere strictly to government guidelines to bring you the best subsidies and highest-quality
                 Tier-1 solar systems. We also hold an exclusive tie-up with Adani for premium components.
@@ -55,7 +57,8 @@ const AboutPage = () => {
           </Reveal>
 
           <Reveal variant="slideRight" delay={0.1}>
-            <div className="bg-gray-50 border border-gray-200 rounded-card p-8">
+            {/* Desktop / Laptop View: Preserved 100% Unchanged */}
+            <div className="hidden md:block bg-gray-50 border border-gray-200 rounded-card p-8">
               <h3 className="font-heading text-2xl mb-2 text-red">Our Mission</h3>
               <span className="block w-8 h-px bg-red mb-5" />
               <p className="text-gray-600 font-body italic leading-relaxed mb-8">
@@ -73,23 +76,52 @@ const AboutPage = () => {
                 ))}
               </ul>
             </div>
+
+            {/* Mobile View Only: 2 Separate Cards, 2 in a Row */}
+            <div className="md:hidden grid grid-cols-2 gap-2.5 sm:gap-4 items-stretch">
+              {/* Card 1: Our Mission */}
+              <div className="bg-gray-50 border border-gray-200 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-start">
+                <h3 className="font-heading text-sm sm:text-base mb-1 text-red">Our Mission</h3>
+                <span className="block w-6 h-0.5 bg-red mb-2.5" />
+                <p className="text-gray-600 font-body italic text-[11px] sm:text-xs leading-relaxed">
+                  "To accelerate the adoption of solar energy by providing innovative, high-performance,
+                  and cost-effective solutions while ensuring an exceptional customer experience."
+                </p>
+              </div>
+
+              {/* Card 2: Our Core Values */}
+              <div className="bg-gray-50 border border-gray-200 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-start">
+                <h3 className="font-heading text-sm sm:text-base mb-1 text-black">Our Core Values</h3>
+                <span className="block w-6 h-0.5 bg-red mb-2.5" />
+                <ul className="space-y-2 sm:space-y-2.5">
+                  {CORE_VALUES.map((val) => (
+                    <li key={val} className="flex items-start gap-1.5 sm:gap-2 text-gray-700 font-body text-[11px] sm:text-xs leading-snug">
+                      <FiCheckCircle className="text-red flex-shrink-0 mt-0.5" size={13} />
+                      <span>{val}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </Reveal>
         </div>
       </section>
 
       {/* Stats */}
-      <section className="py-16 bg-red relative overflow-hidden">
+      <section className="py-8 sm:py-12 md:py-16 bg-red relative overflow-hidden">
         <div className="absolute inset-0 opacity-10"
           style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='white' stroke-width='0.8'%3E%3Cpath d='M0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E\")" }}
         />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Stagger className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
+        <div className="relative max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+          <Stagger className="grid grid-cols-4 gap-1.5 sm:gap-4 md:gap-8 text-center text-white">
             {STATS.map((stat) => (
-              <div key={stat.label}>
-                <div className="font-heading text-5xl md:text-6xl mb-2">
+              <div key={stat.label} className="px-0.5">
+                <div className="font-heading text-xl sm:text-3xl md:text-5xl lg:text-6xl mb-1 md:mb-2">
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 </div>
-                <p className="font-heading uppercase tracking-wider text-sm text-white/80">{stat.label}</p>
+                <p className="font-heading uppercase tracking-wider text-[9px] sm:text-xs md:text-sm text-white/80 leading-tight">
+                  {stat.label}
+                </p>
               </div>
             ))}
           </Stagger>

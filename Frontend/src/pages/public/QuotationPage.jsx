@@ -318,7 +318,7 @@ Please arrange a *Free Site Survey* for my premises!`;
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2">
                   Quick Select Amount
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {BILL_PRESETS.map((preset) => (
                     <button
                       key={preset}
@@ -490,7 +490,7 @@ Please arrange a *Free Site Survey* for my premises!`;
                         <span className="text-xs font-bold uppercase tracking-wider text-gray-500 block">
                           Required Capacity
                         </span>
-                        <div className="text-3xl font-heading font-black text-gray-900 leading-tight">
+                        <div className="text-xl sm:text-2xl md:text-3xl font-heading font-black text-gray-900 leading-tight">
                           {calcResult.systemSizeKW} <span className="text-lg font-bold text-red">kW</span>
                         </div>
                         <span className="text-[11px] text-gray-500 font-medium">
@@ -508,7 +508,7 @@ Please arrange a *Free Site Survey* for my premises!`;
                         <span className="text-xs font-bold uppercase tracking-wider text-gray-500 block">
                           Shadow-Free Roof Area
                         </span>
-                        <div className="text-3xl font-heading font-black text-gray-900 leading-tight">
+                        <div className="text-xl sm:text-2xl md:text-3xl font-heading font-black text-gray-900 leading-tight">
                           {calcResult.requiredRoofArea} <span className="text-lg font-bold text-gray-600">sq. ft.</span>
                         </div>
                         <span className="text-[11px] text-gray-500 font-medium">

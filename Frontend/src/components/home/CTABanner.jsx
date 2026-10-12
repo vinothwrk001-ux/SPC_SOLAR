@@ -31,13 +31,13 @@ const CTABanner = () => {
           </div>
 
           {/* Headline */}
-          <h2 className="font-heading text-5xl md:text-7xl text-white mb-6 leading-none uppercase">
+          <h2 className="font-heading text-2xl sm:text-4xl md:text-7xl text-white mb-3 sm:mb-6 leading-tight md:leading-none uppercase">
             READY TO SWITCH<br />
             TO{' '}
             <span className="text-red">SOLAR?</span>
           </h2>
 
-          <p className="text-gray-400 font-body text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-gray-400 font-body text-xs sm:text-sm md:text-lg max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed">
             Get a detailed quotation with ROI analysis and subsidy estimation.
             Take the first step towards energy independence today.
           </p>

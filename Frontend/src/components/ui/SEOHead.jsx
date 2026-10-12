@@ -1,13 +1,23 @@
-import React from 'react';
-import { Helmet } from 'react-helmet';
+import { useEffect } from 'react';
 
 const SEOHead = ({ title, description }) => {
-  return (
-    <Helmet>
-      <title>{title}</title>
-      <meta name="description" content={description} />
-    </Helmet>
-  );
+  useEffect(() => {
+    if (title) {
+      document.title = title;
+    }
+    if (description) {
+      let meta = document.querySelector('meta[name="description"]');
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'description';
+        document.head.appendChild(meta);
+      }
+      meta.content = description;
+    }
+  }, [title, description]);
+
+  return null;
 };
 
 export default SEOHead;
+

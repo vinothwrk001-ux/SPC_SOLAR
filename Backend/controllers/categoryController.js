@@ -13,11 +13,12 @@ const DEFAULT_CATEGORIES = [
 
 const getCategories = async (req, res) => {
   try {
-    let categories = await Category.find().sort({ name: 1 });
+    let categories = await Category.find().sort({ name: 1 }).lean();
     if (!categories || categories.length === 0) {
       await Category.insertMany(DEFAULT_CATEGORIES);
-      categories = await Category.find().sort({ name: 1 });
+      categories = await Category.find().sort({ name: 1 }).lean();
     }
+    res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
     res.json(categories);
   } catch (error) {
     res.status(500).json({ message: error.message });

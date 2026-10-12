@@ -22,12 +22,14 @@ const getPublicBlogs = async (req, res) => {
       ]
     };
 
-    if (category) {
-      query.category = category;
+    if (category && category !== 'All Blogs') {
+      // Support matching by name ("Government Schemes") or slug ("government-schemes")
+      const safeCat = category.trim().replace(/-/g, '[-\\s]');
+      query.category = { $regex: new RegExp(`^${safeCat}$`, 'i') };
     }
 
     if (tag) {
-      query.tags = tag;
+      query.tags = { $regex: new RegExp(`^${tag.trim()}$`, 'i') };
     }
 
     if (featured === 'true') {
@@ -38,16 +40,29 @@ const getPublicBlogs = async (req, res) => {
       query.isPopular = true;
     }
 
-    if (search) {
-      query.$text = { $search: search };
+    if (search && search.trim()) {
+      const cleanSearch = search.trim();
+      query.$or = [
+        { title: { $regex: cleanSearch, $options: 'i' } },
+        { excerpt: { $regex: cleanSearch, $options: 'i' } },
+        { category: { $regex: cleanSearch, $options: 'i' } },
+        { tags: { $regex: cleanSearch, $options: 'i' } }
+      ];
     }
 
-    const total = await Blog.countDocuments(query);
-    const blogs = await Blog.find(query)
-      .select('-content')
-      .sort({ publishedAt: -1, createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    // Run count and query in parallel using .lean() for fast execution without overhead
+    const [total, blogs] = await Promise.all([
+      Blog.countDocuments(query),
+      Blog.find(query)
+        .select('title subtitle slug excerpt category tags readingTime views likes publishedAt createdAt thumbnailImage featuredImage mainImage author')
+        .sort({ publishedAt: -1, _id: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean()
+    ]);
+
+    // Fast HTTP caching header to eliminate redundant reload latency
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
 
     res.json({
       blogs,
@@ -138,8 +153,9 @@ const getAdminBlogs = async (req, res) => {
     if (status && status !== 'ALL') {
       query.status = status;
     }
-    if (category) {
-      query.category = category;
+    if (category && category !== 'ALL') {
+      const safeCat = category.trim().replace(/-/g, '[-\\s]');
+      query.category = { $regex: new RegExp(`^${safeCat}$`, 'i') };
     }
     if (search) {
       query.$or = [

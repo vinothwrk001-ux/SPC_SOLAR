@@ -7,7 +7,7 @@ import { FiArrowRight, FiSun } from 'react-icons/fi';
 
 const SubsidyBanner = () => {
   return (
-    <section className="py-16 bg-red relative overflow-hidden">
+    <section className="py-6 sm:py-8 lg:py-16 bg-red relative overflow-hidden">
       {/* Scan line */}
       <motion.div
         className="absolute inset-y-0 w-48 bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none"
@@ -28,29 +28,34 @@ const SubsidyBanner = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6 lg:gap-8">
             {/* Left */}
-            <div className="flex items-start lg:items-center gap-5 text-white">
-              <div className="flex-shrink-0 w-14 h-14 bg-white/10 rounded-sm border border-white/20 flex items-center justify-center">
-                <FiSun size={26} className="text-white" />
+            <div className="flex items-start lg:items-center gap-3.5 sm:gap-4 lg:gap-5 text-white">
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-white/10 rounded-sm border border-white/20 flex items-center justify-center">
+                <FiSun className="w-5 h-5 sm:w-6 sm:h-6 lg:w-[26px] lg:h-[26px] text-white" />
               </div>
               <div>
-                <p className="font-accent font-bold text-xs uppercase tracking-widest text-white/70 mb-1">
+                <p className="font-accent font-bold text-[10px] sm:text-xs uppercase tracking-widest text-white/70 mb-0.5 lg:mb-1">
                   Government Initiative
                 </p>
-                <h2 className="font-heading text-3xl md:text-4xl text-white leading-tight">
+                <h2 className="font-heading text-xl sm:text-2xl md:text-4xl text-white leading-tight">
                   Get Up to ₹78,000 Subsidy
                 </h2>
-                <p className="text-white/80 font-body text-sm mt-2 max-w-lg">
+                <p className="text-white/80 font-body text-xs sm:text-sm mt-1 sm:mt-1.5 lg:mt-2 max-w-lg">
                   Authorized PM Surya Ghar Muft Bijli Yojana installer. We handle all the paperwork and documentation for you.
                 </p>
               </div>
             </div>
 
             {/* Right */}
-            <div className="flex-shrink-0 w-full lg:w-auto mt-2 lg:mt-0">
+            <div className="flex-shrink-0 w-full lg:w-auto mt-1 lg:mt-0">
               <Link to="/subsidy" className="block w-full">
-                <Button variant="outline-white" size="lg" className="w-full justify-center" icon={<FiArrowRight />}>
+                <Button
+                  variant="outline-white"
+                  size="lg"
+                  className="w-full justify-center !py-2.5 sm:!py-3 lg:!py-4 !px-5 lg:!px-8 !text-xs sm:!text-sm lg:!text-base"
+                  icon={<FiArrowRight className="w-4 h-4 lg:w-5 lg:h-5" />}
+                >
                   Know More
                 </Button>
               </Link>

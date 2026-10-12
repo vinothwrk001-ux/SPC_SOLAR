@@ -5,7 +5,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import toast from 'react-hot-toast';
-import { FiFileText as FiBlogIcon, FiPlus as PlusIcon, FiEye as EyeIcon, FiEdit2 as EditIcon, FiTrash2 as TrashIcon, FiCopy as CopyIcon, FiCalendar as CalendarIcon, FiArchive as ArchiveIcon, FiCheckCircle as CheckIcon, FiSearch as SearchIcon, FiClock as ClockIcon, FiTrendingUp as ViewsIcon } from 'react-icons/fi';
+import { FiFileText as FiBlogIcon, FiPlus as PlusIcon, FiEye as EyeIcon, FiEdit2 as EditIcon, FiTrash2 as TrashIcon, FiCopy as CopyIcon, FiCalendar as CalendarIcon, FiArchive as ArchiveIcon, FiCheckCircle as CheckIcon, FiSearch as SearchIcon, FiClock as ClockIcon, FiTrendingUp as ViewsIcon, FiFilter, FiFolder, FiX } from 'react-icons/fi';
 import { formatDate, getImageUrl } from '../../utils/blogHelpers';
 
 const AdminBlogs = () => {
@@ -23,6 +23,8 @@ const AdminBlogs = () => {
 
   // Filters
   const [activeTab, setActiveTab] = useState('ALL');
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -31,11 +33,27 @@ const AdminBlogs = () => {
   const [schedulingBlogId, setSchedulingBlogId] = useState(null);
   const [scheduledDateTime, setScheduledDateTime] = useState('');
 
+  // Fetch Categories on mount
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const catRes = await blogService.getCategories();
+        if (Array.isArray(catRes)) {
+          setCategories(catRes);
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+    loadCategories();
+  }, []);
+
   const fetchBlogs = async () => {
     try {
       setLoading(true);
       const data = await blogService.getAdminBlogs({
         status: activeTab,
+        category: selectedCategory !== 'ALL' ? selectedCategory : undefined,
         search: searchQuery,
         page,
         limit: 10
@@ -52,7 +70,12 @@ const AdminBlogs = () => {
 
   useEffect(() => {
     fetchBlogs();
-  }, [activeTab, page]);
+  }, [activeTab, selectedCategory, page]);
+
+  const handleCategoryChange = (catName) => {
+    setSelectedCategory(catName);
+    setPage(1);
+  };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -186,44 +209,117 @@ const AdminBlogs = () => {
       </div>
 
       {/* Filter Tabs & Search Bar */}
-      <Card className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-2">
-          {['ALL', 'PUBLISHED', 'DRAFT', 'SCHEDULED', 'ARCHIVED'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => {
-                setActiveTab(tab);
-                setPage(1);
-              }}
-              className={`px-4 py-2 text-xs font-accent font-bold uppercase tracking-wider rounded transition-colors ${
-                activeTab === tab
-                  ? 'bg-black text-white'
-                  : 'bg-surface text-gray hover:text-black hover:bg-gray-200'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+      <Card className="p-4 space-y-4 shadow-sm border border-gray-light">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          {/* Status Filter Tabs */}
+          <div className="flex flex-wrap gap-2">
+            {['ALL', 'PUBLISHED', 'DRAFT', 'SCHEDULED', 'ARCHIVED'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab);
+                  setPage(1);
+                }}
+                className={`px-4 py-2 text-xs font-accent font-bold uppercase tracking-wider rounded transition-colors ${
+                  activeTab === tab
+                    ? 'bg-black text-white shadow-sm'
+                    : 'bg-surface text-gray hover:text-black hover:bg-gray-200'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {/* Right Controls: Category Filter Dropdown & Search Bar */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* Category Filter Dropdown */}
+            <div className="relative min-w-[210px]">
+              <FiFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray pointer-events-none" size={15} />
+              <select
+                value={selectedCategory}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="w-full bg-surface border border-gray-light text-xs font-accent font-bold uppercase tracking-wider py-2.5 pl-9 pr-8 rounded focus:outline-none focus:border-red cursor-pointer appearance-none text-black hover:border-gray-400 transition-colors"
+                title="Filter by category"
+              >
+                <option value="ALL">All Categories</option>
+                {categories.map((cat) => {
+                  const catName = typeof cat === 'string' ? cat : cat.name;
+                  const catId = typeof cat === 'object' && cat._id ? cat._id : catName;
+                  return (
+                    <option key={catId} value={catName}>
+                      {catName}
+                    </option>
+                  );
+                })}
+              </select>
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray text-xs">
+                ▼
+              </div>
+            </div>
+
+            {/* Search */}
+            <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full sm:w-64">
+              <input
+                type="text"
+                className="w-full border border-gray-light text-sm p-2 rounded focus:outline-none focus:border-red"
+                placeholder="Search blogs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Button type="submit" variant="secondary" className="px-3">
+                <SearchIcon />
+              </Button>
+            </form>
+          </div>
         </div>
 
-        {/* Search */}
-        <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full md:w-72">
-          <input
-            type="text"
-            className="w-full border border-gray-light text-sm p-2 rounded focus:outline-none focus:border-red"
-            placeholder="Search blogs..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Button type="submit" variant="secondary" className="px-3">
-            <SearchIcon />
-          </Button>
-        </form>
+        {/* Category Pills Row (Quick Filter Buttons) */}
+        <div className="pt-3 border-t border-gray-light flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <span className="text-xs font-accent uppercase text-gray flex items-center gap-1.5 flex-shrink-0 font-bold mr-1">
+            <FiFolder size={14} className="text-red" /> Category Filter:
+          </span>
+          <button
+            onClick={() => handleCategoryChange('ALL')}
+            className={`px-3 py-1 text-xs font-accent font-bold uppercase rounded-full whitespace-nowrap transition-all flex-shrink-0 ${
+              selectedCategory === 'ALL'
+                ? 'bg-black text-white shadow-sm'
+                : 'bg-surface text-gray hover:text-black hover:bg-gray-200 border border-gray-light'
+            }`}
+          >
+            All Categories
+          </button>
+          {categories.map((cat) => {
+            const catName = typeof cat === 'string' ? cat : cat.name;
+            const catId = typeof cat === 'object' && cat._id ? cat._id : catName;
+            const isSelected = selectedCategory.toLowerCase() === catName.toLowerCase();
+            return (
+              <button
+                key={catId}
+                onClick={() => handleCategoryChange(catName)}
+                className={`px-3 py-1 text-xs font-accent font-bold uppercase rounded-full whitespace-nowrap transition-all flex-shrink-0 ${
+                  isSelected
+                    ? 'bg-red text-white shadow-sm'
+                    : 'bg-surface text-gray hover:text-black hover:bg-gray-200 border border-gray-light'
+                }`}
+              >
+                {catName}
+              </button>
+            );
+          })}
+          {selectedCategory !== 'ALL' && (
+            <button
+              onClick={() => handleCategoryChange('ALL')}
+              className="text-xs text-red hover:underline font-bold font-accent uppercase ml-2 flex items-center gap-1 flex-shrink-0 cursor-pointer"
+            >
+              <FiX size={13} /> Clear Filter
+            </button>
+          )}
+        </div>
       </Card>
 
       {/* Blog Table */}
-      <Card className="p-0 overflow-hidden">
+      <Card className="p-0 overflow-hidden shadow-sm border border-gray-light">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead className="bg-black text-white">
@@ -246,8 +342,22 @@ const AdminBlogs = () => {
                 </tr>
               ) : blogs.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="py-8 text-center text-gray">
-                    No blog articles found
+                  <td colSpan="7" className="py-12 text-center text-gray">
+                    <div className="text-base font-bold text-black mb-1">No blog articles found</div>
+                    <div className="text-xs text-gray mb-3">Try clearing filters or search query.</div>
+                    {(selectedCategory !== 'ALL' || activeTab !== 'ALL' || searchQuery) && (
+                      <button
+                        onClick={() => {
+                          setSelectedCategory('ALL');
+                          setActiveTab('ALL');
+                          setSearchQuery('');
+                          setPage(1);
+                        }}
+                        className="px-3 py-1.5 bg-black text-white text-xs font-accent uppercase font-bold rounded hover:bg-red transition-colors"
+                      >
+                        Reset All Filters
+                      </button>
+                    )}
                   </td>
                 </tr>
               ) : (
@@ -256,9 +366,13 @@ const AdminBlogs = () => {
                     {/* Thumbnail */}
                     <td className="py-3 px-4">
                       <img
-                        src={getImageUrl(b.featuredImage?.url) || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=150'}
+                        src={getImageUrl(b.thumbnailImage?.url || b.featuredImage?.url || b.mainImage?.url) || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=150'}
                         alt={b.title}
-                        className="w-14 h-10 object-cover rounded border border-gray-light"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=150';
+                        }}
+                        className="w-14 h-10 object-cover rounded border border-gray-light bg-gray-100"
                       />
                     </td>
 
@@ -268,11 +382,20 @@ const AdminBlogs = () => {
                       <div className="text-xs font-mono text-gray font-normal">/{b.slug}</div>
                     </td>
 
-                    {/* Category */}
+                    {/* Category (Clickable filter button) */}
                     <td className="py-3 px-4">
-                      <span className="text-xs bg-gray-100 font-accent px-2 py-0.5 rounded border border-gray-200">
+                      <button
+                        type="button"
+                        onClick={() => handleCategoryChange(b.category)}
+                        title={`Filter by category: ${b.category}`}
+                        className={`text-xs font-accent font-bold px-2.5 py-1 rounded border transition-colors cursor-pointer ${
+                          selectedCategory.toLowerCase() === (b.category || '').toLowerCase()
+                            ? 'bg-red text-white border-red shadow-sm'
+                            : 'bg-gray-100 text-gray-800 border-gray-200 hover:border-red hover:text-red hover:bg-red-50'
+                        }`}
+                      >
                         {b.category}
-                      </span>
+                      </button>
                     </td>
 
                     {/* Status */}

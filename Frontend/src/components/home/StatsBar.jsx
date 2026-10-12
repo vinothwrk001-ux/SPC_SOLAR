@@ -20,31 +20,38 @@ const StatsBar = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-        {/* Mobile View (Grid) */}
-        <div className="grid grid-cols-2 gap-8 text-center text-white md:hidden">
+        {/* Mobile View (4 in a Row like Laptop View) */}
+        <div className="flex justify-between items-center text-center text-white w-full md:hidden">
           {STATS.map((stat, i) => (
-            <motion.div
-              key={`mobile-${stat.label}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-            >
-              <div className="font-accent text-3xl font-bold leading-none mb-1">
-                {stat.raw ? (
-                  stat.raw
-                ) : (
-                  <AnimatedCounter
-                    target={stat.value}
-                    prefix={stat.prefix || ''}
-                    suffix={stat.suffix || ''}
-                    duration={1.5}
-                  />
-                )}
-              </div>
-              <p className="font-heading uppercase tracking-wider text-xs text-white/80 mt-1">
-                {stat.label}
-              </p>
-            </motion.div>
+            <React.Fragment key={`mobile-${stat.label}`}>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="flex-1 px-0.5 sm:px-1"
+              >
+                <div className="font-accent text-base sm:text-2xl font-bold leading-none mb-1">
+                  {stat.raw ? (
+                    stat.raw
+                  ) : (
+                    <AnimatedCounter
+                      target={stat.value}
+                      prefix={stat.prefix || ''}
+                      suffix={stat.suffix || ''}
+                      duration={1.5}
+                    />
+                  )}
+                </div>
+                <p className="font-heading uppercase tracking-normal sm:tracking-wider text-[8px] sm:text-[10px] text-white/80 mt-0.5 sm:mt-1 leading-tight">
+                  {stat.label}
+                </p>
+              </motion.div>
+
+              {/* Divider (not after last) */}
+              {i < STATS.length - 1 && (
+                <div className="w-px h-7 sm:h-8 bg-white/20 mx-0.5 sm:mx-1 flex-shrink-0" />
+              )}
+            </React.Fragment>
           ))}
         </div>
 

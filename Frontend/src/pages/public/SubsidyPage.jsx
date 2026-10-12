@@ -10,18 +10,18 @@ import { Reveal, Stagger } from '../../components/motion';
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-card mb-3 overflow-hidden">
+    <div className="border border-gray-200 rounded-xl md:rounded-card mb-2 sm:mb-2.5 md:mb-3 overflow-hidden shadow-xs">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full text-left px-6 py-4 bg-white flex justify-between items-center focus:outline-none hover:bg-gray-50 transition-colors duration-200"
+        className="w-full text-left px-3.5 py-2.5 sm:px-5 sm:py-3.5 md:px-6 md:py-4 bg-white flex justify-between items-center focus:outline-none hover:bg-gray-50 transition-colors duration-200"
       >
-        <span className="font-heading text-base text-black">{question}</span>
+        <span className="font-heading text-xs sm:text-sm md:text-base text-black font-semibold leading-snug">{question}</span>
         <motion.span
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.25 }}
-          className="text-red flex-shrink-0 ml-4"
+          className="text-red flex-shrink-0 ml-2.5 sm:ml-4"
         >
-          <FiChevronDown size={18} />
+          <FiChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />
         </motion.span>
       </button>
       <AnimatePresence initial={false}>
@@ -34,7 +34,7 @@ const FAQItem = ({ question, answer }) => {
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             className="overflow-hidden"
           >
-            <div className="px-6 py-4 bg-gray-50 text-gray-500 text-sm font-body leading-relaxed border-t border-gray-100">
+            <div className="px-3.5 py-2.5 sm:px-5 sm:py-3.5 md:px-6 md:py-4 bg-gray-50 text-gray-600 text-xs sm:text-sm font-body leading-relaxed border-t border-gray-100">
               {answer}
             </div>
           </motion.div>
@@ -72,37 +72,37 @@ const SubsidyPage = () => {
 
 
       {/* Scheme Overview */}
-      <section className="py-16 bg-surface">
+      <section className="py-4 sm:py-10 md:py-16 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl font-heading mb-4">Scheme Overview</h2>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <h2 className="text-lg sm:text-2xl md:text-3xl font-heading mb-2 md:mb-4 text-black">Scheme Overview</h2>
+            <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-0 md:mb-6 leading-relaxed">
               Launched to promote sustainable energy, the PM Surya Ghar scheme aims to provide up to 300 units of free electricity every month to 1 crore households. By installing a rooftop solar system, you not only reduce your electricity bill to zero but also contribute to a greener nation. The government provides substantial financial assistance directly to your bank account.
             </p>
         </div>
       </section>
 
       {/* Detailed Price List Table */}
-      <section className="py-16 bg-white">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10">
-               <h2 className="text-3xl md:text-4xl font-heading text-black">1KW to 10KW DCR Module Solar Power Plant Price List</h2>
-               <p className="text-red text-xl font-bold mt-2 uppercase tracking-wide">PM Surya Ghar : Muft Bijli Yojana</p>
+      <section className="py-8 sm:py-12 md:py-16 bg-white">
+         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+            <div className="text-center mb-6 md:mb-10">
+               <h2 className="text-xl sm:text-2xl md:text-4xl font-heading text-black">1KW to 10KW DCR Module Solar Power Plant Price List</h2>
+               <p className="text-red text-sm sm:text-base md:text-xl font-bold mt-1.5 md:mt-2 uppercase tracking-wide">PM Surya Ghar : Muft Bijli Yojana</p>
             </div>
             
-            <div className="overflow-x-auto bg-white rounded-card shadow-card-md border border-gray-200">
+            <div className="overflow-x-auto bg-white rounded-xl md:rounded-card shadow-card-md border border-gray-200">
                 <table className="w-full text-center border-collapse">
                    <thead className="bg-gray-50">
                       <tr>
-                         <th className="py-5 px-4 font-heading text-red border-r border-b-2 border-gray-200 align-middle text-lg" rowSpan="2">SOLAR<br/>POWER</th>
-                         <th className="py-3 px-4 font-heading text-red border-r border-b border-gray-200" colSpan="2">MONO CRYSTALLINE PANEL</th>
-                         <th className="py-5 px-4 font-heading text-red border-b-2 border-gray-200 align-middle text-lg" rowSpan="2">BALANCE<br/>AMOUNT</th>
+                         <th className="py-2 px-1 sm:py-3 sm:px-2 md:py-5 md:px-4 font-heading text-red border-r border-b-2 border-gray-200 align-middle text-[11px] sm:text-sm md:text-lg leading-tight" rowSpan="2">SOLAR<br/>POWER</th>
+                         <th className="py-1.5 px-1 sm:py-2 sm:px-2 md:py-3 md:px-4 font-heading text-red border-r border-b border-gray-200 text-[10px] sm:text-xs md:text-base leading-tight uppercase" colSpan="2">MONO CRYSTALLINE PANEL</th>
+                         <th className="py-2 px-1 sm:py-3 sm:px-2 md:py-5 md:px-4 font-heading text-red border-b-2 border-gray-200 align-middle text-[11px] sm:text-sm md:text-lg leading-tight" rowSpan="2">BALANCE<br/>AMOUNT</th>
                       </tr>
                       <tr>
-                         <th className="py-3 px-4 font-heading text-sm text-red border-r border-b-2 border-gray-200">TOTAL AMOUNT</th>
-                         <th className="py-3 px-4 font-heading text-sm text-red border-r border-b-2 border-gray-200">GOVERNMENT SUBSIDY</th>
+                         <th className="py-1.5 px-1 sm:py-2 sm:px-2 md:py-3 md:px-4 font-heading text-[9px] sm:text-xs md:text-sm text-red border-r border-b-2 border-gray-200 leading-tight">TOTAL<br className="sm:hidden"/> AMOUNT</th>
+                         <th className="py-1.5 px-1 sm:py-2 sm:px-2 md:py-3 md:px-4 font-heading text-[9px] sm:text-xs md:text-sm text-red border-r border-b-2 border-gray-200 leading-tight">GOVT<span className="hidden sm:inline">ERNMENT</span><br className="sm:hidden"/> SUBSIDY</th>
                       </tr>
                    </thead>
-                   <tbody className="text-gray-800 text-lg">
+                   <tbody className="text-gray-800 text-[11px] sm:text-sm md:text-lg">
                       {[
                          { kw: '1 KW', total: '₹ 1,02,000', sub: '₹ 30,000', bal: '₹ 72,000' },
                          { kw: '2 KW', total: '₹ 1,80,000', sub: '₹ 60,000', bal: '₹ 1,20,000' },
@@ -116,28 +116,30 @@ const SubsidyPage = () => {
                          { kw: '10 KW', total: '₹ 6,20,000', sub: '₹ 78,000', bal: '₹ 5,42,000' }
                       ].map((row, idx) => (
                          <tr key={idx} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                            <td className="py-4 px-4 font-bold border-r border-gray-200 text-red">{row.kw}</td>
-                            <td className="py-4 px-4 border-r border-gray-200 font-semibold">{row.total}</td>
-                            <td className="py-4 px-4 border-r border-gray-200 font-semibold">{row.sub}</td>
-                            <td className="py-4 px-4 font-bold text-black">{row.bal}</td>
+                            <td className="py-2 px-1 sm:py-3 sm:px-2 md:py-4 md:px-4 font-bold border-r border-gray-200 text-red whitespace-nowrap">{row.kw}</td>
+                            <td className="py-2 px-1 sm:py-3 sm:px-2 md:py-4 md:px-4 border-r border-gray-200 font-semibold whitespace-nowrap">{row.total}</td>
+                            <td className="py-2 px-1 sm:py-3 sm:px-2 md:py-4 md:px-4 border-r border-gray-200 font-semibold whitespace-nowrap">{row.sub}</td>
+                            <td className="py-2 px-1 sm:py-3 sm:px-2 md:py-4 md:px-4 font-bold text-black whitespace-nowrap">{row.bal}</td>
                          </tr>
                       ))}
                    </tbody>
                 </table>
             </div>
             
-            <div className="mt-8 flex flex-col justify-center items-center gap-2 bg-gray-50 p-6 rounded-card border border-gray-200 text-center text-gray-700">
+            <div className="mt-5 md:mt-8 flex flex-col justify-center items-center gap-2 bg-gray-50 p-4 md:p-6 rounded-card border border-gray-200 text-center text-xs md:text-base text-gray-700">
                <p><strong>Note:</strong> Domestic System: Subsidy Included | Commercial System: No Subsidy | Applicable GST: 5%</p>
             </div>
          </div>
       </section>
 
       {/* Eligibility & Documents */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-12">
+      <section className="py-8 sm:py-12 md:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           <div>
-            <h2 className="text-3xl font-heading mb-6">Eligibility Criteria</h2>
-            <ul className="space-y-4">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-heading text-black mb-3 md:mb-6">
+              Eligibility Criteria
+            </h2>
+            <ul className="space-y-2.5 sm:space-y-3.5 md:space-y-4">
               {[
                 "Must be an Indian citizen",
                 "Must own a house with a concrete/suitable roof",
@@ -145,15 +147,17 @@ const SubsidyPage = () => {
                 "Should not have availed any other solar subsidy previously"
               ].map((item, i) => (
                 <li key={i} className="flex items-start">
-                  <FiCheckCircle className="text-red mt-1 mr-3 flex-shrink-0" size={20} />
-                  <span className="text-gray">{item}</span>
+                  <FiCheckCircle className="text-red mt-0.5 sm:mt-1 mr-2 sm:mr-3 flex-shrink-0 w-4 h-4 md:w-5 md:h-5" />
+                  <span className="text-xs sm:text-sm md:text-base text-gray-700 leading-snug sm:leading-normal">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div>
-            <h2 className="text-3xl font-heading mb-6">Required Documents</h2>
-            <ol className="list-decimal list-inside space-y-4 text-gray bg-surface p-6 rounded-card">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-heading text-black mb-3 md:mb-6">
+              Required Documents
+            </h2>
+            <ol className="list-decimal list-inside space-y-2 sm:space-y-3 md:space-y-4 text-xs sm:text-sm md:text-base text-gray-700 bg-surface p-4 sm:p-5 md:p-6 rounded-xl md:rounded-card leading-snug sm:leading-normal">
               <li>Recent Electricity Bill (last 6 months)</li>
               <li>Aadhar Card / PAN Card</li>
               <li>Bank Passbook / Cancelled Cheque</li>
@@ -165,12 +169,14 @@ const SubsidyPage = () => {
       </section>
 
       {/* How to Apply */}
-      <section className="py-16 bg-black text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-heading mb-12 text-center text-white">How to Apply (5-Step Process)</h2>
-          <div className="flex flex-col md:flex-row justify-between relative space-y-8 md:space-y-0">
+      <section className="py-8 sm:py-12 md:py-16 bg-black text-white">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-heading mb-6 md:mb-12 text-center text-white">
+            How to Apply (5-Step Process)
+          </h2>
+          <div className="grid grid-cols-5 md:flex md:flex-row md:justify-between relative gap-1 sm:gap-2 md:gap-0">
             {/* Connecting Line */}
-            <div className="hidden md:block absolute top-6 left-10 right-10 h-0.5 bg-gray-light opacity-20"></div>
+            <div className="absolute top-3.5 sm:top-4.5 md:top-6 left-5 right-5 sm:left-8 sm:right-8 md:left-10 md:right-10 h-0.5 bg-gray-light opacity-20"></div>
             
             {[
               { step: 1, title: "Register on Portal", desc: "Select your state & electricity distribution company." },
@@ -179,12 +185,16 @@ const SubsidyPage = () => {
               { step: 4, title: "Net Metering", desc: "Submit plant details and apply for net meter." },
               { step: 5, title: "Subsidy Credit", desc: "Subsidy is credited to your bank within 30 days." }
             ].map((s) => (
-              <div key={s.step} className="relative z-10 flex flex-col items-center text-center w-full md:w-1/5 px-2">
-                <div className="w-12 h-12 rounded-full bg-red flex items-center justify-center font-accent font-bold text-xl mb-4 border-4 border-black">
+              <div key={s.step} className="relative z-10 flex flex-col items-center text-center px-0.5 sm:px-1 md:px-2 md:w-1/5">
+                <div className="w-7 h-7 sm:w-9 sm:h-9 md:w-12 md:h-12 rounded-full bg-red flex items-center justify-center font-accent font-bold text-xs sm:text-base md:text-xl mb-1.5 sm:mb-2 md:mb-4 border-2 md:border-4 border-black shadow-sm flex-shrink-0">
                   {s.step}
                 </div>
-                <h4 className="font-heading text-lg mb-2">{s.title}</h4>
-                <p className="text-xs text-gray-light">{s.desc}</p>
+                <h4 className="font-heading text-[9.5px] sm:text-xs md:text-lg mb-1 md:mb-2 leading-tight">
+                  {s.title}
+                </h4>
+                <p className="text-[8px] sm:text-[10px] md:text-xs text-gray-light leading-tight sm:leading-normal">
+                  {s.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -192,9 +202,9 @@ const SubsidyPage = () => {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-heading mb-8 text-center">Frequently Asked Questions</h2>
+      <section className="py-6 sm:py-10 md:py-16 bg-white">
+        <div className="max-w-3xl mx-auto px-3 sm:px-6 lg:px-8">
+          <h2 className="text-base sm:text-xl md:text-4xl font-heading mb-3 sm:mb-5 md:mb-8 text-center text-black">Frequently Asked Questions</h2>
           <div>
             {faqs.map((faq, index) => (
               <FAQItem key={index} question={faq.q} answer={faq.a} />
@@ -204,10 +214,10 @@ const SubsidyPage = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-surface text-center">
+      <section className="py-10 md:py-20 bg-surface text-center">
         <div className="max-w-2xl mx-auto px-4">
-          <h2 className="text-4xl font-heading mb-6">Calculate Your Savings & Subsidy</h2>
-          <p className="text-gray mb-8">
+          <h2 className="text-lg sm:text-2xl md:text-4xl font-heading mb-2.5 md:mb-6 text-black">Calculate Your Savings & Subsidy</h2>
+          <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-5 md:mb-8 leading-relaxed">
             Use our intelligent quotation generator to find out exactly how much you will save and the subsidy amount you are eligible for.
           </p>
           <Link to="/quotation">

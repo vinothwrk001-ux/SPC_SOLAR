@@ -67,15 +67,15 @@
 @layer components {
   /* ---- Section Header Utility ---- */
   .section-label {
-    @apply text-red font-accent font-bold tracking-widest uppercase text-xs mb-2 block;
+    @apply text-red font-accent font-bold tracking-widest uppercase text-[10px] sm:text-xs mb-1.5 sm:mb-2 block;
   }
 
   .section-title {
-    @apply font-heading text-4xl md:text-5xl lg:text-6xl tracking-wide leading-none text-black;
+    @apply font-heading text-lg sm:text-2xl md:text-5xl lg:text-6xl tracking-wide leading-tight md:leading-none text-black;
   }
 
   .section-subtitle {
-    @apply text-gray-500 font-body text-base max-w-2xl leading-relaxed;
+    @apply text-gray-500 font-body text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed;
   }
 
   /* ---- Heading Accent System ---- */
@@ -102,11 +102,11 @@
 
   /* ---- Red Accent Line ---- */
   .red-line {
-    @apply block w-12 h-0.5 bg-red mt-4 mb-6;
+    @apply block w-8 sm:w-12 h-0.5 bg-red mt-2 sm:mt-4 mb-3 sm:mb-6;
   }
 
   .red-line-center {
-    @apply block w-16 h-0.5 bg-red mx-auto mt-4 mb-6;
+    @apply block w-10 sm:w-16 h-0.5 bg-red mx-auto mt-2 sm:mt-4 mb-3 sm:mb-6;
   }
 
   /* ---- Container ---- */

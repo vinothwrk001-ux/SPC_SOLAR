@@ -45,9 +45,9 @@ const Footer = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ---- Main Grid ---- */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 pt-10 pb-8 md:pt-16 md:pb-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 sm:gap-x-8 gap-y-8 md:gap-12 pt-10 pb-8 md:pt-16 md:pb-12">
           {/* Column 1 — Brand */}
-          <Reveal>
+          <Reveal className="col-span-2 lg:col-span-1">
             <div>
               <Link to="/" className="flex items-center mb-5 group w-fit">
                 <img src={Logo} alt="SPC Solar Logo" className="h-12 w-auto object-contain" />
@@ -81,7 +81,7 @@ const Footer = () => {
           </Reveal>
 
           {/* Column 2 — Quick Links */}
-          <Reveal delay={0.08}>
+          <Reveal delay={0.08} className="col-span-1">
             <div>
               <h4 className="font-heading text-sm uppercase tracking-widest text-white mb-5 after:block after:w-8 after:h-px after:bg-red after:mt-2">
                 Quick Links
@@ -91,10 +91,10 @@ const Footer = () => {
                   <li key={l.name}>
                     <Link
                       to={l.path}
-                      className="text-gray-400 hover:text-white text-sm font-body flex items-center gap-2 group transition-colors duration-200"
+                      className="text-gray-400 hover:text-white text-sm font-body flex items-center gap-1.5 sm:gap-2 group transition-colors duration-200"
                     >
-                      <span className="w-0 h-px bg-red transition-[width] duration-300 group-hover:w-4" />
-                      {l.name}
+                      <span className="w-0 h-px bg-red transition-[width] duration-300 group-hover:w-4 flex-shrink-0" />
+                      <span>{l.name}</span>
                     </Link>
                   </li>
                 ))}
@@ -102,8 +102,8 @@ const Footer = () => {
             </div>
           </Reveal>
 
-          {/* Column 3 — Services */}
-          <Reveal delay={0.14}>
+          {/* Column 3 — Services (Placed on Right Side of Quick Links on mobile) */}
+          <Reveal delay={0.14} className="col-span-1">
             <div>
               <h4 className="font-heading text-sm uppercase tracking-widest text-white mb-5 after:block after:w-8 after:h-px after:bg-red after:mt-2">
                 Services
@@ -113,10 +113,10 @@ const Footer = () => {
                   <li key={s}>
                     <Link
                       to="/services"
-                      className="text-gray-400 hover:text-white text-sm font-body flex items-center gap-2 group transition-colors duration-200"
+                      className="text-gray-400 hover:text-white text-sm font-body flex items-center gap-1.5 sm:gap-2 group transition-colors duration-200"
                     >
-                      <span className="w-0 h-px bg-red transition-[width] duration-300 group-hover:w-4" />
-                      {s}
+                      <span className="w-0 h-px bg-red transition-[width] duration-300 group-hover:w-4 flex-shrink-0" />
+                      <span>{s}</span>
                     </Link>
                   </li>
                 ))}
@@ -125,7 +125,7 @@ const Footer = () => {
           </Reveal>
 
           {/* Column 4 — Contact */}
-          <Reveal delay={0.2}>
+          <Reveal delay={0.2} className="col-span-2 lg:col-span-1">
             <div>
               <h4 className="font-heading text-sm uppercase tracking-widest text-white mb-5 after:block after:w-8 after:h-px after:bg-red after:mt-2">
                 Contact

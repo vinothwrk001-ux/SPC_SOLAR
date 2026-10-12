@@ -113,7 +113,7 @@ const TestimonialsSection = () => {
                 </div>
 
                 {/* Quote */}
-                <blockquote className="font-body text-gray-700 text-base md:text-lg leading-relaxed italic mb-8">
+                <blockquote className="font-body text-gray-700 text-xs sm:text-sm md:text-lg leading-relaxed italic mb-4 md:mb-8">
                   "{currentItem.review}"
                 </blockquote>
 

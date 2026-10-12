@@ -6,12 +6,12 @@ import { EnergyGrid } from '../motion';
  * PageHero — Shared hero for inner pages (About, Services, etc.)
  * Handles the fixed navbar offset and renders a consistent header.
  */
-const PageHero = ({ label, title, highlight, subtitle, children }) => {
+const PageHero = ({ label, title, highlight, subtitle, children, normalCase }) => {
   // Split title at the highlight word for color treatment
   const titleParts = highlight ? title.split(highlight) : [title];
 
   return (
-    <section className="relative bg-black text-white pt-32 pb-20 overflow-hidden">
+    <section className="relative bg-black text-white pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-14 md:pb-20 overflow-hidden">
       <EnergyGrid opacity={0.05} color="white" />
 
       {/* Glow */}
@@ -26,25 +26,25 @@ const PageHero = ({ label, title, highlight, subtitle, children }) => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex items-center justify-center gap-3 mb-5"
+            className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-5"
           >
-            <span className="w-8 h-px bg-red" />
-            <span className="text-red font-accent font-bold text-xs uppercase tracking-widest">{label}</span>
-            <span className="w-8 h-px bg-red" />
+            <span className="w-6 sm:w-8 h-px bg-red" />
+            <span className="text-red font-accent font-bold text-[10px] sm:text-xs uppercase tracking-widest">{label}</span>
+            <span className="w-6 sm:w-8 h-px bg-red" />
           </motion.div>
         )}
 
-        <div className="overflow-hidden mb-3">
+        <div className="overflow-hidden mb-2 sm:mb-3 pb-1">
           <motion.h1
             initial={{ y: '110%', opacity: 0 }}
             animate={{ y: '0%', opacity: 1 }}
             transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-            className="font-heading text-5xl md:text-7xl text-white uppercase leading-none"
+            className={`font-heading text-2xl sm:text-4xl md:text-6xl lg:text-7xl text-white leading-tight sm:leading-none ${normalCase ? '' : 'uppercase'}`}
           >
             {highlight ? (
               <>
                 {titleParts[0]}
-                <span className="text-red">{highlight}</span>
+                <span className="text-red inline-block whitespace-nowrap">{highlight}</span>
                 {titleParts[1]}
               </>
             ) : (
@@ -58,7 +58,7 @@ const PageHero = ({ label, title, highlight, subtitle, children }) => {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-            className="text-gray-400 font-body text-lg max-w-2xl mx-auto mt-4"
+            className="text-gray-400 font-body text-xs sm:text-base md:text-lg max-w-2xl mx-auto mt-2 sm:mt-4 leading-relaxed"
           >
             {subtitle}
           </motion.p>

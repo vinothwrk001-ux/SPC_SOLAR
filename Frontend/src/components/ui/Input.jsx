@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 
-const Input = forwardRef(({ label, error, hint, className = '', dark = false, ...props }, ref) => {
+const Input = forwardRef(({ label, error, hint, className = '', inputClassName = '', labelClassName = '', dark = false, ...props }, ref) => {
   const inputBase = [
     'w-full px-4 py-3 text-sm font-body outline-none transition-all duration-250 rounded-btn',
     dark
@@ -11,6 +11,7 @@ const Input = forwardRef(({ label, error, hint, className = '', dark = false, ..
       : dark
       ? ''
       : 'border-gray-light hover:border-gray-400',
+    inputClassName,
   ]
     .filter(Boolean)
     .join(' ');
@@ -18,7 +19,7 @@ const Input = forwardRef(({ label, error, hint, className = '', dark = false, ..
   return (
     <div className={`flex flex-col w-full mb-4 ${className}`}>
       {label && (
-        <label className={`mb-1.5 font-accent font-semibold text-xs uppercase tracking-wider ${dark ? 'text-gray-300' : 'text-gray-700'}`}>
+        <label className={`mb-1.5 font-accent font-semibold text-xs uppercase tracking-wider ${dark ? 'text-gray-300' : 'text-gray-700'} ${labelClassName}`}>
           {label}
         </label>
       )}

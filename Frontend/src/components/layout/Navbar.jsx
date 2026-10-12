@@ -176,32 +176,50 @@ const Navbar = () => {
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red/8 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-red/6 rounded-full blur-3xl pointer-events-none" />
 
-            <nav className="relative flex flex-col items-center gap-5 sm:gap-6 w-full px-6 min-h-full pt-28 pb-12">
-              {LINKS.map((link, i) => (
-                <motion.div key={link.name} variants={mobileNavItem} custom={i}>
-                  <Link
-                    to={link.path}
-                    onClick={() => setIsOpen(false)}
-                    className={`font-heading text-2xl sm:text-3xl uppercase tracking-wider transition-colors ${
-                      isActive(link.path) ? 'text-red' : 'text-white hover:text-red'
-                    }`}
+            <nav className="relative flex flex-col items-center justify-between w-full px-6 h-full pt-[72px] pb-3.5">
+              <div className="flex flex-col items-center justify-center gap-2 sm:gap-2.5 my-auto w-full">
+                {LINKS.map((link, i) => (
+                  <motion.div key={link.name} variants={mobileNavItem} custom={i}>
+                    <Link
+                      to={link.path}
+                      onClick={() => handleLinkClick(link)}
+                      className={`font-heading text-[22px] sm:text-2xl uppercase tracking-wider transition-colors block text-center ${
+                        isActive(link.path) ? 'text-red font-bold' : 'text-white hover:text-red'
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
+              <motion.div variants={mobileNavItem} custom={LINKS.length} className="mt-2 flex flex-col gap-1.5 w-full max-w-xs mx-auto shrink-0">
+                <div className="grid grid-cols-2 gap-2 w-full">
+                  <Button
+                    variant="white"
+                    size="sm"
+                    className="w-full !py-2 !text-xs justify-center font-bold"
+                    onClick={() => { setIsOpen(false); setIsLeadModalOpen(true); }}
                   >
-                    {link.name}
-                  </Link>
-                </motion.div>
-              ))}
-
-              <motion.div variants={mobileNavItem} custom={LINKS.length} className="mt-6 flex flex-col gap-3 w-full max-w-sm mx-auto">
-                <Button variant="white" size="lg" className="w-full" onClick={() => { setIsOpen(false); setIsLeadModalOpen(true); }}>
-                  Request Quote
-                </Button>
-                <Link to="/quotation" onClick={() => setIsOpen(false)} className="w-full">
-                  <Button variant="primary" size="lg" className="w-full" icon={<FiArrowRight />}>
-                    Solar Calculator
+                    Request Quote
                   </Button>
-                </Link>
+                  <Link to="/quotation" onClick={() => setIsOpen(false)} className="w-full">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="w-full !py-2 !text-xs justify-center font-bold"
+                      icon={<FiArrowRight size={13} />}
+                    >
+                      Calculator
+                    </Button>
+                  </Link>
+                </div>
 
-                <Link to="/admin/login" onClick={() => setIsOpen(false)} className="text-center text-white/30 mt-2 text-xs font-accent tracking-widest uppercase">
+                <Link
+                  to="/admin/login"
+                  onClick={() => setIsOpen(false)}
+                  className="text-center text-white/30 text-[10px] font-accent tracking-widest uppercase hover:text-white/60 transition-colors py-0.5"
+                >
                   Admin Login
                 </Link>
               </motion.div>

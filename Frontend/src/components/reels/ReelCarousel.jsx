@@ -127,6 +127,107 @@ const ReelCarousel = () => {
 
   if (!loading && reels.length === 0) return null;
 
+  const [mobileIndex, setMobileIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState(1);
+
+  const safeMobileIndex = reels.length > 0 ? ((mobileIndex % reels.length) + reels.length) % reels.length : 0;
+  const currentMobileReel = reels.length > 0 ? reels[safeMobileIndex] : null;
+
+  const handlePrev = () => {
+    handlePrevSlide();
+    setSlideDirection(-1);
+    setMobileIndex((prev) => (prev <= 0 ? (reels.length > 0 ? reels.length - 1 : 0) : prev - 1));
+  };
+
+  const handleNext = () => {
+    handleNextSlide();
+    setSlideDirection(1);
+    setMobileIndex((prev) => (prev >= reels.length - 1 ? 0 : prev + 1));
+  };
+
+  // Touch swipe support for mobile
+  const touchStartX = useRef(null);
+  const touchEndX = useRef(null);
+
+  const onTouchStart = (e) => {
+    touchEndX.current = null;
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchMove = (e) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    if (distance > 40) {
+      handleNext();
+    } else if (distance < -40) {
+      handlePrev();
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
+  const renderReelCard = (reel, globalIdx) => (
+    <motion.div
+      key={reel._id}
+      whileHover={{ y: -8, scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+      onClick={() => handleOpenReel(globalIdx)}
+      className="group relative aspect-[9/16] bg-[#141414] rounded-3xl overflow-hidden border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] cursor-pointer w-full"
+    >
+      {/* Video / Thumbnail */}
+      {reel.thumbnailUrl ? (
+        <img
+          src={getMediaUrl(reel.thumbnailUrl)}
+          alt={reel.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+        />
+      ) : (
+        <video
+          src={getMediaUrl(reel.videoUrl)}
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+        />
+      )}
+
+      {/* Dark Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/20 group-hover:via-black/40 transition-colors" />
+
+      {/* Play Button Icon */}
+      <div className="absolute inset-0 m-auto w-12 h-12 md:w-14 md:h-14 rounded-full bg-red/90 text-white flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+        <FiPlay size={22} className="ml-1" />
+      </div>
+
+      {/* Top Badges */}
+      <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10">
+        <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-accent font-semibold px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
+          <FiZap size={11} className="text-amber-400" /> {reel.systemCapacity}
+        </span>
+        <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-accent font-semibold px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
+          <FiEye size={11} className="text-red" /> {reel.viewsCount || 0}
+        </span>
+      </div>
+
+      {/* Bottom Details Overlay */}
+      <div className="absolute bottom-4 left-4 right-4 text-left space-y-1 z-10">
+        <div className="flex items-center gap-1 text-[11px] text-red font-accent font-semibold">
+          <FiMapPin size={12} className="flex-shrink-0" /> <span className="truncate">{reel.location}</span>
+        </div>
+        <h3 className="font-heading font-bold text-white text-sm sm:text-base leading-tight line-clamp-2 drop-shadow">
+          {reel.title}
+        </h3>
+        <div className="flex items-center justify-between text-[11px] text-white/60 font-accent pt-1">
+          <span className="truncate">{reel.category}</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+
   return (
     <section id="reels" className="relative font-body select-none overflow-hidden">
       {/* 50/50 PERFECT SPLIT BACKGROUND */}
@@ -159,24 +260,70 @@ const ReelCarousel = () => {
           </p>
         </div>
 
-        {/* CARDS GRID STRADDLING THE 50/50 SPLIT LINE */}
-        <div className="w-full flex items-center justify-between gap-3 md:gap-6">
-          {/* Left Arrow (Dark Button) */}
+        {/* CARDS CAROUSEL STRADDLING THE 50/50 SPLIT LINE */}
+        <div className="w-full flex items-center justify-between gap-2.5 sm:gap-4 md:gap-6">
+          {/* Left Arrow */}
           <button
-            onClick={handlePrevSlide}
-            disabled={reels.length <= itemsPerPage}
-            className={`w-12 h-12 rounded-full bg-[#444444] text-white flex items-center justify-center border border-white/20 z-20 flex-shrink-0 transition-all ${
-              reels.length <= itemsPerPage 
+            onClick={handlePrev}
+            disabled={reels.length <= 1}
+            className={`w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-[#444444] text-white flex items-center justify-center border border-white/20 z-20 flex-shrink-0 transition-all ${
+              reels.length <= 1
                 ? 'opacity-40 cursor-not-allowed' 
-                : 'hover:bg-red hover:border-red shadow-2xl cursor-pointer'
+                : 'hover:bg-red hover:border-red shadow-2xl cursor-pointer active:scale-95'
             }`}
             aria-label="Previous Reels"
           >
-            <FiChevronLeft size={24} />
+            <FiChevronLeft size={22} className="md:w-6 md:h-6" />
           </button>
 
-          {/* Cards Grid Centered */}
-          <div className={`flex-1 grid gap-6 justify-center items-center ${
+          {/* Mobile View: Single Reel with horizontal slide transition */}
+          <div
+            className="flex-1 flex md:hidden items-center justify-center min-w-0"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
+            <div className="w-full max-w-[240px] xs:max-w-[255px] sm:max-w-[270px] overflow-hidden rounded-3xl mx-auto shadow-[0_25px_60px_rgba(0,0,0,0.6)]">
+              <AnimatePresence mode="wait" custom={slideDirection}>
+                {loading ? (
+                  <div className="aspect-[9/16] bg-white/5 rounded-3xl animate-pulse border border-white/10 w-full" />
+                ) : currentMobileReel ? (
+                  <motion.div
+                    key={currentMobileReel._id || safeMobileIndex}
+                    custom={slideDirection}
+                    variants={{
+                      enter: (dir) => ({
+                        x: dir > 0 ? 60 : -60,
+                        opacity: 0,
+                        scale: 0.98
+                      }),
+                      center: {
+                        x: 0,
+                        opacity: 1,
+                        scale: 1,
+                        transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] }
+                      },
+                      exit: (dir) => ({
+                        x: dir > 0 ? -60 : 60,
+                        opacity: 0,
+                        scale: 0.98,
+                        transition: { duration: 0.18, ease: [0.7, 0, 0.84, 0] }
+                      })
+                    }}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    className="w-full"
+                  >
+                    {renderReelCard(currentMobileReel, safeMobileIndex)}
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Desktop View: Centered 4-Column Grid (UNCHANGED) */}
+          <div className={`hidden md:grid flex-1 gap-6 justify-center items-center ${
             visibleReels.length === 1 ? 'grid-cols-1 max-w-xs mx-auto' :
             visibleReels.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto' :
             visibleReels.length === 3 ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 max-w-5xl mx-auto' :
@@ -189,81 +336,44 @@ const ReelCarousel = () => {
             ) : (
               visibleReels.map((reel, idx) => {
                 const globalIdx = startIndex + idx;
-                return (
-                  <motion.div
-                    key={reel._id}
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                    onClick={() => handleOpenReel(globalIdx)}
-                    className="group relative aspect-[9/16] bg-[#141414] rounded-3xl overflow-hidden border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] cursor-pointer"
-                  >
-                    {/* Video / Thumbnail */}
-                    {reel.thumbnailUrl ? (
-                      <img
-                        src={getMediaUrl(reel.thumbnailUrl)}
-                        alt={reel.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    ) : (
-                      <video
-                        src={getMediaUrl(reel.videoUrl)}
-                        muted
-                        loop
-                        playsInline
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    )}
-
-                    {/* Dark Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/20 group-hover:via-black/40 transition-colors" />
-
-                    {/* Play Button Icon */}
-                    <div className="absolute inset-0 m-auto w-14 h-14 rounded-full bg-red/90 text-white flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
-                      <FiPlay size={24} className="ml-1" />
-                    </div>
-
-                    {/* Top Badges */}
-                    <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10">
-                      <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-accent font-semibold px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                        <FiZap size={11} className="text-amber-400" /> {reel.systemCapacity}
-                      </span>
-                      <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-accent font-semibold px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                        <FiEye size={11} className="text-red" /> {reel.viewsCount || 0}
-                      </span>
-                    </div>
-
-                    {/* Bottom Details Overlay */}
-                    <div className="absolute bottom-4 left-4 right-4 text-left space-y-1 z-10">
-                      <div className="flex items-center gap-1 text-[11px] text-red font-accent font-semibold">
-                        <FiMapPin size={12} /> {reel.location}
-                      </div>
-                      <h3 className="font-heading font-bold text-white text-base leading-tight line-clamp-2 drop-shadow">
-                        {reel.title}
-                      </h3>
-                      <div className="flex items-center justify-between text-[11px] text-white/60 font-accent pt-1">
-                        <span>{reel.category}</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
+                return renderReelCard(reel, globalIdx);
               })
             )}
           </div>
 
-          {/* Right Slider Arrow (White Button) */}
+          {/* Right Slider Arrow */}
           <button
-            onClick={handleNextSlide}
-            disabled={reels.length <= itemsPerPage}
-            className={`w-12 h-12 rounded-full bg-white text-black flex items-center justify-center border border-white/20 z-20 flex-shrink-0 transition-all ${
-              reels.length <= itemsPerPage 
+            onClick={handleNext}
+            disabled={reels.length <= 1}
+            className={`w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-white text-black flex items-center justify-center border border-white/20 z-20 flex-shrink-0 transition-all ${
+              reels.length <= 1
                 ? 'opacity-40 cursor-not-allowed' 
-                : 'hover:bg-red hover:text-white shadow-2xl cursor-pointer'
+                : 'hover:bg-red hover:text-white shadow-2xl cursor-pointer active:scale-95'
             }`}
             aria-label="Next Reels"
           >
-            <FiChevronRight size={24} />
+            <FiChevronRight size={22} className="md:w-6 md:h-6" />
           </button>
         </div>
+
+        {/* Mobile View Indicators (Dots) */}
+        {!loading && reels.length > 1 && (
+          <div className="flex md:hidden items-center justify-center gap-1.5 mt-5 z-20">
+            {reels.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setSlideDirection(idx > safeMobileIndex ? 1 : -1);
+                  setMobileIndex(idx);
+                }}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  idx === safeMobileIndex ? 'w-6 bg-red' : 'w-1.5 bg-white/40'
+                }`}
+                aria-label={`Go to reel ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* IN-PAGE FULL-SCREEN REEL VIEWER MODAL */}

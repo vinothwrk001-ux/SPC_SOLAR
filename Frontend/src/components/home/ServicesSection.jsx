@@ -56,14 +56,14 @@ const ServicesSection = () => {
         </Reveal>
 
         {/* Cards grid */}
-        <Stagger stagger={0.1} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Stagger stagger={0.1} className="grid grid-cols-2 gap-3 sm:gap-6 md:gap-8">
           {SERVICES.map((service) => {
             const Icon = service.icon;
             return (
-              <Link to={service.path} key={service.number} className="block group">
-                <div className="relative bg-white border border-gray-200 rounded-card p-8 overflow-hidden transition-all duration-350 hover:border-red hover:shadow-card-md">
+              <Link to={service.path} key={service.number} className="block group h-full">
+                <div className="relative bg-white border border-gray-200 rounded-card p-3.5 sm:p-6 md:p-8 overflow-hidden transition-all duration-350 hover:border-red hover:shadow-card-md flex flex-col justify-between h-full">
                   {/* Number watermark */}
-                  <span className="absolute top-4 right-5 font-heading text-7xl text-gray-100 leading-none select-none pointer-events-none transition-colors duration-300 group-hover:text-red/8">
+                  <span className="absolute top-2 right-3 md:top-4 md:right-5 font-heading text-3xl sm:text-5xl md:text-7xl text-gray-100 leading-none select-none pointer-events-none transition-colors duration-300 group-hover:text-red/8">
                     {service.number}
                   </span>
 
@@ -75,19 +75,23 @@ const ServicesSection = () => {
                     transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                   />
 
-                  {/* Icon */}
-                  <div className="w-14 h-14 rounded-sm bg-red-light flex items-center justify-center text-red mb-6 transition-all duration-300 group-hover:bg-red group-hover:text-white">
-                    <Icon size={26} />
+                  <div>
+                    {/* Icon */}
+                    <div className="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-sm bg-red-light flex items-center justify-center text-red mb-3 sm:mb-4 md:mb-6 transition-all duration-300 group-hover:bg-red group-hover:text-white">
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 md:w-[26px] md:h-[26px]" />
+                    </div>
+
+                    {/* Content */}
+                    <h3 className="font-heading text-sm sm:text-xl md:text-2xl mb-1.5 sm:mb-2 md:mb-3 group-hover:text-red transition-colors duration-250 leading-snug">
+                      {service.title}
+                    </h3>
+                    <p className="text-gray-500 text-[11px] sm:text-xs md:text-sm leading-relaxed mb-3 sm:mb-4 md:mb-6 font-body">
+                      {service.desc}
+                    </p>
                   </div>
 
-                  {/* Content */}
-                  <h3 className="font-heading text-2xl mb-3 group-hover:text-red transition-colors duration-250">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-6 font-body">{service.desc}</p>
-
                   {/* CTA */}
-                  <span className="inline-flex items-center gap-2 font-accent font-bold text-xs uppercase tracking-widest text-red transition-all duration-250 group-hover:gap-3">
+                  <span className="inline-flex items-center gap-1.5 sm:gap-2 font-accent font-bold text-[10px] sm:text-xs uppercase tracking-wider md:tracking-widest text-red transition-all duration-250 group-hover:gap-3 mt-auto">
                     Learn More
                     <FiArrowRight size={14} className="transition-transform duration-250 group-hover:translate-x-1" />
                   </span>
