@@ -119,12 +119,16 @@ const AdminCouponsPage = () => {
       <SEOHead title="Welcome Coupon Settings | Admin" description="Configure new customer welcome coupons" />
 
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm">
         <div>
-          <h1 className="text-2xl font-heading font-bold text-gray-900 flex items-center gap-2.5">
-            <FiTag className="text-red" /> New User Welcome Coupon System
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-red animate-pulse" />
+            <span className="font-accent text-xs font-bold uppercase tracking-wider text-red">Promotions & Vouchers</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-heading font-bold text-black tracking-tight">
+            Welcome Coupons Module
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 font-body mt-1">
             Configure welcome discount vouchers issued to newly registered customers and track installation deductions.
           </p>
         </div>
@@ -137,6 +141,45 @@ const AdminCouponsPage = () => {
         >
           <FiRefreshCw className={loadingConfig || loadingUsers ? 'animate-spin' : ''} /> Refresh
         </button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-gray-500 font-bold">Total Issued</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-black">{issuedCoupons.length}</span>
+            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md font-semibold">All</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-green-600 font-bold">Active Vouchers</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-green-700">
+              {issuedCoupons.filter(u => (u.coupon?.status || 'Active') === 'Active').length}
+            </span>
+            <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-md font-semibold">Live</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-blue-600 font-bold">Claimed & Deducted</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-blue-700">
+              {issuedCoupons.filter(u => u.coupon?.status === 'Claimed').length}
+            </span>
+            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-semibold">Redeemed</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-red font-bold">Discount Value</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-red">₹{config.discountAmount}</span>
+            <span className="text-xs bg-red-50 text-red px-2 py-0.5 rounded-md font-semibold">Per User</span>
+          </div>
+        </div>
       </div>
 
       {/* 2-Column: Form & Live Preview */}

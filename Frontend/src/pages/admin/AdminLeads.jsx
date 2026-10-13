@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import api from '../../services/api';
 import Card from '../../components/ui/Card';
 import Modal from '../../components/ui/Modal';
@@ -16,20 +16,48 @@ import {
   FiCheckCircle, 
   FiClock,
   FiUserCheck,
-  FiGift,
-  FiFileText
+  FiPlus,
+  FiX,
+  FiAlertTriangle,
+  FiFileText,
+  FiUsers
 } from 'react-icons/fi';
-import { FaWhatsapp } from 'react-icons/fa';
+import { FaWhatsapp, FaFileExcel } from 'react-icons/fa';
+import { exportLeadsToExcel } from '../../utils/excelExporter';
+
+const STATUS_OPTIONS = ['ALL', 'NEW', 'CONTACTED', 'IN_DISCUSSION', 'CONVERTED', 'LOST'];
 
 const AdminLeads = () => {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+
+  // Notes Modal State
   const [selectedLead, setSelectedLead] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
   const [notesInput, setNotesInput] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
+
+  // Create Lead Modal State
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    city: '',
+    monthlyBill: '',
+    systemSize: '',
+    notes: '',
+    status: 'NEW',
+  });
+  const [creatingLead, setCreatingLead] = useState(false);
+
+  // Delete Modal State
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const fetchLeads = async () => {
     setLoading(true);
@@ -41,7 +69,7 @@ const AdminLeads = () => {
         setLeads(data);
       }
     } catch (error) {
-      toast.error('Failed to fetch leads from server');
+      toast.error('Failed to fetch customer leads');
     } finally {
       setLoading(false);
     }
@@ -54,13 +82,19 @@ const AdminLeads = () => {
   const updateStatus = async (id, newStatus) => {
     try {
       await api.put(`/leads/${id}`, { status: newStatus });
-      toast.success(`Status updated to ${newStatus}`);
+      toast.success(`Lead moved to ${newStatus}`);
       setLeads((prev) =>
         prev.map((l) => (l._id === id ? { ...l, status: newStatus } : l))
       );
     } catch (error) {
       toast.error('Failed to update status');
     }
+  };
+
+  const handleOpenNotes = (lead) => {
+    setSelectedLead(lead);
+    setNotesInput(lead.notes || '');
+    setIsNotesModalOpen(true);
   };
 
   const handleSaveNotes = async () => {
@@ -72,7 +106,7 @@ const AdminLeads = () => {
       setLeads((prev) =>
         prev.map((l) => (l._id === selectedLead._id ? { ...l, notes: notesInput } : l))
       );
-      setIsModalOpen(false);
+      setIsNotesModalOpen(false);
     } catch (error) {
       toast.error('Failed to save notes');
     } finally {
@@ -80,352 +114,660 @@ const AdminLeads = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this lead?')) return;
+  const handleCreateLead = async (e) => {
+    e.preventDefault();
+    if (!createForm.name.trim() || !createForm.phone.trim()) {
+      toast.error('Please enter customer name and phone');
+      return;
+    }
+
     try {
-      await api.delete(`/leads/${id}`);
-      toast.success('Lead removed');
-      setLeads((prev) => prev.filter((l) => l._id !== id));
+      setCreatingLead(true);
+      const { data } = await api.post('/leads', createForm);
+      toast.success('Lead created successfully!');
+      setIsCreateModalOpen(false);
+      setCreateForm({
+        name: '',
+        phone: '',
+        email: '',
+        city: '',
+        monthlyBill: '',
+        systemSize: '',
+        notes: '',
+        status: 'NEW',
+      });
+      fetchLeads();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to create lead');
+    } finally {
+      setCreatingLead(false);
+    }
+  };
+
+  const handlePromptDelete = (lead) => {
+    setLeadToDelete(lead);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!leadToDelete) return;
+    try {
+      setDeleting(true);
+      await api.delete(`/leads/${leadToDelete._id}`);
+      toast.success('Lead removed successfully');
+      setLeads((prev) => prev.filter((l) => l._id !== leadToDelete._id));
+      setDeleteModalOpen(false);
+      setLeadToDelete(null);
     } catch (error) {
       toast.error('Failed to delete lead');
+    } finally {
+      setDeleting(false);
     }
   };
 
   const openWhatsApp = (lead) => {
-    const cleanPhone = lead.phone.replace(/\D/g, '');
+    const cleanPhone = (lead.phone || '').replace(/\D/g, '');
     const phoneWithCode = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
-    const message = `Hello ${lead.name || 'there'}! 👋\n\nGreetings from *SPC Solar*! ☀️\n\nWe received your request for a solar quotation (with up to *₹1,000 offer* applied).\n\nWhen would be a convenient time for a quick 5-minute call to discuss your energy requirements and site details?`;
+    const message = `Hello ${lead.name || 'there'}! 👋\n\nGreetings from *SPC Solar*! ☀️\n\nWe received your inquiry regarding solar rooftop installation. When is a good time for a brief call to evaluate your site and provide a free design estimate?`;
     window.open(`https://wa.me/${phoneWithCode}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
-  const openNotesModal = (lead) => {
-    setSelectedLead(lead);
-    setNotesInput(lead.notes || '');
-    setIsModalOpen(true);
-  };
+  // Filtered Leads
+  const filteredLeads = useMemo(() => {
+    return leads.filter((lead) => {
+      const matchSearch =
+        (lead.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (lead.phone || '').includes(searchTerm) ||
+        (lead.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (lead.city || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (lead.notes || '').toLowerCase().includes(searchTerm.toLowerCase());
 
-  const getStatusBadgeColor = (status) => {
-    switch (status) {
-      case 'New':
-        return 'bg-red-100 text-red-700 border-red-300';
-      case 'Contacted':
-        return 'bg-blue-100 text-blue-700 border-blue-300';
-      case 'Follow-up':
-        return 'bg-amber-100 text-amber-700 border-amber-300';
-      case 'Converted':
-        return 'bg-green-100 text-green-700 border-green-300';
-      case 'Closed':
-        return 'bg-gray-100 text-gray-700 border-gray-300';
+      const leadStatus = (lead.status || '').toUpperCase().replace(/[\s-]/g, '_');
+      const filterStatusNorm = statusFilter.toUpperCase().replace(/[\s-]/g, '_');
+      const matchStatus = statusFilter === 'ALL' || leadStatus === filterStatusNorm;
+      return matchSearch && matchStatus;
+    });
+  }, [leads, searchTerm, statusFilter]);
+
+  // Statistics
+  const stats = useMemo(() => {
+    const total = leads.length;
+    const newCount = leads.filter((l) => (l.status || '').toUpperCase() === 'NEW').length;
+    const inDiscussion = leads.filter((l) => {
+      const s = (l.status || '').toUpperCase().replace(/[\s-]/g, '_');
+      return s === 'IN_DISCUSSION' || s === 'CONTACTED';
+    }).length;
+    const converted = leads.filter((l) => (l.status || '').toUpperCase() === 'CONVERTED').length;
+    const lost = leads.filter((l) => {
+      const s = (l.status || '').toUpperCase();
+      return s === 'LOST' || s === 'CLOSED';
+    }).length;
+    return { total, newCount, inDiscussion, converted, lost };
+  }, [leads]);
+
+  const getStatusBadgeClass = (status) => {
+    const s = (status || '').toUpperCase().replace(/[\s-]/g, '_');
+    switch (s) {
+      case 'NEW':
+        return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'CONTACTED':
+        return 'bg-purple-50 text-purple-700 border-purple-200';
+      case 'IN_DISCUSSION':
+        return 'bg-amber-50 text-amber-700 border-amber-200';
+      case 'QUOTED':
+        return 'bg-indigo-50 text-indigo-700 border-indigo-200';
+      case 'FOLLOW_UP':
+        return 'bg-orange-50 text-orange-700 border-orange-200';
+      case 'CONVERTED':
+        return 'bg-green-50 text-green-700 border-green-200';
+      case 'CLOSED':
+      case 'LOST':
+        return 'bg-gray-100 text-gray-600 border-gray-200';
       default:
-        return 'bg-gray-100 text-gray-700 border-gray-300';
+        return 'bg-gray-100 text-gray-600 border-gray-200';
     }
   };
 
-  const filteredLeads = leads.filter((lead) => {
-    const matchesSearch =
-      (lead.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (lead.phone || '').includes(searchTerm) ||
-      (lead.city || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (lead.state || '').toLowerCase().includes(searchTerm.toLowerCase());
+  const handleExportExcel = async () => {
+    const listToExport = filteredLeads.length > 0 ? filteredLeads : leads;
+    if (listToExport.length === 0) {
+      toast.error('No leads available to export');
+      return;
+    }
 
-    const matchesStatus = statusFilter === 'ALL' || lead.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
-  const stats = {
-    total: leads.length,
-    new: leads.filter((l) => l.status === 'New').length,
-    contacted: leads.filter((l) => l.status === 'Contacted').length,
-    converted: leads.filter((l) => l.status === 'Converted').length,
+    try {
+      setExporting(true);
+      toast.loading('Generating Excel report...', { id: 'excel-export' });
+      await exportLeadsToExcel(listToExport, statusFilter);
+      toast.success(`Exported ${listToExport.length} leads to Excel!`, { id: 'excel-export' });
+    } catch (error) {
+      console.error('Failed to export leads to Excel:', error);
+      toast.error(error.message || 'Failed to export Excel file', { id: 'excel-export' });
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-6 pb-12">
+      {/* Header Card */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm">
         <div>
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 flex items-center gap-2">
-            <FiGift className="text-red-500" /> Customer Leads
-          </h2>
-          <p className="text-sm text-gray-500 font-body">
-            Inquiries captured from the website quotation modal with ₹1,000 offer
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-red animate-pulse" />
+            <span className="font-accent text-xs font-bold uppercase tracking-wider text-red">Customer Leads & CRM Pipeline</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-heading text-black font-bold tracking-tight">
+            Customer Leads Module
+          </h1>
+          <p className="text-sm text-gray-500 font-body mt-1">
+            Track quotation requests, contact phone numbers, follow-up notes, and pipeline conversion stages.
           </p>
         </div>
-        <Button onClick={fetchLeads} variant="outline" className="flex items-center gap-2 text-sm">
-          <FiRefreshCw className={loading ? 'animate-spin' : ''} /> Refresh Leads
-        </Button>
-      </div>
 
-      {/* Metric Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between text-gray-500 text-xs font-semibold uppercase">
-            <span>Total Leads</span>
-            <FiMessageSquare className="text-gray-400" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mt-2">{stats.total}</div>
-        </div>
+        <div className="flex items-center gap-2 self-stretch sm:self-auto flex-wrap">
+          <Button
+            variant="outline"
+            onClick={fetchLeads}
+            className="flex items-center gap-2 text-xs font-accent uppercase tracking-wider px-3 py-2.5"
+            title="Refresh list"
+          >
+            <FiRefreshCw className={loading ? 'animate-spin' : ''} size={15} />
+            <span className="hidden sm:inline">Refresh</span>
+          </Button>
 
-        <div className="bg-red-50 p-4 rounded-xl border border-red-200 shadow-sm">
-          <div className="flex items-center justify-between text-red-600 text-xs font-semibold uppercase">
-            <span>New Inquiries</span>
-            <FiClock className="text-red-500" />
-          </div>
-          <div className="text-2xl font-bold text-red-600 mt-2">{stats.new}</div>
-        </div>
+          <button
+            type="button"
+            onClick={handleExportExcel}
+            disabled={exporting || leads.length === 0}
+            className="flex items-center gap-2 text-xs font-accent font-bold uppercase tracking-wider px-3.5 py-2.5 bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 rounded-btn transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            title="Export customer leads to formatted Excel spreadsheet"
+          >
+            {exporting ? (
+              <FiRefreshCw className="animate-spin text-emerald-700" size={15} />
+            ) : (
+              <FaFileExcel className="text-emerald-700" size={15} />
+            )}
+            <span>Export as Excel</span>
+          </button>
 
-        <div className="bg-blue-50 p-4 rounded-xl border border-blue-200 shadow-sm">
-          <div className="flex items-center justify-between text-blue-600 text-xs font-semibold uppercase">
-            <span>Contacted</span>
-            <FiPhone className="text-blue-500" />
-          </div>
-          <div className="text-2xl font-bold text-blue-600 mt-2">{stats.contacted}</div>
-        </div>
-
-        <div className="bg-green-50 p-4 rounded-xl border border-green-200 shadow-sm">
-          <div className="flex items-center justify-between text-green-600 text-xs font-semibold uppercase">
-            <span>Converted</span>
-            <FiUserCheck className="text-green-500" />
-          </div>
-          <div className="text-2xl font-bold text-green-600 mt-2">{stats.converted}</div>
+          <Button
+            variant="primary"
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-2 text-xs font-accent uppercase tracking-wider px-4 py-2.5 shadow-md hover:shadow-lg"
+          >
+            <FiPlus size={16} />
+            <span>Add Lead</span>
+          </Button>
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <Card className="p-4">
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-          {/* Search Box */}
-          <div className="relative w-full md:w-80">
-            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-gray-500 font-bold">Total Inquiries</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-black">{stats.total}</span>
+            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md font-semibold">All</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-blue-600 font-bold">New Leads</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-blue-700">{stats.newCount}</span>
+            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-semibold">Fresh</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-amber-600 font-bold">In Discussion</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-amber-700">{stats.inDiscussion}</span>
+            <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-md font-semibold">Warm</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-green-600 font-bold">Converted</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-green-700">{stats.converted}</span>
+            <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-md font-semibold">Closed</span>
+          </div>
+        </div>
+
+        <div className="col-span-2 sm:col-span-1 bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-gray-400 font-bold">Lost / Inactive</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-gray-500">{stats.lost}</span>
+            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md font-semibold">Closed</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Control Bar: Search and Status Filter */}
+      <div className="bg-white p-4 rounded-2xl border border-gray-200/80 shadow-sm space-y-3">
+        <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3">
+          <div className="relative flex-1">
+            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={17} />
             <input
               type="text"
-              placeholder="Search by name, phone, city..."
+              placeholder="Search by customer name, phone number, city, or notes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black"
+              className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:border-black transition-colors"
             />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+              >
+                <FiX size={15} />
+              </button>
+            )}
           </div>
 
-          {/* Status Tabs */}
-          <div className="flex flex-wrap gap-1.5 w-full md:w-auto">
-            {['ALL', 'New', 'Contacted', 'Follow-up', 'Converted', 'Closed'].map((status) => (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(status)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                  statusFilter === status
-                    ? 'bg-black text-white shadow-sm'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {status}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 self-end md:self-auto">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-2 text-xs font-accent font-semibold uppercase tracking-wider bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:border-black"
+            >
+              {STATUS_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt === 'ALL' ? 'All Pipeline Stages' : opt.replace('_', ' ')}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-      </Card>
 
-      {/* Leads Table */}
-      <Card className="p-0 overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-gray-900 text-white text-xs uppercase tracking-wider font-semibold">
-              <tr>
-                <th className="py-3.5 px-4">Date</th>
-                <th className="py-3.5 px-4">Customer</th>
-                <th className="py-3.5 px-4">Phone & Direct Contact</th>
-                <th className="py-3.5 px-4">Location</th>
-                <th className="py-3.5 px-4">Quotation Maker</th>
-                <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4">Notes</th>
-                <th className="py-3.5 px-4 text-center">Delete</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm divide-y divide-gray-200">
-              {loading ? (
-                <tr>
-                  <td colSpan="8" className="py-12 text-center text-gray-500">
-                    <div className="flex items-center justify-center gap-2">
-                      <FiRefreshCw className="animate-spin text-red-500" /> Loading leads...
-                    </div>
-                  </td>
+        {/* Filter Pills */}
+        <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-gray-100">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-gray-400 font-bold mr-1">Stage:</span>
+          {STATUS_OPTIONS.map((status) => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`px-3 py-1 rounded-full text-xs font-accent font-semibold tracking-wider transition-all ${
+                statusFilter === status
+                  ? 'bg-black text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {status === 'ALL' ? 'All' : status.replace('_', ' ')}
+            </button>
+          ))}
+          {filteredLeads.length !== leads.length && (
+            <span className="text-xs text-gray-400 font-body ml-auto">
+              Showing {filteredLeads.length} of {leads.length}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Main Table */}
+      {loading ? (
+        <Card className="p-12 text-center bg-white border border-gray-200">
+          <div className="inline-block animate-spin text-red mb-3">
+            <FiRefreshCw size={28} />
+          </div>
+          <p className="text-sm font-accent uppercase tracking-wider text-gray-500">Loading leads pipeline...</p>
+        </Card>
+      ) : filteredLeads.length === 0 ? (
+        <Card className="p-12 text-center bg-white border border-gray-200 rounded-2xl">
+          <div className="w-16 h-16 rounded-full bg-gray-100 text-gray-400 mx-auto flex items-center justify-center mb-4">
+            <FiUsers size={28} />
+          </div>
+          <h3 className="font-heading text-lg text-black mb-1">No Leads Found</h3>
+          <p className="text-sm text-gray-500 max-w-md mx-auto mb-5 font-body">
+            No inquiries match your current search and stage filters.
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSearchTerm('');
+              setStatusFilter('ALL');
+            }}
+            className="text-xs font-accent uppercase tracking-wider"
+          >
+            Reset Filters
+          </Button>
+        </Card>
+      ) : (
+        <Card className="p-0 overflow-hidden bg-white border border-gray-200/90 shadow-sm rounded-2xl">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50/90 text-gray-600 border-b border-gray-200 text-xs font-accent font-bold uppercase tracking-wider">
+                  <th className="py-3.5 px-4 w-12 text-center">User</th>
+                  <th className="py-3.5 px-4">Contact & Location</th>
+                  <th className="py-3.5 px-4">Requirement / Bill</th>
+                  <th className="py-3.5 px-4">Pipeline Status</th>
+                  <th className="py-3.5 px-4">Notes</th>
+                  <th className="py-3.5 px-4">Date</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
-              ) : filteredLeads.length === 0 ? (
-                <tr>
-                  <td colSpan="8" className="py-12 text-center text-gray-500">
-                    No leads found matching your criteria.
-                  </td>
-                </tr>
-              ) : (
-                filteredLeads.map((lead) => (
-                  <tr key={lead._id} className="hover:bg-gray-50 transition-colors">
-                    {/* Date */}
-                    <td className="py-4 px-4 whitespace-nowrap text-gray-600 text-xs">
-                      <div className="flex items-center gap-1.5">
-                        <FiCalendar className="text-gray-400" />
-                        {new Date(lead.createdAt).toLocaleDateString('en-IN', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric'
-                        })}
-                      </div>
-                      <div className="text-[11px] text-gray-400 pl-4">
-                        {new Date(lead.createdAt).toLocaleTimeString('en-IN', {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
+              </thead>
+              <tbody className="text-sm text-black divide-y divide-gray-100">
+                {filteredLeads.map((lead) => (
+                  <tr key={lead._id} className="hover:bg-gray-50/70 transition-colors group">
+                    {/* User Avatar */}
+                    <td className="py-3.5 px-4 text-center">
+                      <div className="w-9 h-9 rounded-full bg-red text-white flex items-center justify-center font-heading font-bold text-xs uppercase shadow-sm mx-auto">
+                        {(lead.name || 'L').slice(0, 2)}
                       </div>
                     </td>
 
-                    {/* Customer Info */}
-                    <td className="py-4 px-4 font-semibold text-gray-900">
-                      <div>{lead.name || 'Anonymous User'}</div>
-                      <div className="text-xs text-red-600 font-normal mt-0.5">
-                        {lead.source || '₹1,000 Offer Lead'}
+                    {/* Contact & Location */}
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <div className="font-heading font-bold text-black text-sm group-hover:text-red transition-colors">
+                        {lead.name}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-600 font-body">
+                        <span className="font-semibold text-gray-800">{lead.phone}</span>
+                        {lead.city && (
+                          <span className="flex items-center gap-0.5 text-gray-500">
+                            <FiMapPin size={11} className="text-gray-400" />
+                            {lead.city}
+                          </span>
+                        )}
                       </div>
                     </td>
 
-                    {/* Phone & Contact Buttons */}
-                    <td className="py-4 px-4">
-                      <div className="font-bold text-gray-800 text-sm tracking-wide">
-                        {lead.phone}
-                      </div>
-                      <div className="flex items-center gap-2 mt-1.5">
-                        {/* Direct Call */}
-                        <a
-                          href={`tel:${lead.phone}`}
-                          className="inline-flex items-center gap-1 text-xs px-2.5 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md font-semibold transition-colors border border-gray-300"
-                          title="Call Customer"
-                        >
-                          <FiPhone size={12} className="text-blue-600" /> Call
-                        </a>
-
-                        {/* WhatsApp Direct */}
-                        <button
-                          onClick={() => openWhatsApp(lead)}
-                          className="inline-flex items-center gap-1 text-xs px-2.5 py-1 bg-green-500 hover:bg-green-600 text-white rounded-md font-semibold transition-colors shadow-sm"
-                          title="Message on WhatsApp"
-                        >
-                          <FaWhatsapp size={13} /> WhatsApp
-                        </button>
-                      </div>
-                    </td>
-
-                    {/* Location */}
-                    <td className="py-4 px-4 text-gray-700 whitespace-nowrap">
-                      <div className="flex items-center gap-1 text-xs font-medium">
-                        <FiMapPin className="text-red-500 flex-shrink-0" />
-                        <span>{lead.city || '—'}, {lead.state || '—'}</span>
-                      </div>
-                    </td>
-
-                    {/* Quotation Maker Action */}
-                    <td className="py-4 px-4 whitespace-nowrap">
-                      <a
-                        href={`/admin/quotation-maker?leadId=${lead._id}&name=${encodeURIComponent(lead.name || '')}&phone=${encodeURIComponent(lead.phone || '')}&city=${encodeURIComponent(lead.city || '')}&state=${encodeURIComponent(lead.state || '')}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-600 text-red-700 hover:text-white border border-red-200 rounded-lg text-xs font-bold transition-all shadow-sm group"
-                        title="Create / Edit & Download Quotation for this client"
-                      >
-                        <FiFileText size={13} className="text-red-600 group-hover:text-white" />
-                        <span>Create / Edit Quotation</span>
-                      </a>
-                    </td>
-
-                    {/* Status Dropdown */}
-                    <td className="py-4 px-4">
-                      <select
-                        value={lead.status || 'New'}
-                        onChange={(e) => updateStatus(lead._id, e.target.value)}
-                        className={`text-xs font-bold px-2.5 py-1.5 rounded-lg border outline-none cursor-pointer transition-colors ${getStatusBadgeColor(
-                          lead.status
-                        )}`}
-                      >
-                        <option value="New">New</option>
-                        <option value="Contacted">Contacted</option>
-                        <option value="Follow-up">Follow-up</option>
-                        <option value="Converted">Converted</option>
-                        <option value="Closed">Closed</option>
-                      </select>
-                    </td>
-
-                    {/* Notes */}
-                    <td className="py-4 px-4">
-                      {lead.notes ? (
-                        <div 
-                          onClick={() => openNotesModal(lead)}
-                          className="max-w-[180px] truncate text-xs text-gray-600 cursor-pointer hover:text-black bg-gray-50 p-1.5 rounded border border-gray-200"
-                          title={lead.notes}
-                        >
-                          {lead.notes}
+                    {/* Requirement / Bill */}
+                    <td className="py-3.5 px-4 whitespace-nowrap text-xs font-body">
+                      {lead.systemSize && (
+                        <div className="font-bold text-black font-accent">
+                          {lead.systemSize}
                         </div>
-                      ) : (
-                        <button
-                          onClick={() => openNotesModal(lead)}
-                          className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 underline"
-                        >
-                          <FiEdit3 size={12} /> Add Note
-                        </button>
+                      )}
+                      {lead.monthlyBill && (
+                        <div className="text-gray-500">
+                          Bill: ₹{lead.monthlyBill}/mo
+                        </div>
+                      )}
+                      {!lead.systemSize && !lead.monthlyBill && (
+                        <span className="text-gray-400">Rooftop Inquiry</span>
                       )}
                     </td>
 
-                    {/* Delete */}
-                    <td className="py-4 px-4 text-center">
-                      <button
-                        onClick={() => handleDelete(lead._id)}
-                        className="text-gray-400 hover:text-red-600 p-1 rounded-md transition-colors"
-                        title="Delete Lead"
+                    {/* Status Dropdown */}
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <select
+                        value={(lead.status || 'NEW').toUpperCase().replace(/[\s-]/g, '_')}
+                        onChange={(e) => updateStatus(lead._id, e.target.value)}
+                        className={`text-xs font-accent font-bold uppercase rounded-full px-2.5 py-1 border outline-none cursor-pointer ${getStatusBadgeClass(lead.status)}`}
                       >
-                        <FiTrash2 size={16} />
+                        <option value="NEW">New</option>
+                        <option value="CONTACTED">Contacted</option>
+                        <option value="IN_DISCUSSION">In Discussion</option>
+                        <option value="CONVERTED">Converted</option>
+                        <option value="LOST">Lost</option>
+                      </select>
+                    </td>
+
+                    {/* Notes preview */}
+                    <td className="py-3.5 px-4 max-w-xs">
+                      <button
+                        onClick={() => handleOpenNotes(lead)}
+                        className="text-left w-full hover:bg-gray-100 p-1.5 rounded-lg transition-colors group/note"
+                      >
+                        {lead.notes ? (
+                          <p className="text-xs text-gray-700 font-body line-clamp-1">
+                            {lead.notes}
+                          </p>
+                        ) : (
+                          <span className="text-xs text-gray-400 italic flex items-center gap-1">
+                            <FiEdit3 size={11} /> Add notes...
+                          </span>
+                        )}
                       </button>
                     </td>
+
+                    {/* Date */}
+                    <td className="py-3.5 px-4 text-xs text-gray-500 font-body whitespace-nowrap">
+                      {lead.createdAt ? new Date(lead.createdAt).toLocaleDateString() : 'Recent'}
+                    </td>
+
+                    {/* Actions */}
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => openWhatsApp(lead)}
+                          className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors border border-transparent hover:border-emerald-200"
+                          title="Message on WhatsApp"
+                        >
+                          <FaWhatsapp size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleOpenNotes(lead)}
+                          className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-200"
+                          title="Edit Notes"
+                        >
+                          <FiEdit3 size={15} />
+                        </button>
+                        <button
+                          onClick={() => handlePromptDelete(lead)}
+                          className="p-1.5 text-red hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200"
+                          title="Delete Lead"
+                        >
+                          <FiTrash2 size={15} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
 
-      {/* Notes Modal */}
+      {/* NOTES MODAL */}
       <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={`Lead Notes: ${selectedLead?.name || 'Customer'}`}
+        isOpen={isNotesModalOpen}
+        onClose={() => !savingNotes && setIsNotesModalOpen(false)}
+        title={`Follow-up Notes: ${selectedLead?.name || ''}`}
+        size="md"
       >
-        {selectedLead && (
-          <div className="space-y-4">
-            <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-xs text-gray-600 grid grid-cols-2 gap-2">
-              <div>
-                <span className="font-semibold text-gray-800">Phone:</span> {selectedLead.phone}
-              </div>
-              <div>
-                <span className="font-semibold text-gray-800">City:</span> {selectedLead.city}, {selectedLead.state}
-              </div>
-            </div>
+        <div className="space-y-4">
+          <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs text-gray-600 flex justify-between">
+            <span><strong>Phone:</strong> {selectedLead?.phone}</span>
+            <span><strong>Location:</strong> {selectedLead?.city || 'N/A'}</span>
+            <span><strong>Status:</strong> {selectedLead?.status}</span>
+          </div>
 
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                Admin Notes & Call Summary:
+          <div>
+            <label className="block mb-1.5 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+              Interaction Log / Requirement Details
+            </label>
+            <textarea
+              rows={5}
+              placeholder="Record call discussions, roof size, budget expectations, follow-up dates..."
+              value={notesInput}
+              onChange={(e) => setNotesInput(e.target.value)}
+              className="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-btn focus:outline-none focus:border-black resize-y font-body"
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsNotesModalOpen(false)}
+              disabled={savingNotes}
+              className="text-xs font-accent uppercase tracking-wider px-4 py-2"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleSaveNotes}
+              disabled={savingNotes}
+              className="text-xs font-accent uppercase tracking-wider px-5 py-2"
+            >
+              {savingNotes ? 'Saving...' : 'Save Notes'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* CREATE LEAD MODAL */}
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={() => !creatingLead && setIsCreateModalOpen(false)}
+        title="Create New Customer Inquiry"
+        size="md"
+      >
+        <form onSubmit={handleCreateLead} className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="col-span-2">
+              <label className="block mb-1 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Customer Name <span className="text-red">*</span>
               </label>
-              <textarea
-                value={notesInput}
-                onChange={(e) => setNotesInput(e.target.value)}
-                placeholder="Write notes about quotation discussion, site details, customer requirements..."
-                rows={4}
-                className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black"
+              <input
+                type="text"
+                required
+                placeholder="e.g. Anand Joshi"
+                value={createForm.name}
+                onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
+                className="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-btn focus:outline-none focus:border-black"
               />
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={handleSaveNotes} disabled={savingNotes}>
-                {savingNotes ? 'Saving...' : 'Save Notes'}
-              </Button>
+            <div>
+              <label className="block mb-1 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Phone Number <span className="text-red">*</span>
+              </label>
+              <input
+                type="tel"
+                required
+                placeholder="e.g. 9876543210"
+                value={createForm.phone}
+                onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
+                className="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-btn focus:outline-none focus:border-black"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="customer@gmail.com"
+                value={createForm.email}
+                onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+                className="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-btn focus:outline-none focus:border-black"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                City / Location
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Pune, MH"
+                value={createForm.city}
+                onChange={(e) => setCreateForm({ ...createForm, city: e.target.value })}
+                className="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-btn focus:outline-none focus:border-black"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Current Monthly Bill (₹)
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. 6500"
+                value={createForm.monthlyBill}
+                onChange={(e) => setCreateForm({ ...createForm, monthlyBill: e.target.value })}
+                className="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-btn focus:outline-none focus:border-black"
+              />
+            </div>
+
+            <div className="col-span-2">
+              <label className="block mb-1 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Requirement Details / Notes
+              </label>
+              <textarea
+                rows={3}
+                placeholder="Inquiry notes..."
+                value={createForm.notes}
+                onChange={(e) => setCreateForm({ ...createForm, notes: e.target.value })}
+                className="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-btn focus:outline-none focus:border-black resize-y font-body"
+              />
             </div>
           </div>
-        )}
+
+          <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCreateModalOpen(false)}
+              disabled={creatingLead}
+              className="text-xs font-accent uppercase tracking-wider px-4 py-2"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={creatingLead}
+              className="text-xs font-accent uppercase tracking-wider px-5 py-2"
+            >
+              {creatingLead ? 'Creating...' : 'Create Lead'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* DELETE MODAL */}
+      <Modal
+        isOpen={deleteModalOpen}
+        onClose={() => !deleting && setDeleteModalOpen(false)}
+        title="Confirm Removal"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <div className="w-12 h-12 rounded-full bg-red-50 text-red mx-auto flex items-center justify-center">
+            <FiAlertTriangle size={24} />
+          </div>
+          <div className="text-center">
+            <h4 className="font-heading font-bold text-base text-black mb-1">
+              Delete this lead?
+            </h4>
+            <p className="text-xs text-gray-600 font-body leading-relaxed">
+              Are you sure you want to permanently delete lead for{' '}
+              <strong className="text-black font-semibold">"{leadToDelete?.name}"</strong>?
+            </p>
+          </div>
+
+          <div className="flex items-center justify-center gap-3 pt-3 border-t border-gray-100">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDeleteModalOpen(false)}
+              disabled={deleting}
+              className="text-xs font-accent uppercase tracking-wider px-4 py-2"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleConfirmDelete}
+              disabled={deleting}
+              className="text-xs font-accent uppercase tracking-wider px-5 py-2 bg-red hover:bg-red-700 flex items-center gap-1.5"
+            >
+              {deleting ? 'Deleting...' : 'Yes, Delete'}
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

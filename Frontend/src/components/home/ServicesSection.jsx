@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiHome, FiBriefcase, FiSettings, FiActivity, FiArrowRight } from 'react-icons/fi';
+import { FiHome, FiBriefcase, FiSettings, FiActivity, FiArrowRight, FiZap, FiSun } from 'react-icons/fi';
 import { Stagger, EnergyGrid, Reveal } from '../motion';
+import api from '../../services/api';
 
-const SERVICES = [
+const STATIC_SERVICES = [
   {
     icon: FiHome,
     number: '01',
@@ -35,7 +36,49 @@ const SERVICES = [
   },
 ];
 
+const getCategoryIcon = (category) => {
+  const cat = (category || '').toLowerCase();
+  if (cat.includes('residen')) return FiHome;
+  if (cat.includes('commerc')) return FiBriefcase;
+  if (cat.includes('industr')) return FiSettings;
+  if (cat.includes('maint') || cat.includes('amc')) return FiActivity;
+  if (cat.includes('stor') || cat.includes('batt')) return FiZap;
+  if (cat.includes('agri') || cat.includes('pump')) return FiSun;
+  return FiZap;
+};
+
 const ServicesSection = () => {
+  const [services, setServices] = useState(STATIC_SERVICES);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchServices = async () => {
+      try {
+        const { data } = await api.get('/services');
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          const activeOnly = data.filter((s) => s.isActive !== false);
+          if (activeOnly.length > 0) {
+            const formatted = activeOnly.slice(0, 4).map((item, idx) => ({
+              id: item._id || idx,
+              icon: getCategoryIcon(item.category),
+              number: String(idx + 1).padStart(2, '0'),
+              title: item.title,
+              desc: item.shortDesc || item.fullDesc || item.desc || 'Comprehensive clean energy solutions tailored to your power needs.',
+              path: '/services',
+            }));
+            setServices(formatted);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not load services for homepage section:', err);
+      }
+    };
+    fetchServices();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <section className="py-16 md:py-24 bg-white relative overflow-hidden">
       <EnergyGrid opacity={0.04} color="black" />
@@ -57,7 +100,7 @@ const ServicesSection = () => {
 
         {/* Cards grid */}
         <Stagger stagger={0.1} className="grid grid-cols-2 gap-3 sm:gap-6 md:gap-8">
-          {SERVICES.map((service) => {
+          {services.map((service) => {
             const Icon = service.icon;
             return (
               <Link to={service.path} key={service.number} className="block group h-full">

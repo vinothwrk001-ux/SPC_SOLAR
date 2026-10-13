@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
 import Button from '../../components/ui/Button';
 import { Reveal, EnergyGrid } from '../../components/motion';
+import api from '../../services/api';
 import { 
   FiHome, FiBriefcase, FiSettings, FiActivity, FiCheckCircle, 
-  FiArrowRight, FiChevronDown, FiZap 
+  FiArrowRight, FiChevronDown, FiZap, FiSun
 } from 'react-icons/fi';
 
-const SERVICES = [
+const STATIC_SERVICES = [
   {
     icon: FiHome,
     number: '01',
@@ -89,8 +90,98 @@ const SERVICES = [
   },
 ];
 
+const getServiceIcon = (category) => {
+  const cat = (category || '').toLowerCase();
+  if (cat.includes('residen')) return FiHome;
+  if (cat.includes('commerc')) return FiBriefcase;
+  if (cat.includes('industr')) return FiSettings;
+  if (cat.includes('maint') || cat.includes('amc')) return FiActivity;
+  if (cat.includes('stor') || cat.includes('batt')) return FiZap;
+  if (cat.includes('agri') || cat.includes('pump')) return FiSun;
+  return FiZap;
+};
+
+const formatImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+  if (url.startsWith('/uploads')) return `${baseUrl}${url}`;
+  return `${baseUrl}/uploads/${url}`;
+};
+
+const buildSpecs = (item) => {
+  if (Array.isArray(item.specs) && item.specs.length > 0) return item.specs;
+  const specs = [];
+  if (item.capacity) {
+    specs.push({ label: 'System Capacity', value: item.capacity });
+  }
+  if (item.warranty) {
+    specs.push({ label: 'Warranty', value: item.warranty });
+  }
+  if (item.category) {
+    specs.push({ label: 'Category', value: item.category });
+  }
+  const cat = (item.category || '').toLowerCase();
+  if (cat.includes('residen')) {
+    specs.push({ label: 'Govt. Subsidy', value: 'Up to ₹78,000 (PM Surya Ghar)' });
+  } else if (cat.includes('commerc') || cat.includes('industr')) {
+    specs.push({ label: 'Tax Incentive', value: '40% Accelerated Depreciation' });
+  } else if (cat.includes('agri')) {
+    specs.push({ label: 'Govt. Scheme', value: 'PM-KUSUM Subsidy Support' });
+  } else {
+    specs.push({ label: 'Execution', value: 'Turnkey Installation' });
+  }
+  return specs;
+};
+
+const buildBenefits = (item) => {
+  if (Array.isArray(item.benefits) && item.benefits.length > 0) {
+    return item.benefits;
+  }
+  return [
+    'Engineered for maximum annual solar yield',
+    'Tier-1 certified solar equipment and inverters',
+    'Full installation warranty and support SLA',
+    'Free site assessment and technical consultation'
+  ];
+};
+
 const ServicesPage = () => {
+  const [services, setServices] = useState(STATIC_SERVICES);
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchServices = async () => {
+      try {
+        const { data } = await api.get('/services');
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          const activeOnly = data.filter((s) => s.isActive !== false);
+          if (activeOnly.length > 0) {
+            const formatted = activeOnly.map((item, idx) => ({
+              id: item._id || idx,
+              number: String(idx + 1).padStart(2, '0'),
+              title: item.title,
+              category: item.category || 'Solar',
+              desc: item.shortDesc || item.fullDesc || item.desc || 'High-performance solar solution engineered for maximum efficiency.',
+              price: item.price || 'Custom Quote',
+              image: item.image,
+              icon: getServiceIcon(item.category),
+              specs: buildSpecs(item),
+              benefits: buildBenefits(item),
+            }));
+            setServices(formatted);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not load services from API, using default list:', err);
+      }
+    };
+    fetchServices();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <div>
@@ -101,36 +192,35 @@ const ServicesPage = () => {
 
       <PageHero
         label="Comprehensive Solar Solutions"
-        title="Our Certified Solar Services"
-        highlight="Solar Services"
-        normalCase={true}
+        title="OUR "
+        highlight="SERVICES"
         subtitle="Hover over or tap each service to view technical specifications, subsidies, and benefits."
       />
 
-      <section className="py-6 sm:py-10 lg:py-14 bg-[#0e0e0e] text-white relative overflow-hidden">
+      <section className="py-8 sm:py-12 lg:py-16 bg-white text-black relative overflow-hidden border-b border-gray-100">
         {/* Background Energy Grid */}
-        <EnergyGrid opacity={0.04} color="white" />
+        <EnergyGrid opacity={0.03} color="black" />
 
         {/* Ambient Red Glow */}
-        <div className="absolute top-1/4 -left-32 w-80 h-80 bg-red/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/4 -right-32 w-80 h-80 bg-red/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/4 -left-32 w-80 h-80 bg-red/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 -right-32 w-80 h-80 bg-red/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* 4 SERVICES DISPLAYED VERTICALLY ONE BY ONE */}
+          {/* DYNAMIC SERVICES DISPLAYED VERTICALLY */}
           <div className="space-y-3 sm:space-y-4 md:space-y-5">
-            {SERVICES.map((service, index) => {
-              const Icon = service.icon;
+            {services.map((service, index) => {
+              const Icon = service.icon || FiZap;
               const isActive = activeServiceIndex === index;
 
               return (
                 <div
-                  key={service.number}
+                  key={service.id || service.number || index}
                   onMouseEnter={() => setActiveServiceIndex(index)}
                   onClick={() => setActiveServiceIndex(index)}
                   className={`relative rounded-xl sm:rounded-2xl transition-all duration-300 overflow-hidden cursor-pointer border ${
                     isActive
-                      ? 'bg-gradient-to-br from-[#1a1a1a] via-[#121212] to-black border-red shadow-[0_10px_35px_rgba(204,34,34,0.25)] ring-1 ring-red/30'
-                      : 'bg-[#141414] border-white/10 hover:border-white/30 hover:bg-[#181818]'
+                      ? 'bg-white border-red shadow-[0_12px_40px_rgba(204,34,34,0.12)] ring-1 ring-red/30'
+                      : 'bg-gray-50/80 border-gray-200 hover:border-gray-300 hover:bg-white hover:shadow-md'
                   }`}
                 >
                   {/* Subtle red accent line at the left */}
@@ -143,7 +233,7 @@ const ServicesPage = () => {
                     <div className="flex items-center gap-2.5 sm:gap-5 min-w-0">
                       {/* Number */}
                       <span className={`font-heading text-lg sm:text-2xl md:text-3xl font-bold transition-colors ${
-                        isActive ? 'text-red' : 'text-white/30'
+                        isActive ? 'text-red' : 'text-gray-300'
                       }`}>
                         {service.number}
                       </span>
@@ -151,19 +241,19 @@ const ServicesPage = () => {
                       {/* Icon */}
                       <div className={`w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-lg sm:rounded-xl flex items-center justify-center transition-all flex-shrink-0 ${
                         isActive
-                          ? 'bg-red text-white shadow-lg shadow-red/40 scale-105'
-                          : 'bg-white/5 border border-white/10 text-white/70'
+                          ? 'bg-red text-white shadow-lg shadow-red/30 scale-105'
+                          : 'bg-white border border-gray-200 text-gray-700 shadow-sm'
                       }`}>
                         <Icon size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6" />
                       </div>
 
                       {/* Title & Category */}
                       <div className="min-w-0">
-                        <span className="text-[9px] font-accent font-semibold tracking-wider uppercase text-gray-400 block sm:hidden">
-                          Service {service.number}
+                        <span className="text-[9px] font-accent font-semibold tracking-wider uppercase text-gray-500 block sm:hidden">
+                          {service.category || `Service ${service.number}`}
                         </span>
                         <h3 className={`font-heading text-xs sm:text-lg md:text-2xl font-bold truncate transition-colors ${
-                          isActive ? 'text-white' : 'text-white/80'
+                          isActive ? 'text-black' : 'text-gray-800'
                         }`}>
                           {service.title}
                         </h3>
@@ -172,13 +262,13 @@ const ServicesPage = () => {
 
                     {/* Right side: Starting Price badge + Expand indicator */}
                     <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                      <div className="bg-white/5 border border-white/10 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-md sm:rounded-lg text-right">
-                        <p className="text-[8px] sm:text-[10px] text-gray-400 font-body leading-none mb-0.5">From</p>
+                      <div className="bg-white border border-gray-200 shadow-sm px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-md sm:rounded-lg text-right">
+                        <p className="text-[8px] sm:text-[10px] text-gray-500 font-body leading-none mb-0.5">From</p>
                         <p className="text-[11px] sm:text-sm text-red font-accent font-bold leading-none">{service.price}</p>
                       </div>
 
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-transform duration-300 ${
-                        isActive ? 'bg-red text-white rotate-180' : 'bg-white/5 text-gray-400'
+                        isActive ? 'bg-red text-white rotate-180 shadow-md shadow-red/20' : 'bg-gray-100 text-gray-500'
                       }`}>
                         <FiChevronDown size={14} className="sm:w-4 sm:h-4" />
                       </div>
@@ -192,44 +282,58 @@ const ServicesPage = () => {
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.3, ease: 'easeOut' }}
-                      className="px-3 pb-4 sm:px-6 sm:pb-6 md:px-7 md:pb-7 pt-1 border-t border-white/10"
+                      className="px-3 pb-4 sm:px-6 sm:pb-6 md:px-7 md:pb-7 pt-1 border-t border-gray-100"
                     >
+                      {/* Optional Service Image */}
+                      {service.image && (
+                        <div className="mb-4 rounded-xl overflow-hidden border border-gray-200/80 bg-gray-50 shadow-inner">
+                          <img
+                            src={formatImageUrl(service.image)}
+                            alt={service.title}
+                            className="w-full h-44 sm:h-56 object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      )}
+
                       {/* Description */}
-                      <p className="text-gray-300 font-body text-[11px] sm:text-sm leading-relaxed mb-3.5 sm:mb-5 max-w-3xl">
+                      <p className="text-gray-600 font-body text-[11px] sm:text-sm leading-relaxed mb-3.5 sm:mb-5 max-w-3xl">
                         {service.desc}
                       </p>
 
                       {/* Specifications & Benefits Grid */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-4 mb-4 sm:mb-6">
                         {/* Technical Specifications */}
-                        <div className="bg-black/50 border border-white/10 rounded-lg sm:rounded-xl p-3 sm:p-4">
-                          <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 pb-1.5 border-b border-white/10">
-                            <FiZap size={13} className="text-amber-400" />
-                            <h4 className="text-[10px] sm:text-xs font-accent font-bold uppercase tracking-wider text-white">
+                        <div className="bg-gray-50/90 border border-gray-200 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                          <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 pb-1.5 border-b border-gray-200">
+                            <FiZap size={13} className="text-amber-500" />
+                            <h4 className="text-[10px] sm:text-xs font-accent font-bold uppercase tracking-wider text-gray-900">
                               Technical Specifications
                             </h4>
                           </div>
                           <div className="space-y-1 sm:space-y-2">
                             {service.specs.map((spec, sIdx) => (
-                              <div key={sIdx} className="flex items-center justify-between text-[11px] sm:text-xs py-0.5 sm:py-1 border-b border-white/5 last:border-0">
-                                <span className="text-gray-400 font-body">{spec.label}</span>
-                                <span className="text-white font-accent font-semibold text-right">{spec.value}</span>
+                              <div key={sIdx} className="flex items-center justify-between text-[11px] sm:text-xs py-0.5 sm:py-1 border-b border-gray-200/60 last:border-0">
+                                <span className="text-gray-500 font-body">{spec.label}</span>
+                                <span className="text-gray-900 font-accent font-semibold text-right">{spec.value}</span>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         {/* Key Benefits */}
-                        <div className="bg-black/50 border border-white/10 rounded-lg sm:rounded-xl p-3 sm:p-4">
-                          <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 pb-1.5 border-b border-white/10">
+                        <div className="bg-gray-50/90 border border-gray-200 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                          <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 pb-1.5 border-b border-gray-200">
                             <FiCheckCircle size={13} className="text-red" />
-                            <h4 className="text-[10px] sm:text-xs font-accent font-bold uppercase tracking-wider text-white">
+                            <h4 className="text-[10px] sm:text-xs font-accent font-bold uppercase tracking-wider text-gray-900">
                               Key Benefits & Guarantees
                             </h4>
                           </div>
                           <ul className="space-y-1.5 sm:space-y-2">
                             {service.benefits.map((benefit, bIdx) => (
-                              <li key={bIdx} className="flex items-start gap-2 text-[11px] sm:text-xs text-gray-300 font-body">
+                              <li key={bIdx} className="flex items-start gap-2 text-[11px] sm:text-xs text-gray-700 font-body">
                                 <FiCheckCircle size={13} className="text-red flex-shrink-0 mt-0.5" />
                                 <span>{benefit}</span>
                               </li>
@@ -244,13 +348,13 @@ const ServicesPage = () => {
                           <Button
                             variant="primary"
                             size="md"
-                            className="w-full sm:w-auto justify-center !py-2 sm:!py-3 !px-4 sm:!px-6 !text-[11px] sm:!text-sm"
+                            className="w-full sm:w-auto justify-center !py-2 sm:!py-3 !px-4 sm:!px-6 !text-[11px] sm:!text-sm shadow-md shadow-red/20"
                             icon={<FiArrowRight size={13} />}
                           >
                             Get Free Quote for {service.title}
                           </Button>
                         </Link>
-                        <span className="text-[10px] sm:text-xs text-gray-400 font-body text-center sm:text-right">
+                        <span className="text-[10px] sm:text-xs text-gray-500 font-body text-center sm:text-right">
                           Free Site Survey & ROI Calculation Included
                         </span>
                       </div>

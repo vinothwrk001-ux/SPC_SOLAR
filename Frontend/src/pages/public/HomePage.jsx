@@ -9,6 +9,7 @@ import SubsidyBanner from '../../components/home/SubsidyBanner';
 import ReelCarousel from '../../components/reels/ReelCarousel';
 import TestimonialsSection from '../../components/home/TestimonialsSection';
 import CTABanner from '../../components/home/CTABanner';
+import ErrorBoundary from '../../components/ui/ErrorBoundary';
 
 const HomePage = () => {
   return (
@@ -22,7 +23,9 @@ const HomePage = () => {
       <ServicesSection />
       <ProjectsPreview />
       <WhyChooseUs />
-      <ReelCarousel />
+      <ErrorBoundary fallback={null}>
+        <ReelCarousel />
+      </ErrorBoundary>
       <SubsidyBanner />
       <TestimonialsSection />
       <CTABanner />

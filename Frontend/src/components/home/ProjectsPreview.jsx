@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from '../ui/Button';
 import { Reveal, Stagger } from '../motion';
 import { FiArrowRight, FiZap } from 'react-icons/fi';
+import api from '../../services/api';
 
-const PROJECTS = [
+const DEFAULT_IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1509391366360-5157625bf958?auto=format&fit=crop&q=80&w=800';
+
+const formatImageUrl = (url) => {
+  if (!url) return DEFAULT_IMAGE_FALLBACK;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+  if (url.startsWith('/uploads')) return `${baseUrl}${url}`;
+  return `${baseUrl}/uploads/${url}`;
+};
+
+const DEFAULT_PROJECTS = [
   {
     title: 'Green Valley Residence',
     capacity: '5 kW',
     type: 'Residential',
     savings: '₹72K/yr',
-    image: 'https://images.unsplash.com/photo-1611365892502-8eebf8c148e3?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1509391366360-5157625bf958?auto=format&fit=crop&q=80&w=800',
   },
   {
     title: 'TechPark Corporate',
@@ -30,6 +41,24 @@ const PROJECTS = [
 ];
 
 const ProjectsPreview = () => {
+  const [projects, setProjects] = useState(DEFAULT_PROJECTS);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const { data } = await api.get('/projects');
+        if (Array.isArray(data) && data.length > 0) {
+          const featured = data.filter((p) => Boolean(p.isFeatured || p.isFeatures));
+          const list = featured.length > 0 ? featured.slice(0, 3) : data.slice(0, 3);
+          setProjects(list);
+        }
+      } catch (err) {
+        console.error('Failed to load featured projects preview:', err);
+      }
+    };
+    fetchProjects();
+  }, []);
+
   return (
     <section className="py-16 md:py-24 bg-gray-50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,45 +85,55 @@ const ProjectsPreview = () => {
 
         {/* Project cards */}
         <Stagger stagger={0.1} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PROJECTS.map((project) => (
-            <div key={project.title} className="group relative overflow-hidden rounded-card shadow-card cursor-pointer">
-              {/* Image */}
-              <div className="overflow-hidden h-80">
-                <motion.img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover"
-                  whileHover={{ scale: 1.06 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                />
-              </div>
-
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-
-              {/* Content */}
-              <div className="absolute inset-0 flex flex-col justify-end p-6">
-                {/* Tags */}
-                <div className="flex gap-2 mb-3 translate-y-2 group-hover:translate-y-0 transition-transform duration-350">
-                  <span className="bg-red text-white text-xs font-accent font-bold px-3 py-1 rounded-sm uppercase tracking-wider">
-                    {project.capacity}
-                  </span>
-                  <span className="bg-white/10 backdrop-blur-sm text-white text-xs font-accent px-3 py-1 rounded-sm uppercase tracking-wider border border-white/20">
-                    {project.type}
-                  </span>
+          {projects.map((project, idx) => {
+            const pType = project.type || project.clientType || 'Residential';
+            return (
+              <div key={project._id || project.title || idx} className="group relative overflow-hidden rounded-card shadow-card cursor-pointer">
+                {/* Image */}
+                <div className="overflow-hidden h-80 bg-gray-900">
+                  <motion.img
+                    src={formatImageUrl(project.image)}
+                    alt={project.title}
+                    onError={(e) => {
+                      e.currentTarget.src = DEFAULT_IMAGE_FALLBACK;
+                    }}
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.06 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  />
                 </div>
 
-                {/* Title */}
-                <h3 className="font-heading text-2xl text-white mb-2">{project.title}</h3>
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
-                {/* Savings — revealed on hover */}
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-350">
-                  <FiZap size={14} className="text-red" />
-                  <span className="text-white/70 font-body text-sm">Annual Savings: <strong className="text-white">{project.savings}</strong></span>
+                {/* Content */}
+                <div className="absolute inset-0 flex flex-col justify-end p-6">
+                  {/* Tags */}
+                  <div className="flex gap-2 mb-3 translate-y-2 group-hover:translate-y-0 transition-transform duration-350">
+                    <span className="bg-red text-white text-xs font-accent font-bold px-3 py-1 rounded-sm uppercase tracking-wider">
+                      {project.capacity}
+                    </span>
+                    <span className="bg-white/10 backdrop-blur-sm text-white text-xs font-accent px-3 py-1 rounded-sm uppercase tracking-wider border border-white/20">
+                      {pType}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="font-heading text-2xl text-white mb-2 line-clamp-1">{project.title}</h3>
+
+                  {/* Savings — revealed on hover */}
+                  {project.savings && (
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-350">
+                      <FiZap size={14} className="text-red" />
+                      <span className="text-white/70 font-body text-sm">
+                        Annual Savings: <strong className="text-white">{project.savings}</strong>
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </Stagger>
       </div>
     </section>

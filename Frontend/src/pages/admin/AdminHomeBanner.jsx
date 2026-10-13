@@ -20,7 +20,9 @@ import {
   FiCheckCircle, 
   FiLayers,
   FiArrowRight,
-  FiRefreshCw
+  FiRefreshCw,
+  FiSmartphone,
+  FiX
 } from 'react-icons/fi';
 
 const QUICK_CTA_LINKS = [
@@ -56,6 +58,11 @@ const AdminHomeBanner = () => {
   const [filePreview, setFilePreview] = useState(null);
   const [fileType, setFileType] = useState('image'); // 'image' or 'video'
 
+  // Mobile Banner Image State
+  const [selectedMobileFile, setSelectedMobileFile] = useState(null);
+  const [mobileFilePreview, setMobileFilePreview] = useState(null);
+  const [removeMobileMedia, setRemoveMobileMedia] = useState(false);
+
   const [editingBanner, setEditingBanner] = useState(null);
 
   const fetchBanners = async () => {
@@ -90,6 +97,26 @@ const AdminHomeBanner = () => {
     setFilePreview(previewUrl);
   };
 
+  const handleMobileFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setSelectedMobileFile(file);
+    setRemoveMobileMedia(false);
+    const previewUrl = URL.createObjectURL(file);
+    setMobileFilePreview(previewUrl);
+  };
+
+  const handleClearMobileFile = () => {
+    setSelectedMobileFile(null);
+    setMobileFilePreview(null);
+    setRemoveMobileMedia(true);
+    const input1 = document.getElementById('mobile-banner-file-input');
+    if (input1) input1.value = '';
+    const input2 = document.getElementById('mobile-banner-file-input-edit');
+    if (input2) input2.value = '';
+  };
+
   const resetForm = () => {
     setFormData({
       title: '',
@@ -103,8 +130,15 @@ const AdminHomeBanner = () => {
     });
     setSelectedFile(null);
     setFilePreview(null);
+    setSelectedMobileFile(null);
+    setMobileFilePreview(null);
+    setRemoveMobileMedia(false);
     setFileType('image');
     setEditingBanner(null);
+    const fileInput = document.getElementById('banner-file-input');
+    if (fileInput) fileInput.value = '';
+    const mobileFileInput = document.getElementById('mobile-banner-file-input');
+    if (mobileFileInput) mobileFileInput.value = '';
   };
 
   const handleOpenAdd = () => {
@@ -126,6 +160,9 @@ const AdminHomeBanner = () => {
     });
     setSelectedFile(null);
     setFilePreview(null);
+    setSelectedMobileFile(null);
+    setMobileFilePreview(banner.mobileMediaUrl || banner.mobileImageUrl || null);
+    setRemoveMobileMedia(false);
     setFileType(banner.mediaType || 'image');
     setIsEditModalOpen(true);
   };
@@ -141,6 +178,9 @@ const AdminHomeBanner = () => {
       setUploading(true);
       const data = new FormData();
       data.append('media', selectedFile);
+      if (selectedMobileFile) {
+        data.append('mobileMedia', selectedMobileFile);
+      }
       data.append('mediaType', fileType);
       data.append('title', formData.title);
       data.append('subtitle', formData.subtitle);
@@ -176,6 +216,11 @@ const AdminHomeBanner = () => {
       if (selectedFile) {
         data.append('media', selectedFile);
         data.append('mediaType', fileType);
+      }
+      if (selectedMobileFile) {
+        data.append('mobileMedia', selectedMobileFile);
+      } else if (removeMobileMedia) {
+        data.append('removeMobileMedia', 'true');
       }
       data.append('title', formData.title);
       data.append('subtitle', formData.subtitle);
@@ -227,6 +272,7 @@ const AdminHomeBanner = () => {
 
   const getMediaUrl = (url) => {
     if (!url) return '';
+    if (url.startsWith('blob:') || url.startsWith('data:')) return url;
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
     return `http://localhost:5000${url}`;
   };
@@ -311,11 +357,16 @@ const AdminHomeBanner = () => {
                     )}
 
                     {/* Top Badges */}
-                    <div className="absolute top-3 left-3 flex items-center gap-2 z-10 pointer-events-none">
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10 pointer-events-none">
                       <span className="bg-black/70 backdrop-blur-sm text-white text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1">
                         {isVideo ? <FiVideo className="text-red-400" /> : <FiImage className="text-blue-400" />}
                         {isVideo ? 'VIDEO' : 'IMAGE'}
                       </span>
+                      {(banner.mobileMediaUrl || banner.mobileImageUrl) && (
+                        <span className="bg-purple-600/90 backdrop-blur-sm text-white text-[11px] font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
+                          <FiSmartphone size={12} /> MOBILE
+                        </span>
+                      )}
                       <span className="bg-black/70 backdrop-blur-sm text-white text-[11px] font-mono px-2 py-1 rounded-md">
                         #{banner.order ?? index + 1}
                       </span>
@@ -359,7 +410,7 @@ const AdminHomeBanner = () => {
                       </div>
 
                       {/* CTA Info Pill */}
-                      <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs space-y-1">
+                      <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs space-y-1.5">
                         <div className="flex items-center justify-between text-gray-500">
                           <span className="font-semibold text-gray-700">CTA Button:</span>
                           <span className="font-bold text-red-600">{banner.ctaText || 'None'}</span>
@@ -368,6 +419,14 @@ const AdminHomeBanner = () => {
                           <span className="font-semibold text-gray-700">Target URL:</span>
                           <span className="font-mono text-gray-800 truncate max-w-[180px]" title={banner.ctaUrl}>
                             {banner.ctaUrl || '—'}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-gray-500 border-t border-gray-200/60 pt-1.5 mt-1">
+                          <span className="font-semibold text-gray-700 flex items-center gap-1">
+                            <FiSmartphone size={12} className="text-gray-400" /> Mobile View:
+                          </span>
+                          <span className={`font-semibold ${banner.mobileMediaUrl || banner.mobileImageUrl ? 'text-green-600' : 'text-gray-400'}`}>
+                            {banner.mobileMediaUrl || banner.mobileImageUrl ? 'Custom Image' : 'Desktop Fallback'}
                           </span>
                         </div>
                       </div>
@@ -452,6 +511,59 @@ const AdminHomeBanner = () => {
                 <span className="absolute top-2 left-2 bg-black/80 text-white text-[10px] font-bold px-2 py-0.5 rounded">
                   {fileType.toUpperCase()} PREVIEW
                 </span>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Banner Image Upload Area (Optional) */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-bold text-gray-800 uppercase flex items-center gap-1.5">
+                <FiSmartphone className="text-red-600" />
+                Mobile Banner Image (Optional)
+              </label>
+              <span className="text-[10px] bg-red-100 text-red-700 font-semibold px-2 py-0.5 rounded">
+                Mobile View (9:16)
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mb-3">
+              Upload a vertical portrait image tailored specifically for mobile phone screens. If left blank, the main desktop media will be used automatically.
+            </p>
+
+            <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-red-500 transition-colors bg-white">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleMobileFileChange}
+                className="w-full text-xs cursor-pointer"
+                id="mobile-banner-file-input"
+              />
+              <p className="text-[11px] text-gray-500 mt-1.5">
+                Supported: JPG, PNG, WEBP. (Recommended: 1080×1920 / 9:16 vertical ratio)
+              </p>
+            </div>
+
+            {/* Mobile Image Preview */}
+            {mobileFilePreview && (
+              <div className="mt-3 flex items-center gap-4 bg-white p-3 rounded-lg border border-gray-200">
+                <div className="w-14 h-24 bg-black rounded-md overflow-hidden flex-shrink-0 border border-gray-300 relative shadow-sm">
+                  <img src={mobileFilePreview} alt="Mobile Preview" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="inline-block bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded mb-1">
+                    📱 Mobile Image Attached
+                  </span>
+                  <p className="text-xs font-medium text-gray-700 truncate">
+                    {selectedMobileFile ? selectedMobileFile.name : 'Selected Mobile Image'}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleClearMobileFile}
+                    className="mt-2 text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1"
+                  >
+                    <FiTrash2 size={12} /> Remove Mobile Image
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -598,6 +710,73 @@ const AdminHomeBanner = () => {
             ) : editingBanner ? (
               <div className="mt-2 text-xs text-gray-500 flex items-center gap-2 font-mono truncate">
                 <span>Current file: {editingBanner.mediaUrl || editingBanner.imageUrl}</span>
+              </div>
+            ) : null}
+          </div>
+
+          {/* Replace Mobile Banner Image (Optional) */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-bold text-gray-800 uppercase flex items-center gap-1.5">
+                <FiSmartphone className="text-red-600" />
+                Mobile Banner Image (Optional)
+              </label>
+              <span className="text-[10px] bg-red-100 text-red-700 font-semibold px-2 py-0.5 rounded">
+                Mobile View (9:16)
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mb-3">
+              Upload a vertical portrait image for mobile phones, or keep/remove the existing one.
+            </p>
+
+            <div className="border border-gray-300 rounded-xl p-3 text-center hover:border-red-500 transition-colors bg-white">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleMobileFileChange}
+                className="w-full text-xs cursor-pointer"
+                id="mobile-banner-file-input-edit"
+              />
+              <p className="text-[11px] text-gray-500 mt-1">
+                Supported: JPG, PNG, WEBP (Recommended: 1080×1920 portrait)
+              </p>
+            </div>
+
+            {/* Mobile Image Preview in Edit Modal */}
+            {mobileFilePreview && !removeMobileMedia ? (
+              <div className="mt-3 flex items-center gap-4 bg-white p-3 rounded-lg border border-gray-200">
+                <div className="w-14 h-24 bg-black rounded-md overflow-hidden flex-shrink-0 border border-gray-300 relative shadow-sm">
+                  <img src={getMediaUrl(mobileFilePreview)} alt="Mobile Preview" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="inline-block bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded mb-1">
+                    📱 {selectedMobileFile ? 'New Mobile File Selected' : 'Active Mobile Image'}
+                  </span>
+                  <p className="text-xs text-gray-600 truncate">
+                    {selectedMobileFile ? selectedMobileFile.name : (editingBanner?.mobileMediaUrl || editingBanner?.mobileImageUrl)}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleClearMobileFile}
+                    className="mt-1.5 text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1"
+                  >
+                    <FiTrash2 size={12} /> Remove Mobile Image
+                  </button>
+                </div>
+              </div>
+            ) : removeMobileMedia ? (
+              <div className="mt-2 p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 flex items-center justify-between">
+                <span>Mobile image will be removed on save (desktop media fallback will be used).</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRemoveMobileMedia(false);
+                    setMobileFilePreview(editingBanner?.mobileMediaUrl || editingBanner?.mobileImageUrl || null);
+                  }}
+                  className="text-xs text-blue-600 underline font-semibold ml-2 cursor-pointer"
+                >
+                  Undo
+                </button>
               </div>
             ) : null}
           </div>

@@ -14,6 +14,14 @@ const bannerSchema = new mongoose.Schema({
     enum: ['image', 'video'],
     default: 'image',
   },
+  mobileMediaUrl: {
+    type: String,
+    default: '',
+  },
+  mobileImageUrl: {
+    type: String,
+    default: '',
+  },
   title: {
     type: String,
     default: '',

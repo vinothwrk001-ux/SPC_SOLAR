@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
 import toast from 'react-hot-toast';
-import { FiSave, FiSettings } from 'react-icons/fi';
+import { FiSave, FiSettings, FiRefreshCw, FiDollarSign, FiZap, FiGrid } from 'react-icons/fi';
 
 const AdminSolarCalculatorConfig = () => {
   const [loading, setLoading] = useState(true);
@@ -53,7 +52,7 @@ const AdminSolarCalculatorConfig = () => {
     setSaving(true);
     try {
       await api.put('/solar-calculator/admin/config', form);
-      toast.success('Solar Calculator Settings Saved!');
+      toast.success('Solar Calculator Settings Saved Successfully!');
     } catch (error) {
       toast.error('Failed to save settings');
     } finally {
@@ -61,123 +60,181 @@ const AdminSolarCalculatorConfig = () => {
     }
   };
 
-  if (loading) {
-    return <div className="p-8 text-center text-gray font-accent">Loading Solar Calculator Settings...</div>;
-  }
-
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-12">
-      {/* Header */}
-      <div className="border-b border-gray-light pb-4">
-        <h1 className="text-3xl font-heading text-black flex items-center gap-2">
-          <FiSettings className="text-red" /> SOLAR CALCULATOR SETTINGS
-        </h1>
-        <p className="text-gray text-sm mt-1">
-          Simple configuration for your public solar savings calculator.
-        </p>
+    <div className="space-y-6 pb-12">
+      {/* Header Card */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-red animate-pulse" />
+            <span className="font-accent text-xs font-bold uppercase tracking-wider text-red">Algorithm Configuration</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-heading text-black font-bold tracking-tight">
+            Solar Calculator Settings Module
+          </h1>
+          <p className="text-sm text-gray-500 font-body mt-1">
+            Configure tariffs, generation formulas, rooftop area ratios, and cost benchmarks for the customer savings estimator.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 self-stretch sm:self-auto">
+          <Button
+            variant="outline"
+            onClick={fetchConfig}
+            className="flex items-center gap-2 text-xs font-accent uppercase tracking-wider px-3 py-2.5"
+            title="Refresh settings"
+          >
+            <FiRefreshCw className={loading ? 'animate-spin' : ''} size={15} />
+            <span className="hidden sm:inline">Refresh</span>
+          </Button>
+
+          <Button
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={saving}
+            className="flex items-center gap-2 text-xs font-accent uppercase tracking-wider px-4 py-2.5 shadow-md hover:shadow-lg"
+          >
+            <FiSave size={16} />
+            <span>{saving ? 'Saving...' : 'Save Settings'}</span>
+          </Button>
+        </div>
       </div>
 
-      <Card className="p-8 shadow-card border border-gray-light">
+      {/* Stats KPI Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-red font-bold">Base Benchmark / kW</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-red">₹{Number(form.perKwPrice).toLocaleString()}</span>
+            <span className="text-xs bg-red-50 text-red px-2 py-0.5 rounded-md font-semibold">Per kW</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-blue-600 font-bold">Grid Tariff Rate</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-blue-700">₹{form.baseTariff}</span>
+            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-semibold">/ kWh</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-amber-600 font-bold">Roof Area Ratio</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-amber-700">{form.roofAreaSqFtPerKW} sq.ft</span>
+            <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-md font-semibold">Per kW</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-accent uppercase tracking-wider text-green-600 font-bold">Default Bill</span>
+          <div className="flex items-baseline justify-between mt-2">
+            <span className="text-2xl font-heading font-bold text-green-700">₹{Number(form.defaultBillAmount).toLocaleString()}</span>
+            <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-md font-semibold">/ Month</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Settings Form Card */}
+      <Card className="p-6 sm:p-8 bg-white border border-gray-200/90 shadow-sm rounded-2xl">
         <form onSubmit={handleSubmit} className="space-y-6">
-          
+          <div className="border-b border-gray-100 pb-4">
+            <h3 className="font-heading font-bold text-lg text-black">Financial & Technical Parameters</h3>
+            <p className="text-xs text-gray-500 font-body mt-0.5">
+              These values directly influence the estimations displayed on the public Solar Calculator page.
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-accent font-semibold mb-1">
-                Base Turnkey Cost per kW (₹ / kW)
+              <label className="block mb-1.5 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Installation Price per kW (₹)
               </label>
-              <Input
+              <input
                 type="number"
                 value={form.perKwPrice}
-                onChange={(e) => setForm({ ...form, perKwPrice: parseInt(e.target.value) || 0 })}
-                placeholder="e.g. 45000"
-                required
+                onChange={(e) => setForm({ ...form, perKwPrice: Number(e.target.value) })}
+                className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-btn focus:bg-white focus:outline-none focus:border-black"
               />
-              <span className="text-xs text-gray mt-1 block">Average system cost per 1 kW installation</span>
+              <span className="text-xs text-gray-400 font-body mt-1 block">Default benchmark: ₹45,000 / kW</span>
             </div>
 
             <div>
-              <label className="block text-sm font-accent font-semibold mb-1">
-                Base Electricity Rate (₹ / kWh unit)
+              <label className="block mb-1.5 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Average Grid Electricity Tariff (₹ / kWh Unit)
               </label>
-              <Input
+              <input
                 type="number"
                 step="0.1"
                 value={form.baseTariff}
-                onChange={(e) => setForm({ ...form, baseTariff: parseFloat(e.target.value) || 0 })}
-                placeholder="e.g. 8.5"
-                required
+                onChange={(e) => setForm({ ...form, baseTariff: Number(e.target.value) })}
+                className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-btn focus:bg-white focus:outline-none focus:border-black"
               />
-              <span className="text-xs text-gray mt-1 block">Local electricity tariff rate per unit</span>
+              <span className="text-xs text-gray-400 font-body mt-1 block">DISCOM average rate in ₹ (e.g. 8.5)</span>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-light">
             <div>
-              <label className="block text-sm font-accent font-semibold mb-1">
-                Required Roof Area per kW (sq. ft / kW)
+              <label className="block mb-1.5 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Rooftop Area Requirement (Sq. Ft per kW)
               </label>
-              <Input
+              <input
                 type="number"
                 value={form.roofAreaSqFtPerKW}
-                onChange={(e) => setForm({ ...form, roofAreaSqFtPerKW: parseInt(e.target.value) || 0 })}
-                placeholder="e.g. 60"
-                required
+                onChange={(e) => setForm({ ...form, roofAreaSqFtPerKW: Number(e.target.value) })}
+                className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-btn focus:bg-white focus:outline-none focus:border-black"
               />
-              <span className="text-xs text-gray mt-1 block">Rooftop space needed per 1 kW solar panel</span>
+              <span className="text-xs text-gray-400 font-body mt-1 block">Standard shadow-free area per kilowatt (approx 60-80)</span>
             </div>
 
             <div>
-              <label className="block text-sm font-accent font-semibold mb-1">
-                Default Slider Electricity Bill (₹)
+              <label className="block mb-1.5 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Default Monthly Bill Slider Starting Point (₹)
               </label>
-              <Input
+              <input
                 type="number"
                 value={form.defaultBillAmount}
-                onChange={(e) => setForm({ ...form, defaultBillAmount: parseInt(e.target.value) || 0 })}
-                placeholder="e.g. 6900"
-                required
+                onChange={(e) => setForm({ ...form, defaultBillAmount: Number(e.target.value) })}
+                className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-btn focus:bg-white focus:outline-none focus:border-black"
               />
-              <span className="text-xs text-gray mt-1 block">Default bill amount pre-selected on calculator slider</span>
+              <span className="text-xs text-gray-400 font-body mt-1 block">Pre-selected value on calculator load</span>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-light">
             <div>
-              <label className="block text-sm font-accent font-semibold mb-1">
-                Minimum Bill Limit (₹)
+              <label className="block mb-1.5 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Minimum Bill Amount Slider Limit (₹)
               </label>
-              <Input
+              <input
                 type="number"
                 value={form.minBillAmount}
-                onChange={(e) => setForm({ ...form, minBillAmount: parseInt(e.target.value) || 0 })}
-                placeholder="500"
+                onChange={(e) => setForm({ ...form, minBillAmount: Number(e.target.value) })}
+                className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-btn focus:bg-white focus:outline-none focus:border-black"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-accent font-semibold mb-1">
-                Maximum Bill Limit (₹)
+              <label className="block mb-1.5 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                Maximum Bill Amount Slider Limit (₹)
               </label>
-              <Input
+              <input
                 type="number"
                 value={form.maxBillAmount}
-                onChange={(e) => setForm({ ...form, maxBillAmount: parseInt(e.target.value) || 0 })}
-                placeholder="50000"
+                onChange={(e) => setForm({ ...form, maxBillAmount: Number(e.target.value) })}
+                className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-btn focus:bg-white focus:outline-none focus:border-black"
               />
             </div>
           </div>
 
-          <div className="pt-6 border-t border-gray-light flex justify-end">
+          <div className="flex justify-end pt-4 border-t border-gray-100">
             <Button
               type="submit"
               variant="primary"
               disabled={saving}
-              className="bg-red hover:bg-black text-white px-8 py-3 flex items-center gap-2"
+              className="text-xs font-accent uppercase tracking-wider px-6 py-2.5 flex items-center gap-1.5"
             >
-              <FiSave /> <span>{saving ? 'Saving...' : 'Save Settings'}</span>
+              <FiSave size={16} />
+              <span>{saving ? 'Saving...' : 'Save Configuration'}</span>
             </Button>
           </div>
-
         </form>
       </Card>
     </div>

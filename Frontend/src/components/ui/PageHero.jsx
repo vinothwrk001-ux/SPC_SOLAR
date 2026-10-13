@@ -6,9 +6,39 @@ import { EnergyGrid } from '../motion';
  * PageHero — Shared hero for inner pages (About, Services, etc.)
  * Handles the fixed navbar offset and renders a consistent header.
  */
-const PageHero = ({ label, title, highlight, subtitle, children, normalCase }) => {
-  // Split title at the highlight word for color treatment
-  const titleParts = highlight ? title.split(highlight) : [title];
+const PageHero = ({ label, title = '', highlight, subtitle, children, normalCase }) => {
+  // Render title with highlighted word safely whether highlight is part of title or separate
+  const renderTitle = () => {
+    if (!title && !highlight) return null;
+    if (!highlight) return title;
+
+    // Check if title already includes the highlight keyword (case-insensitive)
+    const escapedHighlight = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escapedHighlight})`, 'i');
+
+    if (regex.test(title)) {
+      const parts = title.split(regex);
+      return parts.map((part, index) => {
+        if (regex.test(part)) {
+          return (
+            <span key={index} className="text-red inline-block whitespace-nowrap">
+              {part}
+            </span>
+          );
+        }
+        return part;
+      });
+    }
+
+    // If title does not contain the highlight keyword, append it with clean spacing
+    const cleanTitle = (title || '').trimEnd();
+    return (
+      <>
+        {cleanTitle ? `${cleanTitle} ` : ''}
+        <span className="text-red inline-block whitespace-nowrap">{highlight}</span>
+      </>
+    );
+  };
 
   return (
     <section className="relative bg-black text-white pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-14 md:pb-20 overflow-hidden">
@@ -41,15 +71,7 @@ const PageHero = ({ label, title, highlight, subtitle, children, normalCase }) =
             transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             className={`font-heading text-2xl sm:text-4xl md:text-6xl lg:text-7xl text-white leading-tight sm:leading-none ${normalCase ? '' : 'uppercase'}`}
           >
-            {highlight ? (
-              <>
-                {titleParts[0]}
-                <span className="text-red inline-block whitespace-nowrap">{highlight}</span>
-                {titleParts[1]}
-              </>
-            ) : (
-              title
-            )}
+            {renderTitle()}
           </motion.h1>
         </div>
 

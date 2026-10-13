@@ -43,7 +43,7 @@ export const Stagger = ({ children, className = '', delay = 0, stagger = 0.08, o
     >
       {React.Children.map(children, (child, i) =>
         child ? (
-          <motion.div variants={staggerChild} key={i}>
+          <motion.div variants={staggerChild} key={i} className="h-full">
             {child}
           </motion.div>
         ) : null

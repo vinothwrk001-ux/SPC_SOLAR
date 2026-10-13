@@ -30,7 +30,15 @@ const ReelCarousel = () => {
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem('spc_reel_muted') === 'true');
   const [shareSheetOpen, setShareSheetOpen] = useState(false);
 
+  // Mobile View State
+  const [mobileIndex, setMobileIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState(1);
+
+  // Refs
   const videoRefs = useRef({});
+  const touchStartX = useRef(null);
+  const touchEndX = useRef(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -123,12 +131,7 @@ const ReelCarousel = () => {
   };
 
   const visibleReels = reels.slice(startIndex, startIndex + itemsPerPage);
-  const activeReel = activeReelIndex !== null ? reels[activeReelIndex] : null;
-
-  if (!loading && reels.length === 0) return null;
-
-  const [mobileIndex, setMobileIndex] = useState(0);
-  const [slideDirection, setSlideDirection] = useState(1);
+  const activeReel = activeReelIndex !== null && reels[activeReelIndex] ? reels[activeReelIndex] : null;
 
   const safeMobileIndex = reels.length > 0 ? ((mobileIndex % reels.length) + reels.length) % reels.length : 0;
   const currentMobileReel = reels.length > 0 ? reels[safeMobileIndex] : null;
@@ -146,9 +149,6 @@ const ReelCarousel = () => {
   };
 
   // Touch swipe support for mobile
-  const touchStartX = useRef(null);
-  const touchEndX = useRef(null);
-
   const onTouchStart = (e) => {
     touchEndX.current = null;
     touchStartX.current = e.targetTouches[0].clientX;
@@ -169,6 +169,11 @@ const ReelCarousel = () => {
     touchStartX.current = null;
     touchEndX.current = null;
   };
+
+  // If loading is done and there are no reels, return null safely after all hooks are executed
+  if (!loading && reels.length === 0) {
+    return null;
+  }
 
   const renderReelCard = (reel, globalIdx) => (
     <motion.div

@@ -1,8 +1,26 @@
 const Lead = require('../models/Lead');
 
+const normalizeStatus = (status) => {
+  if (!status) return 'New';
+  const s = status.trim().toUpperCase().replace(/[\s-]/g, '_');
+  const map = {
+    'NEW': 'New',
+    'CONTACTED': 'Contacted',
+    'QUOTED': 'Quoted',
+    'FOLLOW_UP': 'Follow-up',
+    'FOLLOWUP': 'Follow-up',
+    'IN_DISCUSSION': 'In Discussion',
+    'INDISCUSSION': 'In Discussion',
+    'CONVERTED': 'Converted',
+    'CLOSED': 'Closed',
+    'LOST': 'Lost'
+  };
+  return map[s] || status;
+};
+
 exports.createLead = async (req, res) => {
   try {
-    const { phone, name, city, state, source, notes } = req.body;
+    const { phone, name, city, state, source, notes, monthlyBill, systemSize, email, status } = req.body;
     
     if (!phone) {
       return res.status(400).json({ success: false, message: 'Phone number is required' });
@@ -15,7 +33,10 @@ exports.createLead = async (req, res) => {
       state: (state || '').trim(),
       source: source || 'Quotation Modal (₹1,000 Offer)',
       notes: notes || '',
-      status: 'New'
+      monthlyBill: monthlyBill || '',
+      systemSize: systemSize || '',
+      email: email || '',
+      status: normalizeStatus(status || 'New')
     });
 
     await newLead.save();
@@ -39,19 +60,22 @@ exports.getLeads = async (req, res) => {
 exports.updateLead = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, notes, name, city, state } = req.body;
+    const { status, notes, name, city, state, monthlyBill, systemSize, email } = req.body;
 
     const updateData = {};
-    if (status) updateData.status = status;
+    if (status !== undefined) updateData.status = normalizeStatus(status);
     if (notes !== undefined) updateData.notes = notes;
-    if (name) updateData.name = name;
-    if (city) updateData.city = city;
-    if (state) updateData.state = state;
+    if (name !== undefined) updateData.name = name;
+    if (city !== undefined) updateData.city = city;
+    if (state !== undefined) updateData.state = state;
+    if (monthlyBill !== undefined) updateData.monthlyBill = monthlyBill;
+    if (systemSize !== undefined) updateData.systemSize = systemSize;
+    if (email !== undefined) updateData.email = email;
 
     const updatedLead = await Lead.findByIdAndUpdate(
       id,
       updateData,
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     if (!updatedLead) {
@@ -61,7 +85,7 @@ exports.updateLead = async (req, res) => {
     res.status(200).json({ success: true, message: 'Lead updated successfully', lead: updatedLead });
   } catch (error) {
     console.error('Error updating lead:', error);
-    res.status(500).json({ success: false, message: 'Server error while updating lead' });
+    res.status(500).json({ success: false, message: error.message || 'Server error while updating lead' });
   }
 };
 

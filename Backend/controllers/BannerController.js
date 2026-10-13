@@ -20,6 +20,8 @@ exports.getBanners = async (req, res) => {
       _id: primaryBanner?._id,
       imageUrl: primaryBanner?.imageUrl || primaryBanner?.mediaUrl || '',
       mediaUrl: primaryBanner?.mediaUrl || primaryBanner?.imageUrl || '',
+      mobileMediaUrl: primaryBanner?.mobileMediaUrl || '',
+      mobileImageUrl: primaryBanner?.mobileImageUrl || primaryBanner?.mobileMediaUrl || '',
       mediaType: primaryBanner?.mediaType || 'image',
       title: primaryBanner?.title || '',
       subtitle: primaryBanner?.subtitle || '',
@@ -49,20 +51,30 @@ exports.getAllBannersAdmin = async (req, res) => {
 // @access  Private/Admin
 exports.uploadBanner = async (req, res) => {
   try {
-    if (!req.file && !req.body.mediaUrl) {
-      return res.status(400).json({ success: false, message: 'Please upload an image or video file' });
+    const files = req.files || (req.file ? [req.file] : []);
+    const desktopFile = files.find(f => f.fieldname === 'media' || f.fieldname === 'file') || 
+      (!files.some(f => f.fieldname === 'mobileMedia' || f.fieldname === 'mobileFile') ? files[0] : null);
+    const mobileFile = files.find(f => f.fieldname === 'mobileMedia' || f.fieldname === 'mobileFile');
+
+    if (!desktopFile && !req.body.mediaUrl) {
+      return res.status(400).json({ success: false, message: 'Please upload an image or video file for the main banner' });
     }
 
-    let mediaUrl = req.body.mediaUrl;
+    let mediaUrl = req.body.mediaUrl || '';
     let mediaType = req.body.mediaType || 'image';
+    let mobileMediaUrl = req.body.mobileMediaUrl || '';
 
-    if (req.file) {
-      mediaUrl = `/uploads/${req.file.filename}`;
-      if (req.file.mimetype.startsWith('video') || /\.(mp4|webm|mov|mkv)$/i.test(req.file.originalname)) {
+    if (desktopFile) {
+      mediaUrl = `/uploads/${desktopFile.filename}`;
+      if (desktopFile.mimetype.startsWith('video') || /\.(mp4|webm|mov|mkv)$/i.test(desktopFile.originalname)) {
         mediaType = 'video';
       } else {
         mediaType = 'image';
       }
+    }
+
+    if (mobileFile) {
+      mobileMediaUrl = `/uploads/${mobileFile.filename}`;
     }
 
     const {
@@ -79,6 +91,8 @@ exports.uploadBanner = async (req, res) => {
     const banner = new Banner({
       mediaUrl,
       imageUrl: mediaUrl,
+      mobileMediaUrl,
+      mobileImageUrl: mobileMediaUrl,
       mediaType,
       title,
       subtitle,
@@ -109,8 +123,12 @@ exports.updateBanner = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Banner not found' });
     }
 
-    if (req.file) {
-      // If updating media, remove old media file if on local disk
+    const files = req.files || (req.file ? [req.file] : []);
+    const desktopFile = files.find(f => f.fieldname === 'media' || f.fieldname === 'file') ||
+      (!files.some(f => f.fieldname === 'mobileMedia' || f.fieldname === 'mobileFile') ? files[0] : null);
+    const mobileFile = files.find(f => f.fieldname === 'mobileMedia' || f.fieldname === 'mobileFile');
+
+    if (desktopFile) {
       const oldMedia = banner.mediaUrl || banner.imageUrl;
       if (oldMedia && oldMedia.startsWith('/uploads/')) {
         const oldFilePath = path.join(__dirname, '..', oldMedia);
@@ -118,13 +136,36 @@ exports.updateBanner = async (req, res) => {
           try { fs.unlinkSync(oldFilePath); } catch (e) {}
         }
       }
-      banner.mediaUrl = `/uploads/${req.file.filename}`;
+      banner.mediaUrl = `/uploads/${desktopFile.filename}`;
       banner.imageUrl = banner.mediaUrl;
-      if (req.file.mimetype.startsWith('video') || /\.(mp4|webm|mov|mkv)$/i.test(req.file.originalname)) {
+      if (desktopFile.mimetype.startsWith('video') || /\.(mp4|webm|mov|mkv)$/i.test(desktopFile.originalname)) {
         banner.mediaType = 'video';
       } else {
         banner.mediaType = 'image';
       }
+    }
+
+    if (mobileFile) {
+      const oldMobile = banner.mobileMediaUrl;
+      if (oldMobile && oldMobile.startsWith('/uploads/')) {
+        const oldFilePath = path.join(__dirname, '..', oldMobile);
+        if (fs.existsSync(oldFilePath)) {
+          try { fs.unlinkSync(oldFilePath); } catch (e) {}
+        }
+      }
+      banner.mobileMediaUrl = `/uploads/${mobileFile.filename}`;
+      banner.mobileImageUrl = banner.mobileMediaUrl;
+    }
+
+    if (req.body.removeMobileMedia === 'true' || req.body.removeMobileMedia === true) {
+      if (banner.mobileMediaUrl && banner.mobileMediaUrl.startsWith('/uploads/')) {
+        const oldFilePath = path.join(__dirname, '..', banner.mobileMediaUrl);
+        if (fs.existsSync(oldFilePath)) {
+          try { fs.unlinkSync(oldFilePath); } catch (e) {}
+        }
+      }
+      banner.mobileMediaUrl = '';
+      banner.mobileImageUrl = '';
     }
 
     // Ensure fallback values if old document lacked them
@@ -158,7 +199,7 @@ exports.updateBanner = async (req, res) => {
     if (secondaryCtaUrl !== undefined) banner.secondaryCtaUrl = secondaryCtaUrl;
     if (order !== undefined) banner.order = Number(order) || 0;
     if (isActive !== undefined) banner.isActive = isActive === 'true' || isActive === true;
-    if (mediaType !== undefined && !req.file) banner.mediaType = mediaType;
+    if (mediaType !== undefined && !desktopFile) banner.mediaType = mediaType;
 
     const updated = await banner.save();
     res.json({ success: true, message: 'Banner updated successfully', banner: updated });
@@ -203,6 +244,13 @@ exports.deleteBanner = async (req, res) => {
 
     if (banner.mediaUrl && banner.mediaUrl.startsWith('/uploads/')) {
       const filePath = path.join(__dirname, '..', banner.mediaUrl);
+      if (fs.existsSync(filePath)) {
+        try { fs.unlinkSync(filePath); } catch (e) {}
+      }
+    }
+
+    if (banner.mobileMediaUrl && banner.mobileMediaUrl.startsWith('/uploads/')) {
+      const filePath = path.join(__dirname, '..', banner.mobileMediaUrl);
       if (fs.existsSync(filePath)) {
         try { fs.unlinkSync(filePath); } catch (e) {}
       }

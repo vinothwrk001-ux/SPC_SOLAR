@@ -33,6 +33,7 @@ const HeroSection = () => {
             {
               _id: data._id || '1',
               mediaUrl: data.mediaUrl || data.imageUrl,
+              mobileMediaUrl: data.mobileMediaUrl || data.mobileImageUrl || '',
               mediaType: data.mediaType || 'image',
               title: data.title || '',
               subtitle: data.subtitle || '',
@@ -84,6 +85,9 @@ const HeroSection = () => {
   const currentBanner = banners[currentIndex] || DEFAULT_BANNER;
   const isVideo = currentBanner.mediaType === 'video' || /\.(mp4|webm|mov|mkv)$/i.test(currentBanner.mediaUrl || currentBanner.imageUrl || '');
   const mediaSrc = getMediaUrl(currentBanner.mediaUrl || currentBanner.imageUrl);
+  const mobileMediaSrc = (currentBanner.mobileMediaUrl || currentBanner.mobileImageUrl)
+    ? getMediaUrl(currentBanner.mobileMediaUrl || currentBanner.mobileImageUrl)
+    : null;
 
   const handleCtaClick = (e, url) => {
     e.stopPropagation();
@@ -132,20 +136,45 @@ const HeroSection = () => {
           className="absolute inset-0 w-full h-full"
         >
           {isVideo ? (
-            <video
-              ref={(el) => (videoRefs.current[currentBanner._id] = el)}
-              src={mediaSrc}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-            />
+            <>
+              {mobileMediaSrc && (
+                <div
+                  className="block sm:hidden w-full h-full bg-cover bg-center"
+                  style={{ backgroundImage: `url('${mobileMediaSrc}')` }}
+                />
+              )}
+              <video
+                ref={(el) => (videoRefs.current[currentBanner._id] = el)}
+                src={mediaSrc}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className={`w-full h-full object-cover ${mobileMediaSrc ? 'hidden sm:block' : ''}`}
+              />
+            </>
           ) : (
-            <div
-              className="w-full h-full bg-cover bg-center transition-transform duration-10000 ease-out"
-              style={{ backgroundImage: `url('${mediaSrc}')` }}
-            />
+            <>
+              {mobileMediaSrc ? (
+                <>
+                  {/* Smartphone View (Mobile Screen) */}
+                  <div
+                    className="block sm:hidden w-full h-full bg-cover bg-center transition-transform duration-10000 ease-out"
+                    style={{ backgroundImage: `url('${mobileMediaSrc}')` }}
+                  />
+                  {/* Desktop / Laptop View (Tablet & Up) */}
+                  <div
+                    className="hidden sm:block w-full h-full bg-cover bg-center transition-transform duration-10000 ease-out"
+                    style={{ backgroundImage: `url('${mediaSrc}')` }}
+                  />
+                </>
+              ) : (
+                <div
+                  className="w-full h-full bg-cover bg-center transition-transform duration-10000 ease-out"
+                  style={{ backgroundImage: `url('${mediaSrc}')` }}
+                />
+              )}
+            </>
           )}
 
           {/* Subtle dark gradient overlay only if title/subtitle exists, else minimal overlay */}
@@ -154,8 +183,8 @@ const HeroSection = () => {
       </AnimatePresence>
 
       {/* Slide Content & CTA Overlay */}
-      <div className="relative z-20 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-16 sm:pb-20 md:pb-24 pointer-events-none">
-        <div className="max-w-2xl space-y-4 pointer-events-auto">
+      <div className="relative z-20 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-14 sm:pb-20 md:pb-24 pointer-events-none">
+        <div className="max-w-2xl space-y-2.5 sm:space-y-4 pointer-events-auto">
           {/* Animated Title & Subtitle (rendered if provided) */}
           {currentBanner.title && (
             <motion.h1
@@ -163,7 +192,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-wide uppercase drop-shadow-lg"
+              className="font-heading text-xl xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-wide uppercase drop-shadow-lg leading-tight"
             >
               {currentBanner.title}
             </motion.h1>
@@ -175,7 +204,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="font-body text-base sm:text-lg md:text-xl text-gray-200 drop-shadow-md font-medium"
+              className="font-body text-xs xs:text-sm sm:text-lg md:text-xl text-gray-200 drop-shadow-md font-medium leading-relaxed"
             >
               {currentBanner.subtitle}
             </motion.p>
@@ -187,12 +216,12 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2"
+            className="flex flex-wrap items-center gap-2.5 sm:gap-4 pt-1 sm:pt-2"
           >
             {currentBanner.ctaText && (
               <button
                 onClick={(e) => handleCtaClick(e, currentBanner.ctaUrl || '/quotation')}
-                className="group inline-flex items-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-heading font-bold text-sm sm:text-base uppercase tracking-wider bg-red-600 hover:bg-red-700 text-white shadow-xl shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                className="group inline-flex items-center gap-2 px-4 py-2.5 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl font-heading font-bold text-xs sm:text-base uppercase tracking-wider bg-red-600 hover:bg-red-700 text-white shadow-xl shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
               >
                 <span>{currentBanner.ctaText}</span>
                 <FiArrowRight className="transform group-hover:translate-x-1 transition-transform" />
@@ -202,7 +231,7 @@ const HeroSection = () => {
             {currentBanner.secondaryCtaText && currentBanner.secondaryCtaUrl && (
               <button
                 onClick={(e) => handleCtaClick(e, currentBanner.secondaryCtaUrl)}
-                className="inline-flex items-center gap-2 px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl font-heading font-bold text-sm sm:text-base uppercase tracking-wider bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 hover:border-white/40 transition-all duration-200"
+                className="inline-flex items-center gap-2 px-3.5 py-2 sm:px-6 sm:py-4 rounded-lg sm:rounded-xl font-heading font-bold text-xs sm:text-base uppercase tracking-wider bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 hover:border-white/40 transition-all duration-200"
               >
                 <span>{currentBanner.secondaryCtaText}</span>
               </button>

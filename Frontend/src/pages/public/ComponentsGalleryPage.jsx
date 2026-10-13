@@ -49,8 +49,8 @@ const ComponentsGalleryPage = () => {
 
       <PageHero
         label="Gallery"
-        title="ENERGY "
-        highlight="ASSETS"
+        title="OUR "
+        highlight="GALLERY"
         subtitle="Explore our catalog of premium solar energy products and components."
       />
 

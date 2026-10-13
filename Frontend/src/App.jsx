@@ -39,10 +39,12 @@ import AdminGalleryComponents from './pages/admin/AdminGalleryComponents';
 import AdminHomeBanner from './pages/admin/AdminHomeBanner';
 import AdminLeads from './pages/admin/AdminLeads';
 import PublicLayout from './components/layout/PublicLayout';
+import ErrorBoundary from './components/ui/ErrorBoundary';
 
 function App() {
   return (
-    <AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
         <Router>
           <ScrollToTop />
           <Routes>
@@ -87,7 +89,8 @@ function App() {
             </Route>
           </Routes>
         </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
