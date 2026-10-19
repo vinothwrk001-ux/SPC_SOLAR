@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiX, FiTag, FiImage, FiUsers, FiGift } from 'react-icons/fi';
+import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiTag, FiImage, FiUsers } from 'react-icons/fi';
 import Logo from '../../assets/Logo.png';
 
 const AdminLayout = () => {

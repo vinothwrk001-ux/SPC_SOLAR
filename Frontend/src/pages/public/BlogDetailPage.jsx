@@ -20,7 +20,7 @@ import {
   FiArrowRight,
   FiEye
 } from 'react-icons/fi';
-import { FaWhatsapp, FaLinkedin, FaFacebook, FaTwitter, FaTelegramPlane } from 'react-icons/fa';
+import { FaWhatsapp, FaFacebook, FaTelegramPlane } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 
 const BlogDetailPage = () => {

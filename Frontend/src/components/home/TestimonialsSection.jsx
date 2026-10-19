@@ -7,10 +7,12 @@ import Input from '../ui/Input';
 import Button from '../ui/Button';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import { usePreload } from '../../context/PreloadContext';
 
 const TestimonialsSection = () => {
-  const [testimonials, setTestimonials] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { preloadedData } = usePreload();
+  const [testimonials, setTestimonials] = useState(() => preloadedData?.testimonials || []);
+  const [loading, setLoading] = useState(() => !preloadedData?.testimonials);
   const [active, setActive] = useState(0);
 
   // Write Review Modal State
@@ -25,8 +27,13 @@ const TestimonialsSection = () => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (preloadedData?.testimonials) {
+      setTestimonials(preloadedData.testimonials);
+      setLoading(false);
+      return;
+    }
     fetchApprovedTestimonials();
-  }, []);
+  }, [preloadedData?.testimonials]);
 
   const fetchApprovedTestimonials = async () => {
     setLoading(true);

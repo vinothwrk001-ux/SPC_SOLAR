@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { blogService } from '../../services/blogService';
 import { formatDate, sanitizeHTML } from '../../utils/blogHelpers';
 import SEOHead from '../../components/ui/SEOHead';
-import { FiArrowLeft, FiTag, FiClock, FiUser } from 'react-icons/fi';
+import { FiArrowLeft, FiClock, FiUser } from 'react-icons/fi';
 
 const AdminBlogPreview = () => {
   const { id } = useParams();

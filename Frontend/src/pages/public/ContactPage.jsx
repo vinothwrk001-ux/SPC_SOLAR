@@ -11,9 +11,9 @@ import toast from 'react-hot-toast';
 
 const CONTACT_INFO = [
   { icon: FiMapPin, label: 'Office Address', value: 'No-115-117, Easwari Towers, Devanga High School Road, RS Puram, Coimbatore - 641002.' },
+  { icon: FiPhone, label: 'Office Number', value: '+91 80987 44044', href: 'tel:+918098744044' },
   { icon: FiPhone, label: 'Phone Number 1', value: '+91 84896 44044', href: 'tel:+918489644044' },
   { icon: FiPhone, label: 'Phone Number 2', value: '+91 84897 44044', href: 'tel:+918489744044' },
-  { icon: FiPhone, label: 'Office Number', value: '+91 80987 44044', href: 'tel:+918098744044' },
   { icon: FiMail, label: 'Email Address', value: 'spctechnologycoimbatore@gmail.com', href: 'mailto:spctechnologycoimbatore@gmail.com' },
 ];
 
@@ -122,7 +122,21 @@ const ContactPage = () => {
                     </p>
                   </div>
 
-                  {/* Card 3: Phone Number 1 */}
+                  {/* Card 3: Office Number */}
+                  <a
+                    href="tel:+918098744044"
+                    className="bg-gray-50 border border-gray-200 rounded-xl p-3 sm:p-3.5 flex flex-col justify-start hover:border-red transition-all active:scale-[0.99]"
+                  >
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-red-light flex items-center justify-center text-red mb-2 shrink-0">
+                      <FiPhone size={15} />
+                    </div>
+                    <h4 className="font-heading text-xs sm:text-sm font-bold text-black mb-1">Office Number</h4>
+                    <p className="text-gray-800 font-body font-semibold text-[11px] sm:text-xs leading-tight">
+                      +91 80987 44044
+                    </p>
+                  </a>
+
+                  {/* Card 4: Phone Number 1 */}
                   <a
                     href="tel:+918489644044"
                     className="bg-gray-50 border border-gray-200 rounded-xl p-3 sm:p-3.5 flex flex-col justify-start hover:border-red transition-all active:scale-[0.99]"
@@ -136,7 +150,7 @@ const ContactPage = () => {
                     </p>
                   </a>
 
-                  {/* Card 4: Phone Number 2 */}
+                  {/* Card 5: Phone Number 2 */}
                   <a
                     href="tel:+918489744044"
                     className="bg-gray-50 border border-gray-200 rounded-xl p-3 sm:p-3.5 flex flex-col justify-start hover:border-red transition-all active:scale-[0.99]"
@@ -147,20 +161,6 @@ const ContactPage = () => {
                     <h4 className="font-heading text-xs sm:text-sm font-bold text-black mb-1">Phone Number 2</h4>
                     <p className="text-gray-800 font-body font-semibold text-[11px] sm:text-xs leading-tight">
                       +91 84897 44044
-                    </p>
-                  </a>
-
-                  {/* Card 5: Office Number */}
-                  <a
-                    href="tel:+918098744044"
-                    className="bg-gray-50 border border-gray-200 rounded-xl p-3 sm:p-3.5 flex flex-col justify-start hover:border-red transition-all active:scale-[0.99]"
-                  >
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-red-light flex items-center justify-center text-red mb-2 shrink-0">
-                      <FiPhone size={15} />
-                    </div>
-                    <h4 className="font-heading text-xs sm:text-sm font-bold text-black mb-1">Office Number</h4>
-                    <p className="text-gray-800 font-body font-semibold text-[11px] sm:text-xs leading-tight">
-                      +91 80987 44044
                     </p>
                   </a>
 

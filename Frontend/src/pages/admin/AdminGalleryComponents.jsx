@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
@@ -11,6 +11,7 @@ const AdminGalleryComponents = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
   
   // Single edit state
   const [title, setTitle] = useState('');
@@ -40,8 +41,8 @@ const AdminGalleryComponents = () => {
   const fetchComponents = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('http://localhost:5000/api/gallery-components', { withCredentials: true });
-      setComponents(data);
+      const { data } = await api.get('/gallery-components');
+      setComponents(data || []);
     } catch (error) {
       toast.error('Failed to load gallery components');
     } finally {
@@ -199,7 +200,7 @@ const AdminGalleryComponents = () => {
           formData.append('image', singleImage);
         }
 
-        await axios.put(`http://localhost:5000/api/gallery-components/${editingId}`, formData, config);
+        await api.put(`/gallery-components/${editingId}`, formData);
         toast.success('Gallery component updated successfully');
         setIsModalOpen(false);
         fetchComponents();
@@ -243,7 +244,7 @@ const AdminGalleryComponents = () => {
         formData.append('images', item.file);
       });
 
-      const response = await axios.post('http://localhost:5000/api/gallery-components/batch', formData, config);
+      const response = await api.post('/gallery-components/batch', formData);
       
       // Cleanup object URLs
       selectedBatchFiles.forEach(item => {
@@ -264,12 +265,7 @@ const AdminGalleryComponents = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this component image?')) return;
     try {
-      const token = localStorage.getItem('adminToken');
-      const config = {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true
-      };
-      await axios.delete(`http://localhost:5000/api/gallery-components/${id}`, config);
+      await api.delete(`/gallery-components/${id}`);
       toast.success('Component deleted');
       fetchComponents();
     } catch (error) {
@@ -381,7 +377,7 @@ const AdminGalleryComponents = () => {
                   <tr key={comp._id} className="hover:bg-gray-50/80 transition-colors">
                     <td className="py-4 px-6">
                       <img 
-                        src={`http://localhost:5000${comp.imageUrl}`} 
+                        src={`${baseUrl}${comp.imageUrl}`} 
                         alt={comp.title} 
                         className="h-16 w-16 object-cover rounded-xl shadow-sm border border-gray-200"
                       />

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
 import Button from '../../components/ui/Button';
 import { Reveal, EnergyGrid } from '../../components/motion';
 import api from '../../services/api';
+import ReferralCard from '../../components/referral/ReferralCard';
 import { 
   FiHome, FiBriefcase, FiSettings, FiActivity, FiCheckCircle, 
   FiArrowRight, FiChevronDown, FiZap, FiSun
@@ -233,7 +234,7 @@ const ServicesPage = () => {
                     <div className="flex items-center gap-2.5 sm:gap-5 min-w-0">
                       {/* Number */}
                       <span className={`font-heading text-lg sm:text-2xl md:text-3xl font-bold transition-colors ${
-                        isActive ? 'text-red' : 'text-gray-300'
+                        isActive ? 'text-red' : 'text-black'
                       }`}>
                         {service.number}
                       </span>
@@ -515,14 +516,7 @@ const ServicesPage = () => {
             </div>
           </div>
           
-          <div className="mt-4 sm:mt-6 md:mt-8 bg-green-50 border border-green-200 p-3.5 sm:p-5 md:p-6 rounded-xl sm:rounded-card text-center">
-             <h4 className="font-heading text-base sm:text-lg md:text-xl text-green-800 mb-1 sm:mb-2 font-bold">
-               Refer & Earn Program!
-             </h4>
-             <p className="text-green-700 font-body text-xs sm:text-sm leading-relaxed max-w-2xl mx-auto">
-               Earn <strong>₹2,000 per 1kW</strong> for every successful referral (credited after getting full payment from the client).
-             </p>
-          </div>
+          <ReferralCard className="mt-8 sm:mt-12 md:mt-16" />
         </div>
       </section>
     </div>

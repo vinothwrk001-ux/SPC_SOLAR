@@ -3,7 +3,7 @@ import api from '../../services/api';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import toast from 'react-hot-toast';
-import { FiSave, FiSettings, FiRefreshCw, FiDollarSign, FiZap, FiGrid } from 'react-icons/fi';
+import { FiSave, FiRefreshCw } from 'react-icons/fi';
 
 const AdminSolarCalculatorConfig = () => {
   const [loading, setLoading] = useState(true);

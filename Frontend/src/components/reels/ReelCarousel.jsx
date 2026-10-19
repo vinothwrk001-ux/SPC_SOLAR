@@ -1,27 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiChevronLeft, FiChevronRight, FiPlay, FiZap, FiMapPin, FiEye, 
-  FiX, FiVolume2, FiVolumeX, FiShare2
+import {
+  FiChevronLeft, FiChevronRight, FiPlay, FiZap, FiMapPin, FiEye,
+  FiX, FiVolume2, FiVolumeX, FiShare2, FiArrowRight
 } from 'react-icons/fi';
-import { 
-  getPublicReels, 
-  recordReelView, 
-  recordQuoteClick 
+import {
+  getPublicReels,
+  recordReelView,
+  recordQuoteClick
 } from '../../services/reelService';
 import ReelShareSheet from './ReelShareSheet';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Reveal, EnergyGrid } from '../motion';
+import Button from '../ui/Button';
+import { usePreload } from '../../context/PreloadContext';
 
 const ReelCarousel = () => {
-  const [reels, setReels] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { preloadedData } = usePreload();
+  const [reels, setReels] = useState(() => preloadedData?.reels || []);
+  const [loading, setLoading] = useState(() => !preloadedData?.reels);
   const [startIndex, setStartIndex] = useState(0);
 
   const getMediaUrl = (url) => {
     if (!url) return '';
     if (url.startsWith('http')) return url;
-    if (url.startsWith('/uploads')) return `http://localhost:5000${url}`;
-    return `http://localhost:5000/uploads/${url}`;
+    const backendBase = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+    if (url.startsWith('/uploads')) return `${backendBase}${url}`;
+    return `${backendBase}/uploads/${url.startsWith('/') ? url.slice(1) : url}`;
   };
 
   // In-Page Fullscreen Modal State
@@ -42,6 +47,12 @@ const ReelCarousel = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (preloadedData?.reels) {
+      setReels(preloadedData.reels);
+      setLoading(false);
+      return;
+    }
+
     const loadReels = async () => {
       try {
         const data = await getPublicReels();
@@ -53,7 +64,7 @@ const ReelCarousel = () => {
       }
     };
     loadReels();
-  }, []);
+  }, [preloadedData?.reels]);
 
   const itemsPerPage = 4;
   const maxIndex = Math.max(0, reels.length - itemsPerPage);
@@ -71,7 +82,7 @@ const ReelCarousel = () => {
     setActiveReelIndex(index);
     const reel = reels[index];
     if (reel) {
-      recordReelView(reel._id).catch(() => {});
+      recordReelView(reel._id).catch(() => { });
     }
   };
 
@@ -124,7 +135,7 @@ const ReelCarousel = () => {
   // CTA Click
   const handleQuoteClick = () => {
     if (activeReelIndex !== null && reels[activeReelIndex]) {
-      recordQuoteClick(reels[activeReelIndex]._id).catch(() => {});
+      recordQuoteClick(reels[activeReelIndex]._id).catch(() => { });
     }
     handleCloseReel();
     navigate('/quotation');
@@ -181,7 +192,7 @@ const ReelCarousel = () => {
       whileHover={{ y: -8, scale: 1.02 }}
       transition={{ duration: 0.3 }}
       onClick={() => handleOpenReel(globalIdx)}
-      className="group relative aspect-[9/16] bg-[#141414] rounded-3xl overflow-hidden border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] cursor-pointer w-full"
+      className="group relative aspect-[9/16] bg-[#141414] rounded-2xl md:rounded-3xl overflow-hidden border border-gray-800 hover:border-red/60 shadow-[0_16px_36px_rgba(0,0,0,0.2)] hover:shadow-[0_24px_50px_rgba(204,34,34,0.22)] cursor-pointer w-full transition-all duration-300"
     >
       {/* Video / Thumbnail */}
       {reel.thumbnailUrl ? (
@@ -204,7 +215,7 @@ const ReelCarousel = () => {
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/20 group-hover:via-black/40 transition-colors" />
 
       {/* Play Button Icon */}
-      <div className="absolute inset-0 m-auto w-12 h-12 md:w-14 md:h-14 rounded-full bg-red/90 text-white flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+      <div className="absolute inset-0 m-auto w-12 h-12 md:w-14 md:h-14 rounded-full bg-red text-white flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-red-dark transition-all duration-300">
         <FiPlay size={22} className="ml-1" />
       </div>
 
@@ -234,48 +245,45 @@ const ReelCarousel = () => {
   );
 
   return (
-    <section id="reels" className="relative font-body select-none overflow-hidden">
-      {/* 50/50 PERFECT SPLIT BACKGROUND */}
-      <div className="absolute inset-0 z-0 flex flex-col pointer-events-none">
-        {/* TOP HALF: PURE WHITE (50% HEIGHT) */}
-        <div className="bg-white h-[45%] md:h-[50%] w-full" />
-        
-        {/* BOTTOM HALF: DARK DIAGONAL STRIPED TEXTURE (50% HEIGHT) */}
-        <div 
-          className="h-[55%] md:h-[50%] w-full border-b border-white/10"
-          style={{
-            backgroundColor: '#0e0e0e',
-            backgroundImage: 'repeating-linear-gradient(-45deg, #181818, #181818 2px, #0e0e0e 2px, #0e0e0e 12px)'
-          }}
-        />
-      </div>
+    <section id="reels" className="py-16 md:py-24 bg-[#FAFAFA] relative overflow-hidden font-body select-none border-t border-gray-200">
+      {/* Background Energy Grid matching Services & Projects */}
+      <EnergyGrid opacity={0.035} color="black" />
+
+      {/* Subtle ambient light glows */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] bg-red/[0.035] rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-80 h-80 bg-gray-200/50 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-gray-200/50 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Top and Bottom Accent Lines */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red/40 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
 
       {/* FOREGROUND CONTENT */}
-      <div className="relative z-10 pt-16 md:pt-20 pb-20 md:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-        {/* TOP HEADER IN WHITE SECTION */}
-        <div className="text-center max-w-4xl mx-auto mb-10 md:mb-14">
-          <div className="inline-block border border-red/40 rounded-full px-6 py-1.5 text-xs font-accent font-bold tracking-widest text-red uppercase mb-4 shadow-sm bg-white">
-            BEHIND THE SCENES
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+        {/* TOP HEADER MATCHING WEBSITE DESIGN SYSTEM */}
+        <Reveal>
+          <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
+            <span className="section-label">Behind The Scenes</span>
+            <h2 className="section-title">
+              FROM OUR HANDS <span className="text-red">TO YOURS</span>
+            </h2>
+            <span className="red-line-center" />
+            <p className="section-subtitle mx-auto">
+              Experience our real rooftop solar panel installations, customer success stories, and subsidy guidance in high-definition video reels.
+            </p>
           </div>
-          <h2 className="font-heading text-4xl md:text-5xl font-bold tracking-tight text-black">
-            From Our Hands to Yours
-          </h2>
-          <p className="text-gray-600 text-sm md:text-base font-body mt-3 max-w-xl mx-auto">
-            Experience our real rooftop solar panel installations, customer success stories, and subsidy guidance in high-definition video reels.
-          </p>
-        </div>
+        </Reveal>
 
-        {/* CARDS CAROUSEL STRADDLING THE 50/50 SPLIT LINE */}
-        <div className="w-full flex items-center justify-between gap-2.5 sm:gap-4 md:gap-6">
+        {/* CARDS CAROUSEL */}
+        <div className="w-full flex items-center justify-between gap-3 sm:gap-4 md:gap-6">
           {/* Left Arrow */}
           <button
             onClick={handlePrev}
             disabled={reels.length <= 1}
-            className={`w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-[#444444] text-white flex items-center justify-center border border-white/20 z-20 flex-shrink-0 transition-all ${
-              reels.length <= 1
-                ? 'opacity-40 cursor-not-allowed' 
-                : 'hover:bg-red hover:border-red shadow-2xl cursor-pointer active:scale-95'
-            }`}
+            className={`w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13 rounded-full bg-white text-gray-900 flex items-center justify-center border border-gray-200 shadow-card hover:shadow-card-md hover:bg-red hover:text-white hover:border-red transition-all duration-250 z-20 flex-shrink-0 ${reels.length <= 1
+                ? 'opacity-30 cursor-not-allowed'
+                : 'cursor-pointer hover:scale-105 active:scale-95'
+              }`}
             aria-label="Previous Reels"
           >
             <FiChevronLeft size={22} className="md:w-6 md:h-6" />
@@ -288,10 +296,10 @@ const ReelCarousel = () => {
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
           >
-            <div className="w-full max-w-[240px] xs:max-w-[255px] sm:max-w-[270px] overflow-hidden rounded-3xl mx-auto shadow-[0_25px_60px_rgba(0,0,0,0.6)]">
+            <div className="w-full max-w-[240px] xs:max-w-[255px] sm:max-w-[270px] overflow-hidden rounded-2xl mx-auto shadow-[0_20px_50px_rgba(0,0,0,0.18)]">
               <AnimatePresence mode="wait" custom={slideDirection}>
                 {loading ? (
-                  <div className="aspect-[9/16] bg-white/5 rounded-3xl animate-pulse border border-white/10 w-full" />
+                  <div className="aspect-[9/16] bg-gray-200 rounded-2xl animate-pulse border border-gray-300 w-full" />
                 ) : currentMobileReel ? (
                   <motion.div
                     key={currentMobileReel._id || safeMobileIndex}
@@ -327,16 +335,15 @@ const ReelCarousel = () => {
             </div>
           </div>
 
-          {/* Desktop View: Centered 4-Column Grid (UNCHANGED) */}
-          <div className={`hidden md:grid flex-1 gap-6 justify-center items-center ${
-            visibleReels.length === 1 ? 'grid-cols-1 max-w-xs mx-auto' :
-            visibleReels.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto' :
-            visibleReels.length === 3 ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 max-w-5xl mx-auto' :
-            'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-          }`}>
+          {/* Desktop View: Centered 4-Column Grid */}
+          <div className={`hidden md:grid flex-1 gap-6 justify-center items-center ${visibleReels.length === 1 ? 'grid-cols-1 max-w-xs mx-auto' :
+              visibleReels.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto' :
+                visibleReels.length === 3 ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 max-w-5xl mx-auto' :
+                  'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+            }`}>
             {loading ? (
               [1, 2, 3, 4].map((n) => (
-                <div key={n} className="aspect-[9/16] bg-white/5 rounded-3xl animate-pulse border border-white/10" />
+                <div key={n} className="aspect-[9/16] bg-gray-200 rounded-2xl animate-pulse border border-gray-300" />
               ))
             ) : (
               visibleReels.map((reel, idx) => {
@@ -350,11 +357,10 @@ const ReelCarousel = () => {
           <button
             onClick={handleNext}
             disabled={reels.length <= 1}
-            className={`w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-white text-black flex items-center justify-center border border-white/20 z-20 flex-shrink-0 transition-all ${
-              reels.length <= 1
-                ? 'opacity-40 cursor-not-allowed' 
-                : 'hover:bg-red hover:text-white shadow-2xl cursor-pointer active:scale-95'
-            }`}
+            className={`w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13 rounded-full bg-white text-gray-900 flex items-center justify-center border border-gray-200 shadow-card hover:shadow-card-md hover:bg-red hover:text-white hover:border-red transition-all duration-250 z-20 flex-shrink-0 ${reels.length <= 1
+                ? 'opacity-30 cursor-not-allowed'
+                : 'cursor-pointer hover:scale-105 active:scale-95'
+              }`}
             aria-label="Next Reels"
           >
             <FiChevronRight size={22} className="md:w-6 md:h-6" />
@@ -363,7 +369,7 @@ const ReelCarousel = () => {
 
         {/* Mobile View Indicators (Dots) */}
         {!loading && reels.length > 1 && (
-          <div className="flex md:hidden items-center justify-center gap-1.5 mt-5 z-20">
+          <div className="flex md:hidden items-center justify-center gap-1.5 mt-6 z-20">
             {reels.map((_, idx) => (
               <button
                 key={idx}
@@ -371,14 +377,24 @@ const ReelCarousel = () => {
                   setSlideDirection(idx > safeMobileIndex ? 1 : -1);
                   setMobileIndex(idx);
                 }}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  idx === safeMobileIndex ? 'w-6 bg-red' : 'w-1.5 bg-white/40'
-                }`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${idx === safeMobileIndex ? 'w-6 bg-red shadow-sm shadow-red/40' : 'w-1.5 bg-gray-300 hover:bg-gray-400'
+                  }`}
                 aria-label={`Go to reel ${idx + 1}`}
               />
             ))}
           </div>
         )}
+
+        {/* Bottom CTA to view all reels */}
+        <Reveal delay={0.2}>
+          <div className="mt-12 md:mt-16 text-center">
+            <Link to="/reels">
+              <Button variant="outline" icon={<FiArrowRight />}>
+                View All Reels
+              </Button>
+            </Link>
+          </div>
+        </Reveal>
       </div>
 
       {/* IN-PAGE FULL-SCREEN REEL VIEWER MODAL */}
@@ -433,7 +449,7 @@ const ReelCarousel = () => {
                 </button>
               )}
 
-              <div 
+              <div
                 onClick={handleTogglePlay}
                 className="relative w-full h-full max-w-md mx-auto overflow-hidden bg-black flex items-center justify-center cursor-pointer"
               >

@@ -10,6 +10,7 @@ const projectSchema = new mongoose.Schema({
   image: { type: String, default: '' },
   images: [{ type: String }],
   savings: { type: String, default: '' },
+  client: { type: String, default: '' },
   completedDate: { type: Date },
   isFeatured: { type: Boolean, default: false },
   isFeatures: { type: Boolean, default: false },

@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { blogService } from '../../services/blogService';
 import SEOHead from '../../components/ui/SEOHead';
 import Card from '../../components/ui/Card';
-import { formatDate, getImageUrl } from '../../utils/blogHelpers';
+import { getImageUrl } from '../../utils/blogHelpers';
 import { FiArrowLeft, FiClock, FiArrowRight } from 'react-icons/fi';
 
 const BlogCategoryPage = () => {

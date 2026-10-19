@@ -236,7 +236,7 @@ const AdminQuotationMaker = () => {
     const cleanPhone = rawPhone.replace(/\D/g, '');
     const phoneWithCode = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
 
-    const message = `Hello *${formData.toName}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):\n\n⚡ *System Size:* ${formData.kwSize} KW (${formData.systemType})\n📦 *PV Modules:* ${formData.panelQty} Nos (${formData.panelMake.replace(/\n/g, ' ')})\n🔌 *Inverter:* ${formData.inverterCapacity} KVA (${formData.inverterMake.replace(/\n/g, ' ')})\n\n💵 *Total System Cost:* ₹${total.toLocaleString()}\n🏛️ *Govt Subsidy:* -₹${subsidy.toLocaleString()}\n🧾 *Net Investment:* *₹${grandTotal.toLocaleString()}*\n\n💳 *Payment Milestones:*\n1. Material Dispatch / Advance (${formData.advPercent}%): ₹${term1.toLocaleString()}\n2. Second Stage (${formData.secPercent}%): ₹${term2.toLocaleString()}\n3. Work Completion (${formData.thirdPercent}%): ₹${term3.toLocaleString()}\n\n📞 Contact: 84896 44044 / 80987 44044\n🌐 Website: SPC Solar Technology`;
+    const message = `Hello *${formData.toName}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):\n\n⚡ *System Size:* ${formData.kwSize} KW (${formData.systemType})\n📦 *PV Modules:* ${formData.panelQty} Nos (${formData.panelMake.replace(/\n/g, ' ')})\n🔌 *Inverter:* ${formData.inverterCapacity} KVA (${formData.inverterMake.replace(/\n/g, ' ')})\n\n💵 *Total System Cost:* ₹${total.toLocaleString()}\n🏛️ *Govt Subsidy:* -₹${subsidy.toLocaleString()}\n🧾 *Net Investment:* *₹${grandTotal.toLocaleString()}*\n\n💳 *Payment Milestones:*\n1. Material Dispatch / Advance (${formData.advPercent}%): ₹${term1.toLocaleString()}\n2. Second Stage (${formData.secPercent}%): ₹${term2.toLocaleString()}\n3. Work Completion (${formData.thirdPercent}%): ₹${term3.toLocaleString()}\n\n📞 Contact: 80987 44044 (Office) / 84896 44044\n🌐 Website: SPC Solar Technology`;
 
     if (cleanPhone) {
       window.open(`https://wa.me/${phoneWithCode}?text=${encodeURIComponent(message)}`, '_blank');
@@ -396,180 +396,177 @@ const AdminQuotationMaker = () => {
             <span className="text-xs text-gray-500 font-mono font-bold">Ref: {formData.refNo}</span>
           </div>
 
-          <div className="print-page print-page-1 bg-gradient-to-br from-[#0b1120] via-[#111827] to-[#0b1120] text-gray-100 p-6 sm:p-8 print:p-[10mm_12mm] w-full min-h-[297mm] print:min-h-0 print:h-[297mm] shadow-2xl print:shadow-none font-sans text-[11px] leading-normal relative rounded-2xl print:rounded-none border border-white/15 flex flex-col justify-between overflow-hidden">
+          <div className="print-page print-page-1 bg-white text-gray-900 p-5 sm:p-6 print:p-[10mm_12mm] w-full h-[297mm] min-h-[297mm] max-h-[297mm] shadow-2xl print:shadow-none font-sans text-[11px] leading-normal relative rounded-2xl print:rounded-none border border-gray-200 flex flex-col justify-between overflow-hidden">
             
-            {/* Background Glow */}
-            <div className="absolute top-[-10%] right-[-10%] w-[300px] h-[300px] bg-red-600/10 rounded-full blur-[90px] pointer-events-none print:hidden"></div>
-
-            <div className="relative z-10 flex-1 flex flex-col justify-between">
+            <div className="relative z-10 flex-1 flex flex-col justify-between h-full">
               <div>
                 {/* Header */}
-                <div className="flex justify-between items-start mb-4">
-                  <div className="font-medium text-[11px] uppercase leading-relaxed text-gray-300 tracking-wider">
-                    <p className="text-white font-black text-base tracking-wide mb-1 text-red-500">SPC SOLAR TECHNOLOGY</p>
-                    <p className="text-gray-300">No-115-117, Easwari Towers,</p>
-                    <p className="text-gray-300">Devanga High School Road, RS Puram,</p>
-                    <p className="text-gray-300">Coimbatore - 641002.</p>
-                    <p className="mt-1 text-red-400 font-bold tracking-wide">MOBILE: 84896 44044, 80987 44044</p>
-                    <p className="text-red-300 font-medium">spctechnologycoimbatore@gmail.com</p>
+                <div className="flex justify-between items-start mb-2 sm:mb-2.5">
+                  <div className="font-medium text-[10.5px] uppercase leading-relaxed text-gray-700 tracking-wider">
+                    <p className="font-black text-base tracking-wide mb-0.5 text-red-600">SPC SOLAR TECHNOLOGY</p>
+                    <p className="text-gray-700 leading-snug">No-115-117, Easwari Towers,</p>
+                    <p className="text-gray-700 leading-snug">Devanga High School Road, RS Puram,</p>
+                    <p className="text-gray-700 leading-snug">Coimbatore - 641002.</p>
+                    <p className="mt-0.5 text-red-600 font-bold tracking-wide">MOBILE: 80987 44044 (Office), 84896 44044</p>
+                    <p className="text-red-600 font-medium">spctechnologycoimbatore@gmail.com</p>
                   </div>
                   <div className="text-right flex flex-col items-end">
-                    <div className="bg-white/95 p-2 rounded-2xl shadow-xl border border-white/20 backdrop-blur-md">
-                      <img src={Logo} alt="SPC Solar Logo" className="w-28 sm:w-32 object-contain" />
+                    <div className="bg-white p-1.5 rounded-xl shadow-xs border border-gray-200">
+                      <img src={Logo} alt="SPC Solar Logo" className="w-24 sm:w-28 object-contain" />
                     </div>
                   </div>
                 </div>
 
                 {/* Title */}
-                <div className="text-center my-3">
-                  <h1 className="text-xl sm:text-2xl font-black tracking-widest uppercase bg-gradient-to-r from-red-400 via-red-500 to-amber-400 bg-clip-text text-transparent drop-shadow">
+                <div className="text-center my-1.5 sm:my-2">
+                  <h1 className="text-lg sm:text-xl font-black tracking-widest uppercase text-red-600 drop-shadow-xs">
                     {formData.systemType} QUOTATION
                   </h1>
-                  <div className="h-0.5 w-28 bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto mt-1"></div>
+                  <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-red-600 to-transparent mx-auto mt-0.5"></div>
                 </div>
 
                 {/* Ref & Date & To */}
-                <div className="grid grid-cols-2 gap-4 mb-4 bg-white/[0.04] p-3.5 sm:p-4 rounded-xl border border-white/10 text-[11px] shadow-sm">
+                <div className="grid grid-cols-2 gap-3 mb-2 sm:mb-2.5 bg-gray-50/80 p-2.5 sm:p-3 rounded-xl border border-gray-200 text-[10.5px] shadow-xs">
                   <div className="uppercase">
-                    <p className="text-red-400 text-[9.5px] font-bold tracking-widest mb-1">BILL TO</p>
-                    <p className="font-bold text-white text-sm tracking-wide">{formData.toName}</p>
-                    <p className="text-gray-300 text-[10.5px] mt-0.5">{formData.toAddressLine1}</p>
-                    <p className="text-gray-300 text-[10.5px]">{formData.toAddressLine2}</p>
+                    <p className="text-red-600 text-[9px] font-bold tracking-widest mb-0.5">BILL TO</p>
+                    <p className="font-bold text-black text-xs sm:text-sm tracking-wide">{formData.toName}</p>
+                    <p className="text-gray-700 text-[10px] mt-0.5 leading-snug">{formData.toAddressLine1}</p>
+                    <p className="text-gray-700 text-[10px] leading-snug">{formData.toAddressLine2}</p>
                   </div>
                   <div className="text-right uppercase">
-                    <p className="text-red-400 text-[9.5px] font-bold tracking-widest mb-1">PROPOSAL DETAILS</p>
-                    <p><span className="text-gray-400 mr-2">REF:</span> <span className="font-mono font-bold text-white">{formData.refNo}</span></p>
-                    <p><span className="text-gray-400 mr-2">DATE:</span> <span className="font-bold text-white">{formData.date}</span></p>
-                    <p className="mt-1"><span className="text-gray-400 mr-2">SYSTEM:</span> <span className="font-black text-red-400 text-xs">{formData.kwSize} KW ({formData.systemType})</span></p>
+                    <p className="text-red-600 text-[9px] font-bold tracking-widest mb-0.5">PROPOSAL DETAILS</p>
+                    <p><span className="text-gray-500 mr-2">REF:</span> <span className="font-mono font-bold text-black">{formData.refNo}</span></p>
+                    <p><span className="text-gray-500 mr-2">DATE:</span> <span className="font-bold text-black">{formData.date}</span></p>
+                    <p className="mt-0.5"><span className="text-gray-500 mr-2">SYSTEM:</span> <span className="font-black text-red-600 text-xs sm:text-sm">{formData.kwSize} KW ({formData.systemType})</span></p>
                   </div>
                 </div>
 
-                {/* Table */}
-                <div className="rounded-xl overflow-hidden border border-white/15 bg-slate-900/60 backdrop-blur-md shadow-xl mb-3">
+                {/* Table - Generous & balanced fit */}
+                <div className="rounded-xl overflow-hidden border border-gray-300 bg-white shadow-sm mb-2">
                   <table className="w-full text-center border-collapse">
                     <thead>
-                      <tr className="bg-white/10 text-white font-bold tracking-wider text-[10px] uppercase">
-                        <th className="py-2 px-2 border-b border-r border-white/10 w-8">#</th>
-                        <th className="py-2 px-3 border-b border-r border-white/10 text-left">Capital Expenditure (per MWp)</th>
-                        <th className="py-2 px-2 border-b border-r border-white/10 w-20">Qty</th>
-                        <th className="py-2 px-3 border-b border-r border-white/10 w-44">Make</th>
-                        <th className="py-2 px-3 border-b border-white/10 w-28">INR</th>
+                      <tr className="bg-gray-100 text-gray-900 font-bold tracking-wider text-[9.5px] uppercase border-b border-gray-300">
+                        <th className="py-1 px-2 border-b border-r border-gray-300 w-8">#</th>
+                        <th className="py-1 px-3 border-b border-r border-gray-300 text-left">Capital Expenditure (per MWp)</th>
+                        <th className="py-1 px-2 border-b border-r border-gray-300 w-20">Qty</th>
+                        <th className="py-1 px-3 border-b border-r border-gray-300 w-44">Make</th>
+                        <th className="py-1 px-3 border-b border-gray-300 w-28">INR</th>
                       </tr>
                     </thead>
-                    <tbody className="text-gray-200 text-[10px]">
-                      <tr className="hover:bg-white/5 transition-colors border-b border-white/10">
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">1</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 text-left leading-snug">
+                    <tbody className="text-gray-800 text-[9.5px]">
+                      <tr className="hover:bg-gray-50 transition-colors border-b border-gray-200">
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">1</td>
+                        <td className="py-1 px-3 border-r border-gray-200 text-left leading-snug text-gray-900">
                           PV Modules – {formData.systemType === 'OFF GRID' ? '580' : '550'} Watts-Mono Perc Ofcut Bifacial - MNRE Approved - 25 Years warranty "A" Class Cells
                         </td>
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">{formData.panelQty} NOS</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 font-semibold text-white leading-snug">{formData.panelMake}</td>
-                        <td className="py-1.5 px-3"></td>
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">{formData.panelQty} NOS</td>
+                        <td className="py-1 px-3 border-r border-gray-200 font-semibold text-black leading-snug">{formData.panelMake}</td>
+                        <td className="py-1 px-3"></td>
                       </tr>
-                      <tr className="hover:bg-white/5 transition-colors border-b border-white/10">
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">2</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 text-left leading-snug">
+                      <tr className="hover:bg-gray-50 transition-colors border-b border-gray-200">
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">2</td>
+                        <td className="py-1 px-3 border-r border-gray-200 text-left leading-snug text-gray-900">
                           {formData.systemType === 'OFF GRID'
                             ? `MNRE APPROVED - ${formData.inverterCapacity} KW OFFGRID INVERTER WITH LITHIYAM IRON BATTERY SINGLE PHASE 8 + 2 Years Replacement warranty`
                             : `MNRE APPROVED ON GRID - ${formData.inverterCapacity} KVA THREE PHASE Inverter 10 Years Warranty WITH DONGLE`}
                         </td>
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">1 NO</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 font-semibold text-white leading-snug">{formData.inverterMake}</td>
-                        <td className="py-1.5 px-3"></td>
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">1 NO</td>
+                        <td className="py-1 px-3 border-r border-gray-200 font-semibold text-black leading-snug">{formData.inverterMake}</td>
+                        <td className="py-1 px-3"></td>
                       </tr>
-                      <tr className="hover:bg-white/5 transition-colors border-b border-white/10">
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">3</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 text-left">GI STRUCTURE 4 X 3 1/2</td>
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">1 LOT</td>
-                        <td className="py-1.5 px-3 border-r border-white/10"></td>
-                        <td className="py-1.5 px-3"></td>
+                      <tr className="hover:bg-gray-50 transition-colors border-b border-gray-200">
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">3</td>
+                        <td className="py-1 px-3 border-r border-gray-200 text-left text-gray-900">GI STRUCTURE 4 X 3 1/2</td>
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">1 LOT</td>
+                        <td className="py-1 px-3 border-r border-gray-200"></td>
+                        <td className="py-1 px-3"></td>
                       </tr>
-                      <tr className="hover:bg-white/5 transition-colors bg-white/[0.02] border-b border-white/10">
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">4</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 text-left">DCDB BOX WITH SURGE PROTECTION DEVICE</td>
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">1 NO</td>
-                        <td className="py-1.5 px-3 border-r border-white/10"></td>
-                        <td className="py-1.5 px-3"></td>
+                      <tr className="hover:bg-gray-50 transition-colors bg-gray-50/50 border-b border-gray-200">
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">4</td>
+                        <td className="py-1 px-3 border-r border-gray-200 text-left text-gray-900">DCDB BOX WITH SURGE PROTECTION DEVICE</td>
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">1 NO</td>
+                        <td className="py-1 px-3 border-r border-gray-200"></td>
+                        <td className="py-1 px-3"></td>
                       </tr>
-                      <tr className="hover:bg-white/5 transition-colors border-b border-white/10">
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">5</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 text-left">DC CABLE 4 SQURE MM</td>
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">As req.</td>
-                        <td className="py-1.5 px-3 border-r border-white/10"></td>
-                        <td className="py-1.5 px-3"></td>
+                      <tr className="hover:bg-gray-50 transition-colors border-b border-gray-200">
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">5</td>
+                        <td className="py-1 px-3 border-r border-gray-200 text-left text-gray-900">DC CABLE 4 SQURE MM</td>
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">As req.</td>
+                        <td className="py-1 px-3 border-r border-gray-200"></td>
+                        <td className="py-1 px-3"></td>
                       </tr>
-                      <tr className="hover:bg-white/5 transition-colors bg-white/[0.02] border-b border-white/10">
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">6</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 text-left">ACDB BOX WITH SURGE PROTECTION DEVICE</td>
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">1 NO</td>
-                        <td className="py-1.5 px-3 border-r border-white/10"></td>
-                        <td className="py-1.5 px-3"></td>
+                      <tr className="hover:bg-gray-50 transition-colors bg-gray-50/50 border-b border-gray-200">
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">6</td>
+                        <td className="py-1 px-3 border-r border-gray-200 text-left text-gray-900">ACDB BOX WITH SURGE PROTECTION DEVICE</td>
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">1 NO</td>
+                        <td className="py-1 px-3 border-r border-gray-200"></td>
+                        <td className="py-1 px-3"></td>
                       </tr>
-                      <tr className="hover:bg-white/5 transition-colors border-b border-white/10">
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">7</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 text-left">AC CABLE</td>
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">As req.</td>
-                        <td className="py-1.5 px-3 border-r border-white/10"></td>
-                        <td className="py-1.5 px-3"></td>
+                      <tr className="hover:bg-gray-50 transition-colors border-b border-gray-200">
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">7</td>
+                        <td className="py-1 px-3 border-r border-gray-200 text-left text-gray-900">AC CABLE</td>
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">As req.</td>
+                        <td className="py-1 px-3 border-r border-gray-200"></td>
+                        <td className="py-1 px-3"></td>
                       </tr>
-                      <tr className="hover:bg-white/5 transition-colors bg-white/[0.02] border-b border-white/10">
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">8</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 text-left">EARTHING 3 FEET COPPER COATED IRON ROD</td>
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">2</td>
-                        <td className="py-1.5 px-3 border-r border-white/10"></td>
-                        <td className="py-1.5 px-3"></td>
+                      <tr className="hover:bg-gray-50 transition-colors bg-gray-50/50 border-b border-gray-200">
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">8</td>
+                        <td className="py-1 px-3 border-r border-gray-200 text-left text-gray-900">EARTHING 3 FEET COPPER COATED IRON ROD</td>
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">2</td>
+                        <td className="py-1 px-3 border-r border-gray-200"></td>
+                        <td className="py-1 px-3"></td>
                       </tr>
-                      <tr className="hover:bg-white/5 transition-colors border-b border-white/10">
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">9</td>
-                        <td className="py-1.5 px-3 border-r border-white/10 text-left">LIGHTNING ARRESTOR C/W GI PIPE</td>
-                        <td className="py-1.5 px-2 border-r border-white/10 font-bold text-white">1</td>
-                        <td className="py-1.5 px-3 border-r border-white/10"></td>
-                        <td className="py-1.5 px-3"></td>
+                      <tr className="hover:bg-gray-50 transition-colors border-b border-gray-200">
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">9</td>
+                        <td className="py-1 px-3 border-r border-gray-200 text-left text-gray-900">LIGHTNING ARRESTOR C/W GI PIPE</td>
+                        <td className="py-1 px-2 border-r border-gray-200 font-bold text-black">1</td>
+                        <td className="py-1 px-3 border-r border-gray-200"></td>
+                        <td className="py-1 px-3"></td>
                       </tr>
 
                       {/* Financial Totals */}
-                      <tr className="bg-white/5 text-white font-bold border-b border-white/10">
-                        <td className="py-2 px-3 border-r border-white/10 text-right uppercase tracking-wider text-[10.5px]" colSpan="4">TOTAL SYSTEM COST</td>
-                        <td className="py-2 px-3 text-right font-bold text-white text-[11px]">₹ {total.toLocaleString()}</td>
+                      <tr className="bg-gray-50 text-gray-900 font-bold border-b border-gray-300">
+                        <td className="py-1 px-3 border-r border-gray-300 text-right uppercase tracking-wider text-[9.5px]" colSpan="4">TOTAL SYSTEM COST</td>
+                        <td className="py-1 px-3 text-right font-bold text-black text-[10.5px]">₹ {total.toLocaleString()}</td>
                       </tr>
                       {subsidy > 0 && (
-                        <tr className="bg-white/5 text-white font-bold border-b border-white/10">
-                          <td className="py-1.5 px-3 border-r border-white/10 text-right uppercase tracking-wider text-[10.5px] text-green-400" colSpan="4">CENTRAL GOVT. SUBSIDY</td>
-                          <td className="py-1.5 px-3 text-right text-green-400 font-bold text-[11px]">- ₹ {subsidy.toLocaleString()}</td>
+                        <tr className="bg-emerald-50 text-emerald-800 font-bold border-b border-gray-300">
+                          <td className="py-0.5 px-3 border-r border-gray-300 text-right uppercase tracking-wider text-[9.5px] text-emerald-700" colSpan="4">CENTRAL GOVT. SUBSIDY</td>
+                          <td className="py-0.5 px-3 text-right text-emerald-700 font-bold text-[10.5px]">- ₹ {subsidy.toLocaleString()}</td>
                         </tr>
                       )}
                       {gst > 0 && (
-                        <tr className="bg-white/5 text-white font-semibold border-b border-white/10">
-                          <td className="py-1.5 px-3 border-r border-white/10 text-right uppercase tracking-wider text-[10.5px]" colSpan="4">GST {formData.gstPercent}%</td>
-                          <td className="py-1.5 px-3 text-right text-gray-200 text-[11px]">₹ {gst.toLocaleString()}</td>
+                        <tr className="bg-gray-50 text-gray-900 font-semibold border-b border-gray-300">
+                          <td className="py-0.5 px-3 border-r border-gray-300 text-right uppercase tracking-wider text-[9.5px]" colSpan="4">GST {formData.gstPercent}%</td>
+                          <td className="py-0.5 px-3 text-right text-gray-900 text-[10.5px]">₹ {gst.toLocaleString()}</td>
                         </tr>
                       )}
-                      <tr className="bg-red-600/20 text-white font-black text-xs border-b border-t border-red-500/30">
-                        <td className="py-2.5 px-3 border-r border-white/10 text-right uppercase tracking-widest text-red-400" colSpan="4">GRAND TOTAL (NET INVESTMENT)</td>
-                        <td className="py-2.5 px-3 text-right text-red-400 font-black text-sm">₹ {grandTotal.toLocaleString()}</td>
+                      <tr className="bg-red-50 text-red-600 font-black text-xs border-b border-t-2 border-red-500">
+                        <td className="py-1.5 px-3 border-r border-gray-300 text-right uppercase tracking-widest text-red-600 text-xs sm:text-[12.5px]" colSpan="4">GRAND TOTAL (NET INVESTMENT)</td>
+                        <td className="py-1.5 px-3 text-right text-red-600 font-black text-sm sm:text-base">₹ {grandTotal.toLocaleString()}</td>
                       </tr>
 
                       {/* Payment Terms */}
-                      <tr className="text-gray-400 text-[10px] border-b border-white/10">
-                        <td className="py-1.5 px-3 border-r border-white/10 text-left uppercase tracking-wider font-semibold" colSpan="4">RATE PER KW: ₹ {displayedPerKw.toLocaleString()} / KW</td>
-                        <td className="py-1.5 px-3"></td>
+                      <tr className="text-gray-700 text-[9px] border-b border-gray-200 bg-white">
+                        <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-semibold" colSpan="4">RATE PER KW: ₹ {displayedPerKw.toLocaleString()} / KW</td>
+                        <td className="py-0.5 px-3"></td>
                       </tr>
                       {formData.advPercent > 0 && (
-                        <tr className="bg-black/30 text-gray-200 text-[10px] border-b border-white/10">
-                          <td className="py-1.5 px-3 border-r border-white/10 text-left uppercase tracking-wider" colSpan="4">ADVANCE PAYMENT ({formData.advPercent}%)</td>
-                          <td className="py-1.5 px-3 text-right text-white font-bold">₹ {term1.toLocaleString()}</td>
+                        <tr className="bg-gray-50/80 text-gray-800 text-[9px] border-b border-gray-200">
+                          <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-medium" colSpan="4">ADVANCE PAYMENT ({formData.advPercent}%)</td>
+                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {term1.toLocaleString()}</td>
                         </tr>
                       )}
                       {formData.secPercent > 0 && (
-                        <tr className="bg-black/30 text-gray-200 text-[10px] border-b border-white/10">
-                          <td className="py-1.5 px-3 border-r border-white/10 text-left uppercase tracking-wider" colSpan="4">SECOND STAGE PAYMENT ({formData.secPercent}%)</td>
-                          <td className="py-1.5 px-3 text-right text-white font-bold">₹ {term2.toLocaleString()}</td>
+                        <tr className="bg-gray-50/80 text-gray-800 text-[9px] border-b border-gray-200">
+                          <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-medium" colSpan="4">SECOND STAGE PAYMENT ({formData.secPercent}%)</td>
+                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {term2.toLocaleString()}</td>
                         </tr>
                       )}
                       {formData.thirdPercent > 0 && (
-                        <tr className="bg-black/30 text-gray-200 text-[10px]">
-                          <td className="py-1.5 px-3 border-r border-white/10 text-left uppercase tracking-wider" colSpan="4">WORK COMPLETION PAYMENT ({formData.thirdPercent}%)</td>
-                          <td className="py-1.5 px-3 text-right text-white font-bold">₹ {term3.toLocaleString()}</td>
+                        <tr className="bg-gray-50/80 text-gray-800 text-[9px]">
+                          <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-medium" colSpan="4">WORK COMPLETION PAYMENT ({formData.thirdPercent}%)</td>
+                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {term3.toLocaleString()}</td>
                         </tr>
                       )}
                     </tbody>
@@ -577,10 +574,30 @@ const AdminQuotationMaker = () => {
                 </div>
               </div>
 
-              {/* Page 1 Footer */}
-              <div className="text-center text-[10px] text-gray-400 border-t border-white/10 pt-2.5 mt-2 flex justify-between items-center">
-                <span>SPC Solar Technology • Official Proposal</span>
-                <span className="font-mono">Page 1 of 2 (Front Side)</span>
+              {/* Bottom Area: Authorized Channel Partners & Footer (Anchored to Bottom of First Page) */}
+              <div className="mt-auto pt-2">
+                {/* Authorized Channel Partners */}
+                <div className="mb-2">
+                  <div className="text-center mb-1">
+                    <span className="font-bold text-gray-700 tracking-widest uppercase text-[9.5px]">
+                      AUTHORIZED CHANNEL PARTNERS
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-2 font-bold text-gray-900 italic text-[10px]">
+                    <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">KIRLOSKAR</span>
+                    <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">LUMINOUS</span>
+                    <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">AUTOBAT</span>
+                    <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">WAAREE</span>
+                    <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">EASTMAN</span>
+                    <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">POLYCAB</span>
+                  </div>
+                </div>
+
+                {/* Page 1 Footer */}
+                <div className="text-center text-[10px] text-gray-500 border-t border-gray-200 pt-1.5 flex justify-between items-center">
+                  <span>SPC Solar Technology • Official Proposal</span>
+                  <span className="font-mono">Page 1 of 2 (Front Side)</span>
+                </div>
               </div>
             </div>
           </div>
@@ -598,72 +615,69 @@ const AdminQuotationMaker = () => {
             <span className="text-xs text-gray-500 font-mono font-bold">SPC Solar Guarantee</span>
           </div>
 
-          <div className="print-page print-page-2 bg-gradient-to-br from-[#0b1120] via-[#111827] to-[#0b1120] text-gray-100 p-6 sm:p-8 print:p-[10mm_12mm] w-full min-h-[297mm] print:min-h-0 print:h-[297mm] shadow-2xl print:shadow-none font-sans text-[11px] leading-normal relative rounded-2xl print:rounded-none border border-white/15 flex flex-col justify-between overflow-hidden">
+          <div className="print-page print-page-2 bg-white text-gray-900 p-5 sm:p-6 print:p-[10mm_12mm] w-full h-[297mm] min-h-[297mm] max-h-[297mm] shadow-2xl print:shadow-none font-sans text-[11px] leading-normal relative rounded-2xl print:rounded-none border border-gray-200 flex flex-col justify-between overflow-hidden">
             
-            {/* Background Glow */}
-            <div className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] bg-blue-600/10 rounded-full blur-[90px] pointer-events-none print:hidden"></div>
-
-            <div className="relative z-10 flex-1 flex flex-col justify-between">
+            <div className="relative z-10 flex-1 flex flex-col justify-between h-full">
               <div>
                 {/* Terms & Conditions */}
                 <div className="mb-4">
-                  <div className="bg-gradient-to-r from-red-600/30 to-transparent border-l-4 border-red-500 px-3 py-1 inline-block mb-2 shadow-sm rounded-r-md">
-                    <span className="font-bold text-white tracking-widest uppercase text-xs">Terms & Conditions</span>
+                  <div className="bg-red-50 border-l-4 border-red-600 px-3 py-1 inline-block mb-2 shadow-xs rounded-r-md">
+                    <span className="font-bold text-red-600 tracking-widest uppercase text-xs">Terms & Conditions</span>
                   </div>
-                  <ul className="list-none pl-2 space-y-1.5 text-gray-200 font-medium text-[10.5px] leading-relaxed">
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> Quotation valid up to 30 days only from the date of issue.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> Installation work will take 1 TO 21 days & subject to change based on fitting constraint.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> The risk of loss attaching to the goods shall pass to customer with effect from the moment of delivery.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> 1 Year Free Service Support from SPC on date of installation completed.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> All our materials delivery directly to Client Site.</li>
+                  <ul className="list-none pl-2 space-y-1.5 text-gray-800 font-medium text-[10.5px] leading-relaxed">
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> Quotation valid up to 30 days only from the date of issue.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> Installation work will take 1 TO 21 days & subject to change based on fitting constraint.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> The risk of loss attaching to the goods shall pass to customer with effect from the moment of delivery.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> 1 Year Free Service Support from SPC on date of installation completed.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> All our materials delivery directly to Client Site.</li>
                   </ul>
                 </div>
 
                 {/* Client Scope */}
                 <div className="mb-4">
-                  <div className="bg-gradient-to-r from-red-600/30 to-transparent border-l-4 border-red-500 px-3 py-1 inline-block mb-2 shadow-sm rounded-r-md">
-                    <span className="font-bold text-white tracking-widest uppercase text-xs">CLIENT SCOPE</span>
+                  <div className="bg-red-50 border-l-4 border-red-600 px-3 py-1 inline-block mb-2 shadow-xs rounded-r-md">
+                    <span className="font-bold text-red-600 tracking-widest uppercase text-xs">CLIENT SCOPE</span>
                   </div>
-                  <ul className="list-none pl-2 space-y-1 text-gray-300 font-medium uppercase text-[10px] leading-relaxed">
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> Power and water should be provided by client during installation.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> Preparing the roof surface and cleaning is client scope.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> Net meter Procurement and EB department follow up by client.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> GST {formData.gstPercent}% will extra as actual invoicing.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> Material transportation charges shall be paid by client.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> Civil Works and Excavation by Client Scope.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> NETMETER CHARGES IS CLIENT SCOPE. SINGLE PHASE 2575, THREE PHASE 4770.</li>
-                    <li className="flex items-start"><span className="text-red-500 mr-2.5 font-bold">▪</span> DOCUMENT CHARGES 2500 WILL BE CLIENT SCOPE.</li>
+                  <ul className="list-none pl-2 space-y-1 text-gray-800 font-medium uppercase text-[10px] leading-relaxed">
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> Power and water should be provided by client during installation.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> Preparing the roof surface and cleaning is client scope.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> Net meter Procurement and EB department follow up by client.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> GST {formData.gstPercent}% will extra as actual invoicing.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> Material transportation charges shall be paid by client.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> Civil Works and Excavation by Client Scope.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> NETMETER CHARGES IS CLIENT SCOPE. SINGLE PHASE 2575, THREE PHASE 4770.</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2.5 font-bold">▪</span> DOCUMENT CHARGES 2500 WILL BE CLIENT SCOPE.</li>
                   </ul>
                 </div>
 
                 {/* Our Banker */}
-                <div className="mb-4 bg-white/[0.04] p-3.5 sm:p-4 rounded-xl border border-blue-500/30 shadow-sm">
-                  <div className="bg-gradient-to-r from-blue-600/30 to-transparent border-l-4 border-blue-500 px-3 py-1 inline-block mb-2.5 shadow-sm rounded-r-md">
-                    <span className="font-bold text-white tracking-widest uppercase text-xs">OUR BANKER</span>
+                <div className="mb-4 bg-gray-50/80 p-3.5 sm:p-4 rounded-xl border border-gray-300 shadow-xs">
+                  <div className="bg-blue-50 border-l-4 border-blue-600 px-3 py-1 inline-block mb-2.5 shadow-xs rounded-r-md">
+                    <span className="font-bold text-blue-900 tracking-widest uppercase text-xs">OUR BANKER</span>
                   </div>
-                  <div className="pl-2 font-medium space-y-1 text-gray-200 text-[10.5px]">
+                  <div className="pl-2 font-medium space-y-1 text-gray-800 text-[10.5px]">
                     <div className="grid grid-cols-[140px_auto]">
-                      <p className="text-gray-400 font-semibold">COMPANY NAME</p><p className="text-white font-bold">: SPC SOLAR TECHNOLOGY</p>
+                      <p className="text-gray-600 font-semibold">COMPANY NAME</p><p className="text-black font-bold">: SPC SOLAR TECHNOLOGY</p>
                     </div>
                     <div className="grid grid-cols-[140px_auto]">
-                      <p className="text-gray-400 font-semibold">BANK NAME</p><p className="text-white font-bold">: HDFC BANK</p>
+                      <p className="text-gray-600 font-semibold">BANK NAME</p><p className="text-black font-bold">: HDFC BANK</p>
                     </div>
                     <div className="grid grid-cols-[140px_auto]">
-                      <p className="text-gray-400 font-semibold">ACCOUNT NO</p><p className="text-white font-mono font-bold">: 50200020555742</p>
+                      <p className="text-gray-600 font-semibold">ACCOUNT NO</p><p className="text-black font-mono font-bold">: 50200020555742</p>
                     </div>
                     <div className="grid grid-cols-[140px_auto]">
-                      <p className="text-gray-400 font-semibold">BRANCH</p><p className="text-white">: RS PURAM BRANCH, COIMBATORE</p>
+                      <p className="text-gray-600 font-semibold">BRANCH</p><p className="text-black font-medium">: RS PURAM BRANCH, COIMBATORE</p>
                     </div>
                     <div className="grid grid-cols-[140px_auto]">
-                      <p className="text-gray-400 font-semibold">IFSC CODE</p><p className="text-white font-mono font-bold">: HDFC0000000</p>
+                      <p className="text-gray-600 font-semibold">IFSC CODE</p><p className="text-black font-mono font-bold">: HDFC0000000</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Scan to Pay */}
-                <div className="mb-4 bg-white/[0.04] p-3.5 rounded-xl border border-green-500/30 shadow-sm flex items-center justify-between">
+                <div className="mb-4 bg-emerald-50/40 p-3.5 rounded-xl border border-emerald-300 shadow-xs flex items-center justify-between">
                   <div className="flex items-center gap-4 pl-1">
-                    <div className="w-18 h-18 bg-white rounded-xl p-2 flex items-center justify-center font-bold text-gray-900 border border-gray-300 shadow-md">
+                    <div className="w-18 h-18 bg-white rounded-xl p-2 flex items-center justify-center font-bold text-gray-900 border border-gray-300 shadow-sm">
                       <div className="text-center leading-tight">
                         <div className="text-xs font-black text-black tracking-wider">UPI</div>
                         <div className="text-[8px] font-bold text-red-600">PAY</div>
@@ -671,46 +685,31 @@ const AdminQuotationMaker = () => {
                       </div>
                     </div>
                     <div>
-                      <div className="bg-gradient-to-r from-green-600/30 to-transparent border-l-3 border-green-500 px-2 py-0.5 inline-block mb-1 rounded-r-md">
-                        <span className="font-bold text-white tracking-widest uppercase text-[10px]">SCAN TO PAY (UPI)</span>
+                      <div className="bg-emerald-100/70 border-l-3 border-emerald-600 px-2 py-0.5 inline-block mb-1 rounded-r-md">
+                        <span className="font-bold text-emerald-900 tracking-widest uppercase text-[10px]">SCAN TO PAY (UPI)</span>
                       </div>
-                      <p className="text-xs text-gray-400 font-semibold">G.PAY / PHONEPE / ALL UPI</p>
-                      <p className="text-lg text-white font-mono font-black tracking-widest">{formData.gpayNumber}</p>
-                      <p className="text-[9.5px] text-green-400 font-medium">Accepts GPay, PhonePe, Paytm, BHIM & All UPI Apps</p>
+                      <p className="text-xs text-gray-600 font-semibold">G.PAY / PHONEPE / ALL UPI</p>
+                      <p className="text-lg text-black font-mono font-black tracking-widest">{formData.gpayNumber}</p>
+                      <p className="text-[9.5px] text-emerald-700 font-semibold">Accepts GPay, PhonePe, Paytm, BHIM & All UPI Apps</p>
                     </div>
-                  </div>
-                </div>
-
-                {/* Partners */}
-                <div className="mb-4">
-                  <div className="text-center mb-2">
-                    <span className="font-bold text-gray-400 tracking-widest uppercase text-[9.5px]">AUTHORIZED CHANNEL PARTNERS</span>
-                  </div>
-                  <div className="flex flex-wrap justify-center gap-3 font-bold text-gray-300 italic text-[10px]">
-                    <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg">KIRLOSKAR</span>
-                    <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg">LUMINOUS</span>
-                    <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg">AUTOBAT</span>
-                    <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg">WAAREE</span>
-                    <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg">EASTMAN</span>
-                    <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg">POLYCAB</span>
                   </div>
                 </div>
               </div>
 
               {/* Signatures */}
               <div>
-                <div className="flex justify-between items-end font-medium px-4 pt-3 border-t border-white/10">
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-3 pt-10 w-44 text-center text-gray-300 uppercase tracking-wider">
+                <div className="flex justify-between items-end font-medium px-4 pt-3 border-t border-gray-200">
+                  <div className="bg-gray-50 rounded-xl border border-gray-200 p-3 pt-10 w-44 text-center text-gray-800 uppercase tracking-wider">
                     <div className="w-full border-b border-gray-400 mb-1.5"></div>
-                    <p className="text-[8.5px] font-bold text-gray-200">CUSTOMER SIGNATURE</p>
+                    <p className="text-[8.5px] font-bold text-gray-800">CUSTOMER SIGNATURE</p>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-3 pt-10 w-52 text-center text-gray-300 uppercase tracking-wider">
+                  <div className="bg-gray-50 rounded-xl border border-gray-200 p-3 pt-10 w-52 text-center text-gray-800 uppercase tracking-wider">
                     <div className="w-full border-b border-gray-400 mb-1.5"></div>
-                    <p className="text-[8.5px] font-bold text-gray-200">SPC SOLAR OFFICE SIGNATURE</p>
+                    <p className="text-[8.5px] font-bold text-gray-800">SPC SOLAR OFFICE SIGNATURE</p>
                   </div>
                 </div>
 
-                <div className="text-center text-[10px] text-gray-400 pt-2.5 mt-2 flex justify-between items-center border-t border-white/10">
+                <div className="text-center text-[10px] text-gray-500 pt-2.5 mt-2 flex justify-between items-center border-t border-gray-200">
                   <span>SPC Solar Technology • Official Proposal</span>
                   <span className="font-mono">Page 2 of 2 (Back Side)</span>
                 </div>
@@ -739,7 +738,8 @@ const AdminQuotationMaker = () => {
             padding: 0 !important;
             width: 210mm !important;
             height: 100% !important;
-            background-color: #0b1120 !important;
+            background-color: #ffffff !important;
+            color: #000000 !important;
             overflow: visible !important;
           }
           nav, header, aside, .print\\:hidden {
@@ -772,7 +772,8 @@ const AdminQuotationMaker = () => {
             overflow: hidden !important;
             border: none !important;
             border-radius: 0 !important;
-            background: #0b1120 !important;
+            background: #ffffff !important;
+            color: #000000 !important;
           }
           .print-page-1 {
             display: flex !important;

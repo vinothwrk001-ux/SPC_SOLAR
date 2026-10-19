@@ -3,12 +3,18 @@ import { FiX, FiCheckCircle, FiGift } from 'react-icons/fi';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 
-const LeadCaptureModal = ({ isOpen, onClose }) => {
+const LeadCaptureModal = ({ 
+  isOpen, 
+  onClose, 
+  onSuccess, 
+  source = 'Request Quotation (₹1,000 Offer)',
+  calculationData = null 
+}) => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     city: '',
-    state: ''
+    state: 'Tamil Nadu'
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -69,22 +75,62 @@ const LeadCaptureModal = ({ isOpen, onClose }) => {
     setIsLoading(true);
     setServerError('');
 
+    const leadPayload = {
+      name: formData.name.trim(),
+      phone: formData.phone.trim(),
+      city: formData.city.trim(),
+      state: formData.state.trim(),
+      source: source || 'Request Quotation (₹1,000 Offer)',
+      monthlyBill: calculationData?.billValue || calculationData?.monthlyBill || '',
+      systemSize: calculationData?.calcResult?.systemSizeKW ? `${calculationData.calcResult.systemSizeKW} kW` : ''
+    };
+
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/leads`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          phone: formData.phone.trim(),
-          city: formData.city.trim(),
-          state: formData.state.trim()
-        })
+        body: JSON.stringify(leadPayload)
       });
       
       const data = await response.json();
       
       if (data.success) {
+        // Also sync to solar calculator quotations collection if calculation data is present
+        if (calculationData?.calcResult) {
+          try {
+            await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/solar-calculator/leads`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: formData.name.trim(),
+                phone: formData.phone.trim(),
+                location: formData.city.trim(),
+                state: formData.state.trim(),
+                propertyType: calculationData.propertyType || 'Residential',
+                roofType: calculationData.roofType || 'RCC Flat Roof',
+                monthlyBill: calculationData.billValue,
+                calculationResult: calculationData.calcResult,
+                netCost: calculationData.calcResult?.netCost,
+              })
+            });
+          } catch (qErr) {
+            console.warn('Quotation sync notice:', qErr);
+          }
+        }
+
+        const leadObj = {
+          name: formData.name.trim(),
+          phone: formData.phone.trim(),
+          city: formData.city.trim(),
+          state: formData.state.trim(),
+          unlockedAt: Date.now()
+        };
+        localStorage.setItem('spc_unlocked_lead', JSON.stringify(leadObj));
+
         setIsSuccess(true);
+        if (onSuccess) {
+          onSuccess(leadObj);
+        }
       } else {
         setServerError(data.message || 'Something went wrong. Please try again.');
       }
@@ -97,7 +143,7 @@ const LeadCaptureModal = ({ isOpen, onClose }) => {
 
   const resetAndClose = () => {
     setIsSuccess(false);
-    setFormData({ name: '', phone: '', city: '', state: '' });
+    setFormData({ name: '', phone: '', city: '', state: 'Tamil Nadu' });
     setErrors({});
     setServerError('');
     onClose();

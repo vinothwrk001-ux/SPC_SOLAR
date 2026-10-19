@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
-import { FiMenu, FiX, FiArrowRight, FiUser, FiLogOut } from 'react-icons/fi';
+import { FiMenu, FiX, FiArrowRight } from 'react-icons/fi';
 import Button from '../ui/Button';
 import Logo from '../../assets/Logo.png';
 import LeadCaptureModal from './LeadCaptureModal';
+import SubsidyTopTicker from './SubsidyTopTicker';
 import { mobileMenuVariants, mobileNavItem } from '../../animations/variants';
 
 const LINKS = [
@@ -66,96 +67,99 @@ const Navbar = () => {
 
   return (
     <>
-      <motion.nav
-        animate={scrolled ? 'scrolled' : 'top'}
-        variants={{
-          top: {
-            backgroundColor: '#0a0a0a',
-            backdropFilter: 'none',
-            borderBottomColor: 'rgba(255,255,255,0.1)',
-            height: '80px',
-          },
-          scrolled: {
-            backgroundColor: '#0a0a0a',
-            backdropFilter: 'none',
-            borderBottomColor: 'rgba(255,255,255,0.1)',
-            height: '64px',
-          },
-        }}
-        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 border-b"
-      >
-        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 h-full flex items-center justify-between">
-          {/* ---- LOGO ---- */}
-          <Link to="/" className="flex items-center flex-shrink-0 group">
-            <img src={Logo} alt="SPC Solar Logo" className="h-10 md:h-12 w-auto object-contain" />
-          </Link>
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <SubsidyTopTicker scrolled={scrolled} />
+        <motion.nav
+          animate={scrolled ? 'scrolled' : 'top'}
+          variants={{
+            top: {
+              backgroundColor: '#0a0a0a',
+              backdropFilter: 'none',
+              borderBottomColor: 'rgba(255,255,255,0.1)',
+              height: '80px',
+            },
+            scrolled: {
+              backgroundColor: '#0a0a0a',
+              backdropFilter: 'none',
+              borderBottomColor: 'rgba(255,255,255,0.1)',
+              height: '64px',
+            },
+          }}
+          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+          className="w-full border-b"
+        >
+          <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 h-full flex items-center justify-between">
+            {/* ---- LOGO ---- */}
+            <Link to="/" className="flex items-center flex-shrink-0 group">
+              <img src={Logo} alt="SPC Solar Logo" className="h-10 md:h-12 w-auto object-contain" />
+            </Link>
 
-          {/* ---- DESKTOP LINKS ---- */}
-          <div className="hidden lg:flex items-center gap-4 xl:gap-8">
-            {LINKS.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                onClick={() => handleLinkClick(link)}
-                className={`relative font-accent font-semibold text-sm tracking-wide uppercase transition-colors duration-200 group flex items-center gap-1.5 ${
-                  isActive(link.path) ? 'text-red' : 'text-white/80 hover:text-white'
-                }`}
-              >
-                {link.name}
-                {link.isNew && (
-                  <span className="bg-red text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
-                    NEW
-                  </span>
-                )}
-                <motion.span
-                  className="absolute -bottom-1 left-0 h-px bg-red"
-                  initial={false}
-                  animate={{ width: isActive(link.path) ? '100%' : '0%' }}
-                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                />
-                <span className="absolute -bottom-1 left-0 h-px bg-red/40 w-0 group-hover:w-full transition-[width] duration-300" />
-              </Link>
-            ))}
-          </div>
+            {/* ---- DESKTOP LINKS ---- */}
+            <div className="hidden lg:flex items-center gap-4 xl:gap-8">
+              {LINKS.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => handleLinkClick(link)}
+                  className={`relative font-accent font-semibold text-sm tracking-wide uppercase transition-colors duration-200 group flex items-center gap-1.5 ${
+                    isActive(link.path) ? 'text-red' : 'text-white/80 hover:text-white'
+                  }`}
+                >
+                  {link.name}
+                  {link.isNew && (
+                    <span className="bg-red text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                      NEW
+                    </span>
+                  )}
+                  <motion.span
+                    className="absolute -bottom-1 left-0 h-px bg-red"
+                    initial={false}
+                    animate={{ width: isActive(link.path) ? '100%' : '0%' }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  />
+                  <span className="absolute -bottom-1 left-0 h-px bg-red/40 w-0 group-hover:w-full transition-[width] duration-300" />
+                </Link>
+              ))}
+            </div>
 
-          {/* ---- CTA ---- */}
-          <div className="hidden lg:flex items-center gap-3 xl:gap-4">
-            <Button variant="outline-white" size="sm" onClick={() => setIsLeadModalOpen(true)} className="whitespace-nowrap">
-              Request Quote
-            </Button>
-            <Link to="/quotation">
-              <Button size="sm" icon={<FiArrowRight size={14} />} className="whitespace-nowrap">
-                Solar Calculator
+            {/* ---- CTA ---- */}
+            <div className="hidden lg:flex items-center gap-3 xl:gap-4">
+              <Button variant="outline-white" size="sm" onClick={() => setIsLeadModalOpen(true)} className="whitespace-nowrap">
+                Request Quote
               </Button>
-            </Link>
+              <Link to="/quotation">
+                <Button size="sm" icon={<FiArrowRight size={14} />} className="whitespace-nowrap">
+                  Solar Calculator
+                </Button>
+              </Link>
 
-            <Link to="/admin/login" className="text-white/30 hover:text-white text-[10px] uppercase tracking-widest ml-1 font-accent font-bold transition-colors" title="Admin Portal">
-              Admin
-            </Link>
+              <Link to="/admin/login" className="text-white/30 hover:text-white text-[10px] uppercase tracking-widest ml-1 font-accent font-bold transition-colors" title="Admin Portal">
+                Admin
+              </Link>
+            </div>
+
+            {/* ---- HAMBURGER ---- */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="lg:hidden text-white p-1 mr-2.5 sm:mr-3 lg:mr-0 focus:outline-none"
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
+            >
+              <AnimatePresence mode="wait">
+                {isOpen ? (
+                  <motion.span key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                    <FiX size={26} />
+                  </motion.span>
+                ) : (
+                  <motion.span key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                    <FiMenu size={26} />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
           </div>
-
-          {/* ---- HAMBURGER ---- */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden text-white p-1 focus:outline-none"
-            aria-label={isOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={isOpen}
-          >
-            <AnimatePresence mode="wait">
-              {isOpen ? (
-                <motion.span key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                  <FiX size={26} />
-                </motion.span>
-              ) : (
-                <motion.span key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                  <FiMenu size={26} />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </button>
-        </div>
-      </motion.nav>
+        </motion.nav>
+      </header>
 
       {/* ---- MOBILE MENU OVERLAY ---- */}
       <AnimatePresence>
@@ -176,8 +180,8 @@ const Navbar = () => {
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red/8 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-red/6 rounded-full blur-3xl pointer-events-none" />
 
-            <nav className="relative flex flex-col items-center justify-between w-full px-6 h-full pt-[72px] pb-3.5">
-              <div className="flex flex-col items-center justify-center gap-2 sm:gap-2.5 my-auto w-full">
+            <nav className="relative flex flex-col items-center justify-between w-full px-6 h-full pt-[116px] sm:pt-[124px] pb-3.5">
+              <div className="flex flex-col items-center justify-center gap-2 sm:gap-2.5 my-auto w-full pt-2 sm:pt-3">
                 {LINKS.map((link, i) => (
                   <motion.div key={link.name} variants={mobileNavItem} custom={i}>
                     <Link

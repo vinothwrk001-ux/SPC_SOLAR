@@ -12,15 +12,17 @@ import {
   recordReelView, 
   recordQuoteClick 
 } from '../../services/reelService';
+import { usePreload } from '../../context/PreloadContext';
 
 const CATEGORIES = ['All', 'Installation', 'Testimonial', 'Commercial', 'Subsidy Explainer', 'Products'];
 
 const ReelsPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { preloadedData } = usePreload();
 
-  const [reels, setReels] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [reels, setReels] = useState(() => preloadedData?.reels || []);
+  const [loading, setLoading] = useState(() => !preloadedData?.reels);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('All');
   
@@ -36,12 +38,23 @@ const ReelsPage = () => {
   const getMediaUrl = (url) => {
     if (!url) return '';
     if (url.startsWith('http')) return url;
-    if (url.startsWith('/uploads')) return `http://localhost:5000${url}`;
-    return `http://localhost:5000/uploads/${url}`;
+    const backendBase = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+    if (url.startsWith('/uploads')) return `${backendBase}${url}`;
+    return `${backendBase}/uploads/${url.startsWith('/') ? url.slice(1) : url}`;
   };
 
   // Fetch reels from API
   useEffect(() => {
+    if (selectedCategory === 'All' && preloadedData?.reels && preloadedData.reels.length > 0 && reels.length > 0) {
+      setLoading(false);
+      const requestedId = searchParams.get('id');
+      if (requestedId && reels.length > 0) {
+        const idx = reels.findIndex(r => r._id === requestedId);
+        if (idx !== -1) setCurrentIndex(idx);
+      }
+      return;
+    }
+
     const fetchReels = async () => {
       try {
         setLoading(true);

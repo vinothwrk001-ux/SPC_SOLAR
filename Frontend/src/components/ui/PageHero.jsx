@@ -41,7 +41,7 @@ const PageHero = ({ label, title = '', highlight, subtitle, children, normalCase
   };
 
   return (
-    <section className="relative bg-black text-white pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-14 md:pb-20 overflow-hidden">
+    <section className="relative bg-black text-white pt-36 sm:pt-28 md:pt-32 pb-10 sm:pb-14 md:pb-20 overflow-hidden">
       <EnergyGrid opacity={0.05} color="white" />
 
       {/* Glow */}

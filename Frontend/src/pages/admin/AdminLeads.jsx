@@ -32,6 +32,7 @@ const AdminLeads = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [categoryFilter, setCategoryFilter] = useState('ALL');
 
   // Notes Modal State
   const [selectedLead, setSelectedLead] = useState(null);
@@ -172,6 +173,18 @@ const AdminLeads = () => {
     window.open(`https://wa.me/${phoneWithCode}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
+  // Dynamic Category Options from Leads
+  const CATEGORY_OPTIONS = useMemo(() => {
+    const set = new Set();
+    leads.forEach((l) => {
+      if (l.source) set.add(l.source);
+    });
+    if (!set.has('Request Quotation (₹1,000 Offer)')) {
+      set.add('Request Quotation (₹1,000 Offer)');
+    }
+    return ['ALL', ...Array.from(set)];
+  }, [leads]);
+
   // Filtered Leads
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
@@ -180,14 +193,19 @@ const AdminLeads = () => {
         (lead.phone || '').includes(searchTerm) ||
         (lead.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (lead.city || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (lead.source || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (lead.notes || '').toLowerCase().includes(searchTerm.toLowerCase());
 
       const leadStatus = (lead.status || '').toUpperCase().replace(/[\s-]/g, '_');
       const filterStatusNorm = statusFilter.toUpperCase().replace(/[\s-]/g, '_');
       const matchStatus = statusFilter === 'ALL' || leadStatus === filterStatusNorm;
-      return matchSearch && matchStatus;
+
+      const matchCategory =
+        categoryFilter === 'ALL' || (lead.source || 'Request Quotation (₹1,000 Offer)') === categoryFilter;
+
+      return matchSearch && matchStatus && matchCategory;
     });
-  }, [leads, searchTerm, statusFilter]);
+  }, [leads, searchTerm, statusFilter, categoryFilter]);
 
   // Statistics
   const stats = useMemo(() => {
@@ -367,7 +385,20 @@ const AdminLeads = () => {
             )}
           </div>
 
-          <div className="flex items-center gap-2 self-end md:self-auto">
+          <div className="flex items-center gap-2 self-end md:self-auto flex-wrap">
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="px-3 py-2 text-xs font-accent font-semibold uppercase tracking-wider bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:border-black"
+            >
+              <option value="ALL">All Categories / Sources</option>
+              {CATEGORY_OPTIONS.filter((c) => c !== 'ALL').map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -461,8 +492,13 @@ const AdminLeads = () => {
 
                     {/* Contact & Location */}
                     <td className="py-3.5 px-4 whitespace-nowrap">
-                      <div className="font-heading font-bold text-black text-sm group-hover:text-red transition-colors">
-                        {lead.name}
+                      <div className="flex items-center gap-2">
+                        <div className="font-heading font-bold text-black text-sm group-hover:text-red transition-colors">
+                          {lead.name}
+                        </div>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-accent font-bold uppercase tracking-wider bg-red/10 text-red border border-red/20">
+                          {lead.source || 'Request Quotation'}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-600 font-body">
                         <span className="font-semibold text-gray-800">{lead.phone}</span>
@@ -470,6 +506,11 @@ const AdminLeads = () => {
                           <span className="flex items-center gap-0.5 text-gray-500">
                             <FiMapPin size={11} className="text-gray-400" />
                             {lead.city}
+                          </span>
+                        )}
+                        {lead.state && (
+                          <span className="text-gray-400 text-[11px]">
+                            ({lead.state})
                           </span>
                         )}
                       </div>

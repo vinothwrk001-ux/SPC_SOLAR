@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
 import { Stagger, Reveal } from '../../components/motion';
@@ -9,12 +9,13 @@ const ComponentsGalleryPage = () => {
   const [components, setComponents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('ALL');
+  const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
   useEffect(() => {
     const fetchComponents = async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/gallery-components');
-        setComponents(data);
+        const { data } = await api.get('/gallery-components');
+        setComponents(data || []);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching components:', error);
@@ -101,38 +102,42 @@ const ComponentsGalleryPage = () => {
                 if (list.length === 0) return null;
 
                 return (
-                  <div key={cat} className="space-y-6">
+                  <div key={cat} className="space-y-4 sm:space-y-6">
                     <Reveal>
-                      <div className="flex items-center gap-3">
-                        <span className="w-2.5 h-7 bg-red rounded-full"></span>
-                        <h2 className="heading-accent text-2xl md:text-3xl font-heading">{cat}</h2>
-                        <span className="text-xs font-bold text-gray-400 font-accent uppercase px-2.5 py-1 bg-surface rounded-full">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <span className="w-2 h-6 sm:w-2.5 sm:h-7 bg-red rounded-full flex-shrink-0"></span>
+                        <h2 className="heading-accent section-heading-mobile text-xl sm:text-2xl md:text-3xl font-heading">{cat}</h2>
+                        <span className="text-[10px] sm:text-xs font-bold text-gray-400 font-accent uppercase px-2 py-0.5 sm:px-2.5 sm:py-1 bg-surface rounded-full flex-shrink-0">
                           {list.length} {list.length === 1 ? 'Item' : 'Items'}
                         </span>
                       </div>
                     </Reveal>
 
-                    <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <Stagger className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-8">
                       {list.map((comp) => (
-                        <div key={comp._id} className="group bg-white rounded-card overflow-hidden shadow-card border border-gray-200 hover:border-red hover:shadow-card-md transition-all duration-350 flex flex-col justify-between">
-                          <div className="relative h-64 overflow-hidden bg-gray-50 flex items-center justify-center p-4">
+                        <div key={comp._id} className="group bg-white rounded-lg sm:rounded-card overflow-hidden shadow-card border border-gray-200 hover:border-red hover:shadow-card-md transition-all duration-350 flex flex-col justify-between">
+                          <div className="relative h-36 sm:h-48 md:h-64 overflow-hidden bg-gray-50 flex items-center justify-center p-2 sm:p-3 md:p-4">
                             <motion.img
-                              src={`http://localhost:5000${comp.imageUrl}`}
+                              src={`${baseUrl}${comp.imageUrl}`}
                               alt={comp.title}
                               className="w-full h-full object-contain"
                               whileHover={{ scale: 1.06 }}
                               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                             />
                           </div>
-                          <div className="p-6">
-                            <div className="flex items-center justify-between gap-2 mb-1">
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-red bg-red/10 px-2 py-0.5 rounded">
+                          <div className="p-2.5 sm:p-4 md:p-6">
+                            <div className="flex items-center justify-between gap-2 mb-1 sm:mb-1.5 md:mb-1">
+                              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-red bg-red/10 px-1.5 sm:px-2 py-0.5 rounded">
                                 {comp.category || 'Components'}
                               </span>
                             </div>
-                            <h3 className="heading-accent text-xl group-hover:text-red transition-colors">{comp.title}</h3>
+                            <h3 className="heading-accent mobile-clean-text text-xs sm:text-sm md:text-xl font-heading font-bold text-black group-hover:text-red transition-colors line-clamp-2 md:line-clamp-none leading-snug">
+                              {comp.title}
+                            </h3>
                             {comp.description && (
-                              <p className="text-gray-500 text-sm font-body line-clamp-2 mt-2">{comp.description}</p>
+                              <p className="text-gray-500 text-[11px] sm:text-xs md:text-sm font-body line-clamp-2 mt-1 md:mt-2 leading-relaxed">
+                                {comp.description}
+                              </p>
                             )}
                           </div>
                         </div>

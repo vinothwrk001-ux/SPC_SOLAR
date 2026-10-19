@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { FiHome, FiBriefcase, FiSettings, FiActivity, FiArrowRight, FiZap, FiSun } from 'react-icons/fi';
 import { Stagger, EnergyGrid, Reveal } from '../motion';
 import api from '../../services/api';
+import { usePreload } from '../../context/PreloadContext';
 
 const STATIC_SERVICES = [
   {
@@ -47,27 +48,36 @@ const getCategoryIcon = (category) => {
   return FiZap;
 };
 
+const formatServicesData = (data) => {
+  if (!Array.isArray(data) || data.length === 0) return STATIC_SERVICES;
+  const activeOnly = data.filter((s) => s.isActive !== false);
+  if (activeOnly.length === 0) return STATIC_SERVICES;
+  return activeOnly.slice(0, 4).map((item, idx) => ({
+    id: item._id || idx,
+    icon: getCategoryIcon(item.category),
+    number: String(idx + 1).padStart(2, '0'),
+    title: item.title,
+    desc: item.shortDesc || item.fullDesc || item.desc || 'Comprehensive clean energy solutions tailored to your power needs.',
+    path: '/services',
+  }));
+};
+
 const ServicesSection = () => {
-  const [services, setServices] = useState(STATIC_SERVICES);
+  const { preloadedData } = usePreload();
+  const [services, setServices] = useState(() => (preloadedData?.services ? formatServicesData(preloadedData.services) : STATIC_SERVICES));
 
   useEffect(() => {
+    if (preloadedData?.services && preloadedData.services.length > 0) {
+      setServices(formatServicesData(preloadedData.services));
+      return;
+    }
+
     let isMounted = true;
     const fetchServices = async () => {
       try {
         const { data } = await api.get('/services');
         if (isMounted && Array.isArray(data) && data.length > 0) {
-          const activeOnly = data.filter((s) => s.isActive !== false);
-          if (activeOnly.length > 0) {
-            const formatted = activeOnly.slice(0, 4).map((item, idx) => ({
-              id: item._id || idx,
-              icon: getCategoryIcon(item.category),
-              number: String(idx + 1).padStart(2, '0'),
-              title: item.title,
-              desc: item.shortDesc || item.fullDesc || item.desc || 'Comprehensive clean energy solutions tailored to your power needs.',
-              path: '/services',
-            }));
-            setServices(formatted);
-          }
+          setServices(formatServicesData(data));
         }
       } catch (err) {
         console.warn('Could not load services for homepage section:', err);
@@ -77,7 +87,7 @@ const ServicesSection = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [preloadedData?.services]);
 
   return (
     <section className="py-16 md:py-24 bg-white relative overflow-hidden">
@@ -105,8 +115,8 @@ const ServicesSection = () => {
             return (
               <Link to={service.path} key={service.number} className="block group h-full">
                 <div className="relative bg-white border border-gray-200 rounded-card p-3.5 sm:p-6 md:p-8 overflow-hidden transition-all duration-350 hover:border-red hover:shadow-card-md flex flex-col justify-between h-full">
-                  {/* Number watermark */}
-                  <span className="absolute top-2 right-3 md:top-4 md:right-5 font-heading text-3xl sm:text-5xl md:text-7xl text-gray-100 leading-none select-none pointer-events-none transition-colors duration-300 group-hover:text-red/8">
+                  {/* Number */}
+                  <span className="absolute top-3 right-4 md:top-5 md:right-6 font-heading font-bold text-3xl sm:text-4xl md:text-5xl text-black leading-none select-none pointer-events-none transition-colors duration-300 group-hover:text-red">
                     {service.number}
                   </span>
 

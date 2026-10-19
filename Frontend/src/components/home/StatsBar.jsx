@@ -11,7 +11,7 @@ const STATS = [
 
 const StatsBar = () => {
   return (
-    <div className="bg-red relative overflow-hidden">
+    <div className="bg-red relative overflow-hidden mb-6 sm:mb-8 lg:mb-10 shadow-sm">
       {/* Scan line animation */}
       <motion.div
         className="absolute inset-y-0 w-32 bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none"

@@ -19,7 +19,7 @@ import {
   FiMail,
   FiZap
 } from 'react-icons/fi';
-import { FaWhatsapp, FaEnvelope, FaFilePdf } from 'react-icons/fa';
+import { FaWhatsapp, FaEnvelope } from 'react-icons/fa';
 
 const STATUS_OPTIONS = ['ALL', 'New', 'Sent', 'Followup', 'Converted', 'Closed'];
 

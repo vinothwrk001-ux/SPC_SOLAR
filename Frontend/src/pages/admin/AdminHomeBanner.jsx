@@ -274,7 +274,8 @@ const AdminHomeBanner = () => {
     if (!url) return '';
     if (url.startsWith('blob:') || url.startsWith('data:')) return url;
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return `http://localhost:5000${url}`;
+    const backendBase = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+    return `${backendBase}${url.startsWith('/') ? '' : '/'}${url}`;
   };
 
   return (

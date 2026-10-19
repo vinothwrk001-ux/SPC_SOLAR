@@ -37,7 +37,36 @@ startSchedulerEngine();
 
 // Middlewares
 app.use(express.json());
-app.use(cors({ origin: process.env.CLIENT_URL || true, credentials: true }));
+
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
+  'http://127.0.0.1:5175',
+  'http://127.0.0.1:3000'
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow non-browser requests (Postman, curl, SSR, mobile, etc.)
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      /^http:\/\/localhost:\d+$/.test(origin) ||
+      /^http:\/\/127\.0\.0\.1:\d+$/.test(origin) ||
+      process.env.NODE_ENV !== 'production'
+    ) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS policy does not allow access from ${origin}`));
+  },
+  credentials: true
+}));
+
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" })); // Allow serving images
 app.use(morgan('dev'));
@@ -76,4 +105,15 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n❌ [PORT CONFLICT] Port ${PORT} is already in use by another application!`);
+    console.error(`👉 Close the conflicting process or change PORT in .env.\n`);
+  } else {
+    console.error('Server error:', err);
+  }
+});

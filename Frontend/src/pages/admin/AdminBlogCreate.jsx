@@ -5,7 +5,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import toast from 'react-hot-toast';
-import { FiSave, FiEye, FiUpload, FiPlus, FiTrash2, FiArrowLeft, FiTag } from 'react-icons/fi';
+import { FiSave, FiUpload, FiPlus, FiTrash2, FiArrowLeft } from 'react-icons/fi';
 import { slugify } from '../../utils/blogHelpers';
 
 const AdminBlogCreate = () => {

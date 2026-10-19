@@ -1,31 +1,40 @@
 import React, { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import api from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight, FiArrowRight, FiPlay, FiExternalLink } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiArrowRight } from 'react-icons/fi';
+import defaultHeroBanner from '../../assets/hero-banner.png';
+import { usePreload } from '../../context/PreloadContext';
 
 const DEFAULT_BANNER = {
   _id: 'default-1',
-  mediaUrl: 'https://images.unsplash.com/photo-1508514177221-188b1c77eca2?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+  mediaUrl: defaultHeroBanner,
   mediaType: 'image',
-  title: 'POWER YOUR FUTURE',
-  subtitle: 'SOLAR ENERGY. REDEFINED.',
+  title: 'SUNLIGHT TO SAVINGS.',
+  subtitle: 'Smart Solar. Sustainable Living. A Brighter Tomorrow.',
   ctaText: 'REQUEST A QUOTE',
   ctaUrl: '/quotation',
 };
 
 const HeroSection = () => {
-  const [banners, setBanners] = useState([DEFAULT_BANNER]);
+  const { preloadedData } = usePreload();
+  const [banners, setBanners] = useState(() => (preloadedData?.banners?.length > 0 ? preloadedData.banners : [DEFAULT_BANNER]));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !preloadedData?.banners);
   const navigate = useNavigate();
   const videoRefs = useRef({});
 
   useEffect(() => {
+    if (preloadedData?.banners && preloadedData.banners.length > 0) {
+      setBanners(preloadedData.banners);
+      setLoading(false);
+      return;
+    }
+
     const fetchBanners = async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/banner');
+        const { data } = await api.get('/banner');
         if (data?.banners && data.banners.length > 0) {
           setBanners(data.banners);
         } else if (data && (data.mediaUrl || data.imageUrl)) {
@@ -43,13 +52,13 @@ const HeroSection = () => {
           ]);
         }
       } catch (error) {
-        console.error('Failed to load dynamic banners, using default.');
+        console.warn('Failed to load dynamic banners from backend, using default fallback banner.');
       } finally {
         setLoading(false);
       }
     };
     fetchBanners();
-  }, []);
+  }, [preloadedData?.banners]);
 
   // Auto-advance slider
   useEffect(() => {
@@ -77,9 +86,12 @@ const HeroSection = () => {
   };
 
   const getMediaUrl = (url) => {
-    if (!url) return '';
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return `http://localhost:5000${url}`;
+    if (!url) return defaultHeroBanner;
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:') || url.startsWith('/src/')) {
+      return url;
+    }
+    const backendBase = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+    return `${backendBase}${url.startsWith('/') ? '' : '/'}${url}`;
   };
 
   const currentBanner = banners[currentIndex] || DEFAULT_BANNER;
@@ -121,7 +133,7 @@ const HeroSection = () => {
 
   return (
     <section 
-      className="relative w-full h-[70vh] sm:h-[80vh] md:h-screen min-h-[500px] md:min-h-[640px] bg-black overflow-hidden select-none"
+      className="relative w-full h-[70vh] sm:h-[80vh] md:h-screen min-h-[500px] md:min-h-[640px] bg-slate-950 overflow-hidden select-none"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

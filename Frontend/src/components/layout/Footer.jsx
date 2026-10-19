@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
+import { FiFacebook, FiInstagram, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
-import { Reveal, Stagger, EnergyGrid } from '../motion';
+import { Reveal, EnergyGrid } from '../motion';
 import Logo from '../../assets/Logo.png';
 
 const SOCIAL = [
@@ -12,6 +12,7 @@ const SOCIAL = [
 
 const QUICK_LINKS = [
   { name: 'Home', path: '/' },
+  { name: 'Refer & Earn (₹2,000/kW)', path: '/services#referral-program', isSpecial: true },
   { name: 'Services', path: '/services' },
   { name: 'Gallery', path: '/components' },
   { name: 'Solar Reels', path: '/#reels' },
@@ -89,13 +90,24 @@ const Footer = () => {
               <ul className="space-y-3">
                 {QUICK_LINKS.map((l) => (
                   <li key={l.name}>
-                    <Link
-                      to={l.path}
-                      className="text-gray-400 hover:text-white text-sm font-body flex items-center gap-1.5 sm:gap-2 group transition-colors duration-200"
-                    >
-                      <span className="w-0 h-px bg-red transition-[width] duration-300 group-hover:w-4 flex-shrink-0" />
-                      <span>{l.name}</span>
-                    </Link>
+                    {l.isSpecial ? (
+                      <button
+                        type="button"
+                        onClick={() => window.dispatchEvent(new CustomEvent('open-referral-modal'))}
+                        className="text-amber-400 hover:text-amber-300 font-bold text-sm font-body flex items-center gap-1.5 sm:gap-2 group transition-colors duration-200 text-left"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse flex-shrink-0" />
+                        <span>{l.name}</span>
+                      </button>
+                    ) : (
+                      <Link
+                        to={l.path}
+                        className="text-gray-400 hover:text-white text-sm font-body flex items-center gap-1.5 sm:gap-2 group transition-colors duration-200"
+                      >
+                        <span className="w-0 h-px bg-red transition-[width] duration-300 group-hover:w-4 flex-shrink-0" />
+                        <span>{l.name}</span>
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -146,6 +158,15 @@ const Footer = () => {
                 </li>
                 <li>
                   <a
+                    href="tel:+918098744044"
+                    className="flex items-center gap-3 text-gray-400 hover:text-white text-sm font-body transition-colors duration-200"
+                  >
+                    <FiPhone size={16} className="text-red flex-shrink-0" />
+                    +91 80987 44044 (Office)
+                  </a>
+                </li>
+                <li>
+                  <a
                     href="tel:+918489644044"
                     className="flex items-center gap-3 text-gray-400 hover:text-white text-sm font-body transition-colors duration-200"
                   >
@@ -162,19 +183,10 @@ const Footer = () => {
                     +91 84897 44044
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="tel:+918098744044"
-                    className="flex items-center gap-3 text-gray-400 hover:text-white text-sm font-body transition-colors duration-200"
-                  >
-                    <FiPhone size={16} className="text-red flex-shrink-0" />
-                    +91 80987 44044 (Office)
-                  </a>
-                </li>
               </ul>
 
               <a
-                href="https://wa.me/918489644044"
+                href="https://wa.me/918098744044"
                 target="_blank"
                 rel="noreferrer"
                 className="mt-6 inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5b] text-white px-4 py-2.5 rounded-btn font-accent font-bold text-sm transition-colors duration-250"

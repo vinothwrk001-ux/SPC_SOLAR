@@ -20,13 +20,13 @@ const HomePage = () => {
       />
       <HeroSection />
       <StatsBar />
+      <SubsidyBanner />
       <ServicesSection />
       <ProjectsPreview />
       <WhyChooseUs />
       <ErrorBoundary fallback={null}>
         <ReelCarousel />
       </ErrorBoundary>
-      <SubsidyBanner />
       <TestimonialsSection />
       <CTABanner />
     </div>

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiCheckCircle, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { FiCheckCircle, FiChevronDown } from 'react-icons/fi';
 import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
 import Button from '../../components/ui/Button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Reveal, Stagger } from '../../components/motion';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
