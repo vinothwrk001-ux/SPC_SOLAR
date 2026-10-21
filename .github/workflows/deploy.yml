@@ -44,3 +44,10 @@ jobs:
           test -d Frontend/dist && echo "✅ Frontend dist directory verified!"
           test -f Frontend/dist/index.html && echo "✅ index.html verified!"
           test -f Frontend/dist/.htaccess && echo "✅ .htaccess verified!"
+
+      - name: Syntax Check Server Entrypoints
+        run: |
+          node -c Backend/server.js
+          node -c server.js
+          node -c app.js
+          echo "✅ All server entrypoints syntax verified!"

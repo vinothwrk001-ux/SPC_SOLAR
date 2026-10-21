@@ -6,6 +6,8 @@ module.exports = {
       instances: 'max',
       exec_mode: 'cluster',
       autorestart: true,
+      exp_backoff_restart_delay: 200,
+      max_restarts: 15,
       watch: false,
       max_memory_restart: '800M',
       env: {
