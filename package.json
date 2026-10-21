@@ -3,15 +3,18 @@
   "version": "1.0.0",
   "description": "SPC Solar - Smart Solar Energy & Reels Management System",
   "main": "Backend/server.js",
+  "workspaces": [
+    "Backend",
+    "Frontend"
+  ],
   "scripts": {
     "start": "node Backend/server.js",
     "build": "npm --prefix Frontend run build",
     "install:all": "npm --prefix Backend install && npm --prefix Frontend install",
-    "postinstall": "npm --prefix Backend install && npm --prefix Frontend install && npm --prefix Frontend run build",
     "seed": "npm --prefix Backend run seed"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "keywords": ["solar", "spcsolarcbe", "reels"],
   "author": "SPC Solar Coimbatore",
