@@ -1,15 +1,14 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
+const connectDB = require('./config/db');
 const GalleryComponent = require('./models/GalleryComponent');
 require('dotenv').config();
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/spc_solar';
-
 const seedGallery = async () => {
   try {
-    await mongoose.connect(MONGO_URI);
-    console.log('MongoDB Connected');
+    await connectDB();
+
 
     const sourceDir = path.join(__dirname, '../Frontend/src/assets');
     const destDir = path.join(__dirname, 'uploads');

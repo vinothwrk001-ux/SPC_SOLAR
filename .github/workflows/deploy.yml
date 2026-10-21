@@ -1,0 +1,46 @@
+name: Production Build & Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: |
+            Frontend/package-lock.json
+            Backend/package-lock.json
+
+      - name: Install Backend Dependencies
+        working-directory: ./Backend
+        run: npm ci
+
+      - name: Install Frontend Dependencies
+        working-directory: ./Frontend
+        run: npm ci
+
+      - name: Build Frontend for Production (spcsolarcbe.com)
+        working-directory: ./Frontend
+        env:
+          VITE_API_URL: https://spcsolarcbe.com/api
+          VITE_BACKEND_URL: https://spcsolarcbe.com
+        run: npm run build
+
+      - name: Verify Production Assets
+        run: |
+          test -d Frontend/dist && echo "✅ Frontend dist directory verified!"
+          test -f Frontend/dist/index.html && echo "✅ index.html verified!"
+          test -f Frontend/dist/.htaccess && echo "✅ .htaccess verified!"

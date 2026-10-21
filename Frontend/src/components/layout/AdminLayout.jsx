@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiTag, FiImage, FiUsers } from 'react-icons/fi';
+import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiTag, FiImage, FiUsers, FiHardDrive } from 'react-icons/fi';
 import Logo from '../../assets/Logo.png';
 
 const AdminLayout = () => {
@@ -18,6 +18,7 @@ const AdminLayout = () => {
     { name: 'Customer Leads', path: '/admin/leads', icon: <FiUsers /> },
     { name: 'Welcome Coupons', path: '/admin/coupons', icon: <FiTag /> },
     { name: 'Solar Reels', path: '/admin/reels', icon: <FiVideo /> },
+    { name: 'Media Manager', path: '/admin/media', icon: <FiHardDrive /> },
     { name: 'Solar Calculator Settings', path: '/admin/solar-calculator', icon: <FiSettings /> },
     { name: 'Quotation Maker', path: '/admin/quotation-maker', icon: <FiFileText /> },
     { name: 'Quotations List', path: '/admin/quotations', icon: <FiFileText /> },

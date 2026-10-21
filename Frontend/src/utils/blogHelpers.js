@@ -31,10 +31,9 @@ export const getImageUrl = (url) => {
   if (!url) return null;
   if (url.startsWith('http') || url.startsWith('data:')) return url;
   
-  // Assuming the backend is running on the API URL minus '/api'
-  const backendUrl = import.meta.env.VITE_API_URL 
-    ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') 
-    : 'http://localhost:5000';
+  const backendUrl = import.meta.env.VITE_BACKEND_URL 
+    || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') : '')
+    || (typeof window !== 'undefined' && !['localhost', '127.0.0.1'].includes(window.location.hostname) ? window.location.origin : 'http://localhost:5000');
     
   if (url.startsWith('/uploads/')) {
      return `${backendUrl}${url}`;
@@ -46,7 +45,7 @@ export const getImageUrl = (url) => {
   return `${backendUrl}/uploads/${url.startsWith('/') ? url.slice(1) : url}`;
 };
 
-export const generateArticleSchema = (blog, siteUrl = 'http://localhost:5173') => {
+export const generateArticleSchema = (blog, siteUrl = (typeof window !== 'undefined' ? window.location.origin : 'https://spcsolarcbe.com')) => {
   if (!blog) return null;
   const canonical = blog.seo?.canonicalUrl || `${siteUrl}/blog/${blog.slug}`;
   const imageUrl = blog.featuredImage?.url

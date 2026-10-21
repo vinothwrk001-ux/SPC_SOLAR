@@ -1,4 +1,5 @@
 const Reel = require('../models/Reel');
+const mediaService = require('../services/mediaService');
 const path = require('path');
 
 // @desc Get public reels feed
@@ -178,6 +179,7 @@ const createReel = async (req, res) => {
     });
 
     const saved = await newReel.save();
+    await mediaService.syncReelMedia(saved._id, saved.videoUrl, saved.thumbnailUrl);
     res.status(201).json(saved);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -202,6 +204,9 @@ const updateReel = async (req, res) => {
     }
 
     const updated = await Reel.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    if (updated) {
+      await mediaService.syncReelMedia(updated._id, updated.videoUrl, updated.thumbnailUrl);
+    }
     res.json(updated);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -212,6 +217,7 @@ const updateReel = async (req, res) => {
 // @route DELETE /api/reels/admin/:id
 const deleteReel = async (req, res) => {
   try {
+    await mediaService.onReelDeleted(req.params.id);
     await Reel.findByIdAndDelete(req.params.id);
     res.json({ message: 'Reel deleted successfully' });
   } catch (error) {

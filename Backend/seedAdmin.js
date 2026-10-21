@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
+const connectDB = require('./config/db');
 const Admin = require('./models/Admin');
 
 const seedAdmin = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await connectDB();
     
     const count = await Admin.countDocuments();
     if (count > 0) {

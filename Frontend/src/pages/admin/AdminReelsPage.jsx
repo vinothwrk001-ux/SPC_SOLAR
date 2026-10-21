@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   FiVideo, FiPlus, FiTrash2, FiEdit2, FiEye, 
-  FiZap, FiUpload, FiX, FiCheckCircle, FiPlay, FiSearch, FiGlobe, FiEyeOff
+  FiZap, FiUpload, FiX, FiCheckCircle, FiPlay, FiSearch, FiGlobe, FiEyeOff,
+  FiHardDrive, FiImage
 } from 'react-icons/fi';
 import { 
   getAdminReels, 
@@ -9,6 +10,7 @@ import {
   updateReel, 
   deleteReel 
 } from '../../services/reelService';
+import { MediaPickerModal } from '../../components/media/MediaPickerModal';
 
 const CATEGORIES = ['Installation', 'Testimonial', 'Commercial', 'Subsidy Explainer', 'Products'];
 
@@ -22,6 +24,14 @@ const AdminReelsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingReel, setEditingReel] = useState(null);
   const [previewVideoUrl, setPreviewVideoUrl] = useState(null);
+
+  // Media Picker State
+  const [mediaPickerConfig, setMediaPickerConfig] = useState({
+    isOpen: false,
+    resourceType: 'all',
+    title: 'Media Library',
+    targetField: 'videoUrl',
+  });
 
   // Form State
   const [formData, setFormData] = useState({
@@ -101,6 +111,28 @@ const AdminReelsPage = () => {
     setError('');
     setSuccess('');
     setIsModalOpen(true);
+  };
+
+  // Open Media Picker Modal for Reel video or thumbnail
+  const handleOpenMediaPicker = (field, type, title) => {
+    setMediaPickerConfig({
+      isOpen: true,
+      resourceType: type,
+      title: title,
+      targetField: field,
+    });
+  };
+
+  const handleSelectFromMediaPicker = (selectedAsset) => {
+    if (!selectedAsset) return;
+    const url = selectedAsset.secureUrl;
+    if (mediaPickerConfig.targetField === 'videoUrl') {
+      setFormData((prev) => ({ ...prev, videoUrl: url }));
+      setVideoFile(null);
+    } else if (mediaPickerConfig.targetField === 'thumbnailUrl') {
+      setFormData((prev) => ({ ...prev, thumbnailUrl: url }));
+      setThumbnailFile(null);
+    }
   };
 
   // Handle Form Submission
@@ -475,52 +507,82 @@ const AdminReelsPage = () => {
                 />
               </div>
 
-              {/* Video Source Upload / URL */}
+              {/* Video Source Upload / URL / Media Manager */}
               <div className="space-y-2 border-t border-b border-gray-light py-3">
-                <label className="block text-xs font-accent font-semibold text-black">Video Source</label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-accent font-semibold text-black">Video Source *</label>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenMediaPicker('videoUrl', 'video', 'Select Reel Video from Library')}
+                    className="inline-flex items-center gap-1.5 text-xs font-accent font-bold text-red hover:text-red-dark bg-red/10 hover:bg-red/20 px-3 py-1 rounded-lg transition"
+                  >
+                    <FiHardDrive size={13} /> Choose from Media Library
+                  </button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <span className="text-[11px] text-gray block mb-1">Upload Video File (MP4, WEBM up to 50MB)</span>
+                    <span className="text-[11px] text-gray block mb-1">Upload Video File (MP4, WEBM up to 100MB)</span>
                     <input
                       type="file"
                       accept="video/*"
-                      onChange={(e) => setVideoFile(e.target.files[0])}
+                      onChange={(e) => {
+                        setVideoFile(e.target.files[0]);
+                        if (e.target.files[0]) setFormData(prev => ({ ...prev, videoUrl: '' }));
+                      }}
                       className="text-xs text-gray file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-red/10 file:text-red hover:file:bg-red/20"
                     />
                   </div>
                   <div>
-                    <span className="text-[11px] text-gray block mb-1">Or Direct Video URL</span>
+                    <span className="text-[11px] text-gray block mb-1">Or Direct / Selected Video URL</span>
                     <input
                       type="text"
                       value={formData.videoUrl}
-                      onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                      placeholder="https://.../video.mp4"
+                      onChange={(e) => {
+                        setFormData({ ...formData, videoUrl: e.target.value });
+                        if (e.target.value) setVideoFile(null);
+                      }}
+                      placeholder="https://.../video.mp4 or /uploads/media/..."
                       className="w-full px-3 py-1.5 text-sm border border-gray-light rounded-xl focus:outline-none focus:border-red"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Thumbnail Source Upload / URL */}
+              {/* Thumbnail Source Upload / URL / Media Manager */}
               <div className="space-y-2 border-b border-gray-light pb-3">
-                <label className="block text-xs font-accent font-semibold text-black">Thumbnail Image</label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-accent font-semibold text-black">Thumbnail Image</label>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenMediaPicker('thumbnailUrl', 'image', 'Select Reel Thumbnail from Library')}
+                    className="inline-flex items-center gap-1.5 text-xs font-accent font-bold text-black hover:text-red bg-surface hover:bg-gray-200 px-3 py-1 rounded-lg transition"
+                  >
+                    <FiImage size={13} /> Choose from Media Library
+                  </button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <span className="text-[11px] text-gray block mb-1">Upload Thumbnail File</span>
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => setThumbnailFile(e.target.files[0])}
+                      onChange={(e) => {
+                        setThumbnailFile(e.target.files[0]);
+                        if (e.target.files[0]) setFormData(prev => ({ ...prev, thumbnailUrl: '' }));
+                      }}
                       className="text-xs text-gray file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-surface file:text-black"
                     />
                   </div>
                   <div>
-                    <span className="text-[11px] text-gray block mb-1">Or Thumbnail Image URL</span>
+                    <span className="text-[11px] text-gray block mb-1">Or Direct / Selected Thumbnail URL</span>
                     <input
                       type="text"
                       value={formData.thumbnailUrl}
-                      onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
-                      placeholder="https://.../thumbnail.jpg"
+                      onChange={(e) => {
+                        setFormData({ ...formData, thumbnailUrl: e.target.value });
+                        if (e.target.value) setThumbnailFile(null);
+                      }}
+                      placeholder="https://.../thumbnail.jpg or /uploads/..."
                       className="w-full px-3 py-1.5 text-sm border border-gray-light rounded-xl focus:outline-none focus:border-red"
                     />
                   </div>
@@ -594,6 +656,17 @@ const AdminReelsPage = () => {
           </div>
         </div>
       )}
+
+      {/* Media Picker Modal for Video & Thumbnail */}
+      <MediaPickerModal
+        isOpen={mediaPickerConfig.isOpen}
+        onClose={() => setMediaPickerConfig((prev) => ({ ...prev, isOpen: false }))}
+        onSelect={handleSelectFromMediaPicker}
+        maxSelect={1}
+        resourceType={mediaPickerConfig.resourceType}
+        title={mediaPickerConfig.title}
+        folder="reels"
+      />
     </div>
   );
 };

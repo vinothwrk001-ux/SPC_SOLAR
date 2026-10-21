@@ -3,7 +3,7 @@ const Category = require('../models/Category');
 
 const generateSitemap = async (req, res) => {
   try {
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    const clientUrl = (process.env.CLIENT_URL || 'https://spcsolarcbe.com').replace(/\/$/, '');
 
     const blogs = await Blog.find({ status: 'PUBLISHED', publishedAt: { $lte: new Date() } }).select('slug updatedAt');
     const categories = await Category.find({ status: 'ACTIVE' }).select('slug updatedAt');
@@ -12,7 +12,7 @@ const generateSitemap = async (req, res) => {
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
     // Static pages
-    const staticPages = ['', '/about', '/services', '/projects', '/subsidy', '/blog', '/contact', '/quotation'];
+    const staticPages = ['', '/about', '/services', '/projects', '/reels', '/components', '/subsidy', '/blog', '/contact', '/quotation'];
     staticPages.forEach((page) => {
       xml += `  <url>\n    <loc>${clientUrl}${page}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
     });

@@ -46,6 +46,7 @@ const AdminQuotationMaker = lazy(() => import('./pages/admin/AdminQuotationMaker
 const AdminGalleryComponents = lazy(() => import('./pages/admin/AdminGalleryComponents'));
 const AdminHomeBanner = lazy(() => import('./pages/admin/AdminHomeBanner'));
 const AdminLeads = lazy(() => import('./pages/admin/AdminLeads'));
+const AdminMediaManager = lazy(() => import('./pages/admin/AdminMediaManager'));
 
 function App() {
   return (
@@ -96,6 +97,7 @@ function App() {
                     <Route path="testimonials" element={<AdminTestimonials />} />
                     <Route path="gallery-components" element={<AdminGalleryComponents />} />
                     <Route path="home-banner" element={<AdminHomeBanner />} />
+                    <Route path="media" element={<AdminMediaManager />} />
                   </Route>
                 </Routes>
               </Suspense>

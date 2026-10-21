@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
+const connectDB = require('./config/db');
 const Blog = require('./models/Blog');
 const Category = require('./models/Category');
 const Tag = require('./models/Tag');
 
 const seedInitialData = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await connectDB();
     console.log('Connected to MongoDB for seeding...');
 
     // Seed Categories

@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
+const fs = require('fs');
 const connectDB = require('./config/db');
 
 // Route imports
@@ -23,14 +24,25 @@ const reelRoutes = require('./routes/reelRoutes');
 const leadRoutes = require('./routes/leadRoutes');
 const galleryComponentRoutes = require('./routes/galleryComponentRoutes');
 const bannerRoutes = require('./routes/bannerRoutes');
+const mediaRoutes = require('./routes/mediaRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const { generateSitemap } = require('./utils/sitemapGenerator');
 const { startSchedulerEngine } = require('./utils/schedulerEngine');
+const { ensureDefaultAlbums } = require('./services/albumService');
+const { verifyCloudinaryConnection } = require('./config/cloudinary');
 
 const app = express();
 
-// Database Connection
-connectDB();
+// Database Connection & Initial Seeding
+connectDB().then(async () => {
+  ensureDefaultAlbums().catch((err) => console.warn('Album init warning:', err.message));
+  const cloudStatus = await verifyCloudinaryConnection();
+  if (cloudStatus.enabled) {
+    console.log(`☁️  [Cloudinary] Connected successfully! Remote cloud storage active.`);
+  } else {
+    console.log(`📁 [Media Storage] Local disk mode active (/uploads/media). Add Cloudinary keys to .env to enable Cloud.`);
+  }
+});
 
 // Start Background Auto-Scheduler
 startSchedulerEngine();
@@ -40,6 +52,10 @@ app.use(express.json());
 
 const allowedOrigins = [
   process.env.CLIENT_URL,
+  'https://spcsolarcbe.com',
+  'https://www.spcsolarcbe.com',
+  'http://spcsolarcbe.com',
+  'http://www.spcsolarcbe.com',
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
@@ -56,6 +72,7 @@ app.use(cors({
     if (!origin) return callback(null, true);
     if (
       allowedOrigins.includes(origin) ||
+      /^https?:\/\/(www\.)?spcsolarcbe\.com$/.test(origin) ||
       /^http:\/\/localhost:\d+$/.test(origin) ||
       /^http:\/\/127\.0\.0\.1:\d+$/.test(origin) ||
       process.env.NODE_ENV !== 'production'
@@ -77,7 +94,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Dynamic Sitemap & Robots.txt
 app.get('/sitemap.xml', generateSitemap);
 app.get('/robots.txt', (req, res) => {
-  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  const clientUrl = (process.env.CLIENT_URL || 'https://spcsolarcbe.com').replace(/\/$/, '');
   res.type('text/plain');
   res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\nSitemap: ${clientUrl}/sitemap.xml`);
 });
@@ -99,6 +116,22 @@ app.use('/api/reels', reelRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/gallery-components', galleryComponentRoutes);
 app.use('/api/banner', bannerRoutes);
+app.use('/api/media', mediaRoutes);
+
+// Serve Frontend build in Production
+const frontendDist = path.join(__dirname, '../Frontend/dist');
+const localDist = path.join(__dirname, 'dist');
+const distPath = fs.existsSync(frontendDist) ? frontendDist : fs.existsSync(localDist) ? localDist : null;
+
+if (distPath) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+      return next();
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 // Error Middleware
 app.use(errorHandler);
