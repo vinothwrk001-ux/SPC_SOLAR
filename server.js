@@ -1,2 +1,3 @@
 // Root entrypoint for Hostinger / Phusion Passenger / LiteSpeed
-require('./Backend/server.js');
+const app = require('./Backend/server.js');
+module.exports = app;

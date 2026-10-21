@@ -39,15 +39,19 @@ const app = express();
 connectDB().then(async () => {
   ensureDefaultAlbums().catch((err) => console.warn('Album init warning:', err.message));
   const cloudStatus = await verifyCloudinaryConnection();
-  if (cloudStatus.enabled) {
+  if (cloudStatus && cloudStatus.enabled) {
     console.log(`☁️  [Cloudinary] Connected successfully! Remote cloud storage active.`);
   } else {
     console.log(`📁 [Media Storage] Local disk mode active (/uploads/media). Add Cloudinary keys to .env to enable Cloud.`);
   }
+  try {
+    startSchedulerEngine();
+  } catch (err) {
+    console.warn('Scheduler engine warning:', err.message);
+  }
+}).catch((err) => {
+  console.error('DB connect warning:', err.message);
 });
-
-// Start Background Auto-Scheduler
-startSchedulerEngine();
 
 // Middlewares
 app.use(express.json());
@@ -126,16 +130,14 @@ app.get('/health', (req, res) => {
 });
 
 // Serve Frontend build in Production
-const frontendDist = path.join(__dirname, '../Frontend/dist');
-const localDist = path.join(__dirname, 'dist');
-const rootDist = path.join(__dirname, '../dist');
-const distPath = fs.existsSync(frontendDist)
-  ? frontendDist
-  : fs.existsSync(localDist)
-  ? localDist
-  : fs.existsSync(rootDist)
-  ? rootDist
-  : null;
+const possibleDistPaths = [
+  path.join(__dirname, '../Frontend/dist'),
+  path.join(__dirname, 'dist'),
+  path.join(__dirname, '../dist'),
+  path.join(process.cwd(), 'Frontend/dist'),
+  path.join(process.cwd(), 'dist')
+];
+const distPath = possibleDistPaths.find((p) => fs.existsSync(p)) || null;
 
 if (distPath) {
   console.log(`📦 [Frontend] Serving static production build from: ${distPath}`);
@@ -172,17 +174,36 @@ if (distPath) {
 // Error Middleware
 app.use(errorHandler);
 
+// Process Safety Handlers
+process.on('uncaughtException', (err) => {
+  console.error('⚠️ [Uncaught Exception]:', err.message);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('⚠️ [Unhandled Rejection]:', reason);
+});
+
+// Phusion Passenger / Hostinger Cloud listener
+if (typeof PhusionPassenger !== 'undefined') {
+  PhusionPassenger.configure({ autoInstall: false });
+}
+
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const server = typeof PhusionPassenger !== 'undefined'
+  ? app.listen('passenger', () => {
+      console.log('🚀 Server started via Phusion Passenger');
+    })
+  : app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
 
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
     console.error(`\n❌ [PORT CONFLICT] Port ${PORT} is already in use by another application!`);
-    console.error(`👉 Close the conflicting process or change PORT in .env.\n`);
   } else {
     console.error('Server error:', err);
   }
 });
+
+module.exports = app;
