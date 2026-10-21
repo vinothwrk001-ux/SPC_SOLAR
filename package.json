@@ -14,7 +14,7 @@
     "seed": "npm --prefix Backend run seed"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=18.0.0"
   },
   "keywords": ["solar", "spcsolarcbe", "reels"],
   "author": "SPC Solar Coimbatore",
