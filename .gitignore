@@ -1,6 +1,7 @@
 # Logs
 logs
 *.log
+*.bak
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -93,7 +94,9 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist tracked for production Hostinger deployment
+!dist/
+!Frontend/dist/
 
 # Gatsby files
 .cache/

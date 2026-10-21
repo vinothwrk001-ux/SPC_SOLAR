@@ -8,6 +8,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
+const mongoose = require('mongoose');
 
 // Route imports
 const authRoutes = require('./routes/authRoutes');
@@ -126,7 +127,36 @@ app.use('/api/media', mediaRoutes);
 
 // Health Check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
+  res.status(200).json({
+    status: 'ok',
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+    node: process.version,
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'connecting'
+  });
+});
+
+// Dedicated Favicon Handler
+app.get(['/favicon.ico', '/favicon.svg'], (req, res) => {
+  const possibleFavicons = [
+    distPath ? path.join(distPath, 'favicon.ico') : null,
+    distPath ? path.join(distPath, 'favicon.svg') : null,
+    path.join(__dirname, '../dist/favicon.svg'),
+    path.join(__dirname, '../dist/favicon.ico'),
+    path.join(__dirname, '../Frontend/public/favicon.svg'),
+    path.join(__dirname, 'public/favicon.svg')
+  ].filter(Boolean);
+
+  const found = possibleFavicons.find((f) => fs.existsSync(f));
+  if (found) {
+    if (found.endsWith('.svg')) {
+      res.type('image/svg+xml');
+    } else {
+      res.type('image/x-icon');
+    }
+    return res.sendFile(found);
+  }
+  return res.status(204).end();
 });
 
 // Serve Frontend build in Production
@@ -183,27 +213,47 @@ process.on('unhandledRejection', (reason) => {
   console.error('⚠️ [Unhandled Rejection]:', reason);
 });
 
-// Phusion Passenger / Hostinger Cloud listener
-if (typeof PhusionPassenger !== 'undefined') {
-  PhusionPassenger.configure({ autoInstall: false });
+// Server binding configuration
+const DEFAULT_PORT = 5000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : DEFAULT_PORT;
+const HOST = process.env.HOST || '0.0.0.0';
+
+let server = null;
+
+function startServer(targetPort, retriesLeft = 3) {
+  let srv;
+  if (typeof PhusionPassenger !== 'undefined') {
+    try {
+      PhusionPassenger.configure({ autoInstall: false });
+    } catch (e) {}
+    srv = app.listen('passenger', () => {
+      console.log('🚀 Server started via Phusion Passenger socket');
+    });
+  } else {
+    srv = app.listen(targetPort, HOST, () => {
+      console.log(`🚀 Server successfully listening on http://${HOST}:${targetPort}`);
+    });
+  }
+
+  srv.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`❌ [PORT CONFLICT] Port ${targetPort} is already in use.`);
+      if (retriesLeft > 0 && !process.env.PORT) {
+        const nextPort = targetPort + 1;
+        console.log(`🔄 Retrying on fallback port ${nextPort} (${retriesLeft} retries left)...`);
+        startServer(nextPort, retriesLeft - 1);
+      } else {
+        console.error(`💥 Fatal: Cannot bind to port ${targetPort}. Please check process.env.PORT or conflicting processes.`);
+      }
+    } else {
+      console.error('Server error:', err);
+    }
+  });
+
+  server = srv;
+  return srv;
 }
 
-const PORT = process.env.PORT || 5000;
-
-const server = typeof PhusionPassenger !== 'undefined'
-  ? app.listen('passenger', () => {
-      console.log('🚀 Server started via Phusion Passenger');
-    })
-  : app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-
-server.on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
-    console.error(`\n❌ [PORT CONFLICT] Port ${PORT} is already in use by another application!`);
-  } else {
-    console.error('Server error:', err);
-  }
-});
+startServer(PORT);
 
 module.exports = app;
