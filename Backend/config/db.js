@@ -52,14 +52,17 @@ const connectDB = async (customUri) => {
   const { uri, label } = resolveMongoUri(customUri);
 
   try {
-    const conn = await mongoose.connect(uri);
+    const conn = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000,
+    });
     console.log(`✅ [MongoDB] Connected successfully to ${label}!`);
     console.log(`🌐 Host: ${conn.connection.host}`);
     console.log(`📁 Database: ${conn.connection.name}`);
     return conn;
   } catch (error) {
     console.error(`❌ [MongoDB] Connection error (${label}): ${error.message}`);
-    process.exit(1);
+    console.log(`🔄 [MongoDB] Retrying connection in 5 seconds...`);
+    setTimeout(() => connectDB(customUri), 5000);
   }
 };
 

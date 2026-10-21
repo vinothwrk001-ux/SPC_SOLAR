@@ -2,11 +2,11 @@
   "name": "spc-solar",
   "version": "1.0.0",
   "description": "SPC Solar - Smart Solar Energy & Reels Management System",
-  "main": "Backend/server.js",
+  "main": "server.js",
   "scripts": {
     "start": "node Backend/server.js",
     "prebuild": "node -e \"try{require('fs').rmSync('Frontend/node_modules/rolldown',{recursive:true,force:true});require('fs').rmSync('Frontend/node_modules/@rolldown',{recursive:true,force:true});}catch(e){}\"",
-    "build": "cd Frontend && npm install --no-save && npm run build",
+    "build": "npm --prefix Backend install && cd Frontend && npm install --no-save && npm run build",
     "install:all": "npm --prefix Backend install && npm --prefix Frontend install",
     "seed": "npm --prefix Backend run seed"
   },

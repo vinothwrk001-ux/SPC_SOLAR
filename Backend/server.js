@@ -1,10 +1,12 @@
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const path = require('path');
-const fs = require('fs');
 const connectDB = require('./config/db');
 
 // Route imports
@@ -118,18 +120,52 @@ app.use('/api/gallery-components', galleryComponentRoutes);
 app.use('/api/banner', bannerRoutes);
 app.use('/api/media', mediaRoutes);
 
+// Health Check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
+});
+
 // Serve Frontend build in Production
 const frontendDist = path.join(__dirname, '../Frontend/dist');
 const localDist = path.join(__dirname, 'dist');
-const distPath = fs.existsSync(frontendDist) ? frontendDist : fs.existsSync(localDist) ? localDist : null;
+const rootDist = path.join(__dirname, '../dist');
+const distPath = fs.existsSync(frontendDist)
+  ? frontendDist
+  : fs.existsSync(localDist)
+  ? localDist
+  : fs.existsSync(rootDist)
+  ? rootDist
+  : null;
 
 if (distPath) {
+  console.log(`📦 [Frontend] Serving static production build from: ${distPath}`);
   app.use(express.static(distPath));
-  app.get('*', (req, res, next) => {
+  // Express 5 compatible catch-all for SPA client-side routing
+  app.use((req, res, next) => {
+    if (req.method !== 'GET') return next();
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
       return next();
     }
-    res.sendFile(path.join(distPath, 'index.html'));
+    const indexPath = path.join(distPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
+    return next();
+  });
+} else {
+  console.warn('⚠️  [Frontend] dist directory not found. API routes are active.');
+  app.get('/', (req, res) => {
+    res.status(200).send(`
+      <!DOCTYPE html>
+      <html>
+        <head><title>SPC Solar - Server</title></head>
+        <body style="font-family:sans-serif;text-align:center;padding:50px;">
+          <h2>☀️ SPC Solar Backend Server is Live!</h2>
+          <p>Frontend production bundle is being compiled or dist not found.</p>
+          <p><a href="/health">Check Health</a></p>
+        </body>
+      </html>
+    `);
   });
 }
 
