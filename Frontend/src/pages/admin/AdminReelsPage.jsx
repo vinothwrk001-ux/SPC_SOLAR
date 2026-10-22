@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   FiVideo, FiPlus, FiTrash2, FiEdit2, FiEye, 
   FiZap, FiUpload, FiX, FiCheckCircle, FiPlay, FiSearch, FiGlobe, FiEyeOff,
@@ -448,23 +449,37 @@ const AdminReelsPage = () => {
       </div>
 
       {/* CREATE / EDIT MODAL */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-6 shadow-2xl my-8">
-            <div className="flex items-center justify-between border-b border-gray-light pb-4">
-              <h3 className="font-heading text-xl font-bold text-black flex items-center gap-2">
+      {isModalOpen && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden pointer-events-none">
+          {/* Backdrop covering 100% of viewport, headers, and sidebar */}
+          <div 
+            className="fixed inset-0 bg-black/75 backdrop-blur-xs transition-opacity pointer-events-auto"
+            onClick={() => !submitting && setIsModalOpen(false)}
+          />
+
+          {/* Dialog Container */}
+          <div className="pointer-events-auto relative bg-white rounded-2xl md:rounded-3xl max-w-2xl w-full max-h-[90vh] max-h-[90dvh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden z-10">
+            {/* Fixed Header - NEVER cut off */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0 bg-white">
+              <h3 className="font-heading text-lg sm:text-xl font-bold text-black flex items-center gap-2">
                 <FiVideo className="text-red" />
                 {editingReel ? 'Edit Solar Reel' : 'Upload New Solar Reel'}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray hover:text-black">
+              <button 
+                type="button"
+                onClick={() => setIsModalOpen(false)} 
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-black hover:bg-gray-100 transition"
+              >
                 <FiX size={20} />
               </button>
             </div>
 
-            {error && <div className="bg-red/10 text-red p-3 rounded-xl text-xs font-accent">{error}</div>}
-            {success && <div className="bg-emerald-100 text-emerald-800 p-3 rounded-xl text-xs font-accent">{success}</div>}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden min-h-0">
+              {/* Scrollable Form Body */}
+              <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-5 space-y-4">
+                {error && <div className="bg-red/10 text-red p-3 rounded-xl text-xs font-accent">{error}</div>}
+                {success && <div className="bg-emerald-100 text-emerald-800 p-3 rounded-xl text-xs font-accent">{success}</div>}
               <div>
                 <label className="block text-xs font-accent font-semibold text-black mb-1">Reel Title *</label>
                 <input
@@ -733,35 +748,42 @@ const AdminReelsPage = () => {
                   </label>
                 </div>
               </div>
+            </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-light">
+            {/* Fixed Footer - ALWAYS visible, NEVER cut off */}
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 shrink-0 bg-gray-50/90">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-xs font-accent font-semibold text-gray hover:text-black"
+                  className="px-4 py-2 text-xs font-accent font-semibold text-gray-600 hover:text-black transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-red hover:bg-red-hover text-white px-6 py-2 rounded-xl text-xs font-accent font-semibold transition-colors disabled:opacity-50"
+                  className="bg-red hover:bg-red-hover text-white px-6 py-2 rounded-xl text-xs font-accent font-semibold transition-colors disabled:opacity-50 shadow-md shadow-red/20"
                 >
                   {submitting ? 'Saving...' : editingReel ? 'Update Reel' : 'Publish Reel'}
                 </button>
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* VIDEO PREVIEW MODAL */}
-      {previewVideoUrl && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="relative max-w-sm w-full bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/20">
+      {previewVideoUrl && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
+          <div 
+            className="fixed inset-0 bg-black/85 backdrop-blur-md" 
+            onClick={() => setPreviewVideoUrl(null)} 
+          />
+          <div className="relative max-w-sm w-full bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/20 z-10">
             <button
               onClick={() => setPreviewVideoUrl(null)}
-              className="absolute top-4 right-4 z-10 p-2 bg-black/60 text-white rounded-full hover:bg-black"
+              className="absolute top-4 right-4 z-20 p-2 bg-black/60 text-white rounded-full hover:bg-black transition"
             >
               <FiX size={18} />
             </button>
@@ -772,7 +794,8 @@ const AdminReelsPage = () => {
               className="w-full aspect-[9/16] object-cover"
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Media Picker Modal for Video & Thumbnail */}
