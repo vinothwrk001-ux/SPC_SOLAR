@@ -531,36 +531,53 @@ const ReelCarousel = () => {
 
                 {/* Bottom Overlay Info */}
                 <div className="absolute left-4 right-20 bottom-6 z-20 space-y-3 text-left">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center gap-1 bg-red/90 text-white text-[10px] font-accent font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">
-                      <FiZap size={11} /> {activeReel.systemCapacity || 'Solar System'}
-                    </span>
-                    <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full">
-                      <FiMapPin size={11} className="text-red" /> {activeReel.location || 'Tamil Nadu'}
-                    </span>
-                  </div>
+                  {((activeReel.showSystemCapacity && activeReel.systemCapacity) ||
+                    (activeReel.showLocation && activeReel.location) ||
+                    (activeReel.showCategory && activeReel.category)) && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      {activeReel.showSystemCapacity && activeReel.systemCapacity && (
+                        <span className="inline-flex items-center gap-1 bg-red/90 text-white text-[10px] font-accent font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">
+                          <FiZap size={11} /> {activeReel.systemCapacity}
+                        </span>
+                      )}
+                      {activeReel.showLocation && activeReel.location && (
+                        <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full">
+                          <FiMapPin size={11} className="text-red" /> {activeReel.location}
+                        </span>
+                      )}
+                      {activeReel.showCategory && activeReel.category && (
+                        <span className="inline-flex items-center gap-1 bg-black/40 backdrop-blur-md text-white/90 text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full border border-white/10">
+                          {activeReel.category}
+                        </span>
+                      )}
+                    </div>
+                  )}
 
                   <div>
-                    <h3 className="font-heading text-lg font-bold text-white line-clamp-1 leading-snug drop-shadow-md">
-                      {activeReel.title}
-                    </h3>
-                    {activeReel.description && (
+                    {activeReel.title && (
+                      <h3 className="font-heading text-lg font-bold text-white line-clamp-1 leading-snug drop-shadow-md">
+                        {activeReel.title}
+                      </h3>
+                    )}
+                    {activeReel.showDescription && activeReel.description && (
                       <p className="text-xs text-white/80 font-body line-clamp-2 mt-1 leading-relaxed drop-shadow">
                         {activeReel.description}
                       </p>
                     )}
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleQuoteClick();
-                    }}
-                    className="w-full bg-gradient-to-r from-red to-red-hover text-white text-xs font-accent font-bold uppercase tracking-wider py-3 px-4 rounded-xl shadow-lg shadow-red/30 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                  >
-                    <FiZap size={16} className="text-amber-300 animate-pulse" />
-                    <span>Calculate Solar Savings</span>
-                  </button>
+                  {activeReel.showSolarSavingsBtn && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleQuoteClick();
+                      }}
+                      className="w-full bg-gradient-to-r from-red to-red-hover text-white text-xs font-accent font-bold uppercase tracking-wider py-3 px-4 rounded-xl shadow-lg shadow-red/30 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    >
+                      <FiZap size={16} className="text-amber-300 animate-pulse" />
+                      <span>Calculate Solar Savings</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

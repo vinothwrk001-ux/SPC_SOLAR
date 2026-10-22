@@ -41,10 +41,15 @@ const AdminReelsPage = () => {
     thumbnailUrl: '',
     category: 'Installation',
     tags: '',
-    systemCapacity: '5 kW System',
-    location: 'Coimbatore, Tamil Nadu',
+    systemCapacity: '',
+    location: '',
     status: 'Published',
     showOnStorefront: true,
+    showCategory: false,
+    showSystemCapacity: false,
+    showLocation: false,
+    showDescription: false,
+    showSolarSavingsBtn: false,
   });
   const [videoFile, setVideoFile] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
@@ -79,10 +84,15 @@ const AdminReelsPage = () => {
       thumbnailUrl: '',
       category: 'Installation',
       tags: '',
-      systemCapacity: '5 kW System',
-      location: 'Coimbatore, Tamil Nadu',
+      systemCapacity: '',
+      location: '',
       status: 'Published',
       showOnStorefront: true,
+      showCategory: false,
+      showSystemCapacity: false,
+      showLocation: false,
+      showDescription: false,
+      showSolarSavingsBtn: false,
     });
     setVideoFile(null);
     setThumbnailFile(null);
@@ -101,10 +111,15 @@ const AdminReelsPage = () => {
       thumbnailUrl: reel.thumbnailUrl || '',
       category: reel.category || 'Installation',
       tags: Array.isArray(reel.tags) ? reel.tags.join(', ') : '',
-      systemCapacity: reel.systemCapacity || '5 kW System',
-      location: reel.location || 'Coimbatore, Tamil Nadu',
+      systemCapacity: reel.systemCapacity || '',
+      location: reel.location || '',
       status: reel.status || 'Published',
       showOnStorefront: reel.showOnStorefront !== undefined ? reel.showOnStorefront : true,
+      showCategory: Boolean(reel.showCategory),
+      showSystemCapacity: Boolean(reel.showSystemCapacity),
+      showLocation: Boolean(reel.showLocation),
+      showDescription: Boolean(reel.showDescription),
+      showSolarSavingsBtn: Boolean(reel.showSolarSavingsBtn),
     });
     setVideoFile(null);
     setThumbnailFile(null);
@@ -151,6 +166,11 @@ const AdminReelsPage = () => {
       data.append('location', formData.location);
       data.append('status', formData.status);
       data.append('showOnStorefront', formData.showOnStorefront);
+      data.append('showCategory', formData.showCategory);
+      data.append('showSystemCapacity', formData.showSystemCapacity);
+      data.append('showLocation', formData.showLocation);
+      data.append('showDescription', formData.showDescription);
+      data.append('showSolarSavingsBtn', formData.showSolarSavingsBtn);
       data.append('tags', formData.tags);
 
       if (videoFile) {
@@ -445,66 +465,164 @@ const AdminReelsPage = () => {
             {success && <div className="bg-emerald-100 text-emerald-800 p-3 rounded-xl text-xs font-accent">{success}</div>}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-accent font-semibold text-black mb-1">Reel Title *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="e.g. 5kW Rooftop Solar Installation"
-                    className="w-full px-3 py-2 text-sm border border-gray-light rounded-xl focus:outline-none focus:border-red"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-accent font-semibold text-black mb-1">Category</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-gray-light rounded-xl focus:outline-none focus:border-red"
-                  >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-accent font-semibold text-black mb-1">System Capacity</label>
-                  <input
-                    type="text"
-                    value={formData.systemCapacity}
-                    onChange={(e) => setFormData({ ...formData, systemCapacity: e.target.value })}
-                    placeholder="e.g. 5 kW System or 10 kW On-Grid"
-                    className="w-full px-3 py-2 text-sm border border-gray-light rounded-xl focus:outline-none focus:border-red"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-accent font-semibold text-black mb-1">Location</label>
-                  <input
-                    type="text"
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    placeholder="e.g. Coimbatore, Tamil Nadu"
-                    className="w-full px-3 py-2 text-sm border border-gray-light rounded-xl focus:outline-none focus:border-red"
-                  />
-                </div>
-              </div>
-
               <div>
-                <label className="block text-xs font-accent font-semibold text-black mb-1">Description</label>
-                <textarea
-                  rows={2}
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Short caption describing the solar installation..."
+                <label className="block text-xs font-accent font-semibold text-black mb-1">Reel Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="e.g. 5kW Rooftop Solar Installation"
                   className="w-full px-3 py-2 text-sm border border-gray-light rounded-xl focus:outline-none focus:border-red"
                 />
+              </div>
+
+              {/* Selective Reel Details & Action Overlays (Optional by Admin) */}
+              <div className="bg-gray-50/70 p-4 rounded-2xl border border-gray-200 space-y-3.5">
+                <div className="border-b border-gray-200 pb-2">
+                  <h4 className="text-xs font-accent font-bold uppercase tracking-wider text-black flex items-center justify-between">
+                    <span>Reel Overlay Details & Actions</span>
+                    <span className="text-[10px] font-normal text-gray-500 lowercase">
+                      (unselected options will be hidden so reel only plays video)
+                    </span>
+                  </h4>
+                </div>
+
+                <div className="space-y-3">
+                  {/* Option 1: Category */}
+                  <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-gray-200 shadow-xs">
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <span className="text-xs font-accent font-semibold text-black flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.showCategory}
+                          onChange={(e) => setFormData({ ...formData, showCategory: e.target.checked })}
+                          className="rounded text-red focus:ring-red cursor-pointer"
+                        />
+                        <span>Display Category Badge</span>
+                      </span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${formData.showCategory ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {formData.showCategory ? 'ON' : 'OFF'}
+                      </span>
+                    </label>
+                    {formData.showCategory && (
+                      <select
+                        value={formData.category}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className="w-full px-3 py-1.5 text-xs border border-gray-light rounded-lg focus:outline-none focus:border-red"
+                      >
+                        {CATEGORIES.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+
+                  {/* Option 2: System Capacity */}
+                  <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-gray-200 shadow-xs">
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <span className="text-xs font-accent font-semibold text-black flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.showSystemCapacity}
+                          onChange={(e) => setFormData({ ...formData, showSystemCapacity: e.target.checked })}
+                          className="rounded text-red focus:ring-red cursor-pointer"
+                        />
+                        <span>Display System Capacity Badge</span>
+                      </span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${formData.showSystemCapacity ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {formData.showSystemCapacity ? 'ON' : 'OFF'}
+                      </span>
+                    </label>
+                    {formData.showSystemCapacity && (
+                      <input
+                        type="text"
+                        value={formData.systemCapacity}
+                        onChange={(e) => setFormData({ ...formData, systemCapacity: e.target.value })}
+                        placeholder="e.g. 5 kW System or 10 kW On-Grid"
+                        className="w-full px-3 py-1.5 text-xs border border-gray-light rounded-lg focus:outline-none focus:border-red"
+                      />
+                    )}
+                  </div>
+
+                  {/* Option 3: Location */}
+                  <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-gray-200 shadow-xs">
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <span className="text-xs font-accent font-semibold text-black flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.showLocation}
+                          onChange={(e) => setFormData({ ...formData, showLocation: e.target.checked })}
+                          className="rounded text-red focus:ring-red cursor-pointer"
+                        />
+                        <span>Display Location Badge</span>
+                      </span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${formData.showLocation ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {formData.showLocation ? 'ON' : 'OFF'}
+                      </span>
+                    </label>
+                    {formData.showLocation && (
+                      <input
+                        type="text"
+                        value={formData.location}
+                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                        placeholder="e.g. Coimbatore, Tamil Nadu"
+                        className="w-full px-3 py-1.5 text-xs border border-gray-light rounded-lg focus:outline-none focus:border-red"
+                      />
+                    )}
+                  </div>
+
+                  {/* Option 4: Description */}
+                  <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-gray-200 shadow-xs">
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <span className="text-xs font-accent font-semibold text-black flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.showDescription}
+                          onChange={(e) => setFormData({ ...formData, showDescription: e.target.checked })}
+                          className="rounded text-red focus:ring-red cursor-pointer"
+                        />
+                        <span>Display Description Caption</span>
+                      </span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${formData.showDescription ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {formData.showDescription ? 'ON' : 'OFF'}
+                      </span>
+                    </label>
+                    {formData.showDescription && (
+                      <textarea
+                        rows={2}
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        placeholder="Short caption describing the solar installation..."
+                        className="w-full px-3 py-1.5 text-xs border border-gray-light rounded-lg focus:outline-none focus:border-red"
+                      />
+                    )}
+                  </div>
+
+                  {/* Option 5: Calculate Solar Savings Button */}
+                  <div className="flex flex-col gap-1 p-3 bg-white rounded-xl border border-gray-200 shadow-xs">
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <span className="text-xs font-accent font-semibold text-black flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.showSolarSavingsBtn}
+                          onChange={(e) => setFormData({ ...formData, showSolarSavingsBtn: e.target.checked })}
+                          className="rounded text-red focus:ring-red cursor-pointer"
+                        />
+                        <span className="flex items-center gap-1.5">
+                          <span className="text-red font-bold">⚡</span>
+                          <span>Display "Calculate Solar Savings" Button</span>
+                        </span>
+                      </span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${formData.showSolarSavingsBtn ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {formData.showSolarSavingsBtn ? 'ON' : 'OFF'}
+                      </span>
+                    </label>
+                    <p className="text-[11px] text-gray-500 pl-6">
+                      When turned off, the reel will play without the red Solar Savings button overlay.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Video Source Upload / URL / Media Manager */}

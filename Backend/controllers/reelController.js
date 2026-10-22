@@ -163,6 +163,11 @@ const createReel = async (req, res) => {
       ? req.body.tags.split(',').map(t => t.trim()).filter(Boolean)
       : (req.body.tags || []);
 
+    const parseBool = (val, defaultVal = false) => {
+      if (val === undefined || val === null) return defaultVal;
+      return val === true || val === 'true';
+    };
+
     const newReel = new Reel({
       title: req.body.title || 'Solar Installation Reel',
       description: req.body.description || '',
@@ -170,11 +175,16 @@ const createReel = async (req, res) => {
       thumbnailUrl,
       category: req.body.category || 'Installation',
       tags: tagsArray,
-      systemCapacity: req.body.systemCapacity || '5 kW System',
-      location: req.body.location || 'Coimbatore, Tamil Nadu',
+      systemCapacity: req.body.systemCapacity || '',
+      location: req.body.location || '',
       linkedService: req.body.linkedService || 'Rooftop Solar Installation',
       status: req.body.status || 'Published',
-      showOnStorefront: req.body.showOnStorefront !== undefined ? req.body.showOnStorefront : true
+      showOnStorefront: parseBool(req.body.showOnStorefront, true),
+      showCategory: parseBool(req.body.showCategory, false),
+      showSystemCapacity: parseBool(req.body.showSystemCapacity, false),
+      showLocation: parseBool(req.body.showLocation, false),
+      showDescription: parseBool(req.body.showDescription, false),
+      showSolarSavingsBtn: parseBool(req.body.showSolarSavingsBtn, false),
     });
 
     const saved = await newReel.save();
@@ -191,6 +201,11 @@ const updateReel = async (req, res) => {
   try {
     let updateData = { ...req.body };
 
+    const parseBool = (val, defaultVal = false) => {
+      if (val === undefined || val === null) return defaultVal;
+      return val === true || val === 'true';
+    };
+
     if (req.files && req.files.videoFile) {
       updateData.videoUrl = `/uploads/${req.files.videoFile[0].filename}`;
     }
@@ -200,6 +215,25 @@ const updateReel = async (req, res) => {
 
     if (typeof updateData.tags === 'string') {
       updateData.tags = updateData.tags.split(',').map(t => t.trim()).filter(Boolean);
+    }
+
+    if (updateData.showOnStorefront !== undefined) {
+      updateData.showOnStorefront = parseBool(updateData.showOnStorefront, true);
+    }
+    if (updateData.showCategory !== undefined) {
+      updateData.showCategory = parseBool(updateData.showCategory, false);
+    }
+    if (updateData.showSystemCapacity !== undefined) {
+      updateData.showSystemCapacity = parseBool(updateData.showSystemCapacity, false);
+    }
+    if (updateData.showLocation !== undefined) {
+      updateData.showLocation = parseBool(updateData.showLocation, false);
+    }
+    if (updateData.showDescription !== undefined) {
+      updateData.showDescription = parseBool(updateData.showDescription, false);
+    }
+    if (updateData.showSolarSavingsBtn !== undefined) {
+      updateData.showSolarSavingsBtn = parseBool(updateData.showSolarSavingsBtn, false);
     }
 
     const updated = await Reel.findByIdAndUpdate(req.params.id, updateData, { new: true });
