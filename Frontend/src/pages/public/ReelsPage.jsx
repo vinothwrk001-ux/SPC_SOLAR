@@ -159,7 +159,7 @@ const ReelsPage = () => {
       />
 
       {/* TOP BAR OVERLAY */}
-      <div className="absolute top-0 left-0 right-0 z-30 p-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent flex items-center justify-between">
+      <div className="absolute top-0 left-0 right-0 z-30 p-4 pt-[max(1rem,env(safe-area-inset-top))] bg-gradient-to-b from-black/80 via-black/40 to-transparent flex items-center justify-between">
         <Link 
           to="/" 
           className="flex items-center gap-2 text-white/80 hover:text-white bg-black/40 hover:bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 transition-colors text-xs font-accent uppercase tracking-wider"
@@ -224,6 +224,8 @@ const ReelsPage = () => {
               poster={currentReel.thumbnailUrl ? getMediaUrl(currentReel.thumbnailUrl) : undefined}
               loop
               playsInline
+              webkit-playsinline="true"
+              muted={isMuted}
               className="w-full h-full object-cover"
             />
 
@@ -244,7 +246,7 @@ const ReelsPage = () => {
             <div className="absolute inset-x-0 bottom-0 h-96 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
 
             {/* RIGHT SIDE FLOATING ACTION BUTTON - SHARE ONLY */}
-            <div className="absolute right-4 bottom-24 z-20 flex flex-col items-center">
+            <div className="absolute right-4 bottom-[max(6rem,calc(5rem+env(safe-area-inset-bottom)))] z-20 flex flex-col items-center">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -262,7 +264,7 @@ const ReelsPage = () => {
             </div>
 
             {/* BOTTOM DETAILS OVERLAY */}
-            <div className="absolute left-4 right-20 bottom-6 z-20 space-y-3 text-left">
+            <div className="absolute left-4 right-20 bottom-[max(1.5rem,env(safe-area-inset-bottom))] z-20 space-y-3 text-left">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1 bg-red/90 text-white text-[10px] font-accent font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">
                   <FiZap size={11} /> {currentReel.systemCapacity || 'Solar System'}

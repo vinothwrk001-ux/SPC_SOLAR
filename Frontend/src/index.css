@@ -62,6 +62,29 @@
     outline: 2px solid var(--color-red);
     outline-offset: 2px;
   }
+
+  /* ---- iOS Safari Auto-Zoom Prevention (Ensures minimum 16px font-size on editable controls) ---- */
+  @supports (-webkit-touch-callout: none) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+
+  /* ---- Safari Momentum Scrolling ---- */
+  .overflow-y-auto,
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 @layer components {
@@ -242,6 +265,22 @@
     @apply text-red underline hover:no-underline;
   }
 
+  /* ---- Safari WebKit Backdrop Filter Stabilization ---- */
+  [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  /* ---- iOS Safe Area Insets ---- */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
 }
 
 /* =============================================
@@ -292,6 +331,10 @@
   display: flex;
   width: max-content;
   animation: marquee 32s linear infinite;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .animate-marquee:hover {

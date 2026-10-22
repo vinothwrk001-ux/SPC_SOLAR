@@ -271,7 +271,7 @@ const BlogPage = () => {
                 <FiSearch className="absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                 <input
                   type="text"
-                  className="w-full bg-white border border-gray-200 py-2.5 sm:py-3 pl-10 sm:pl-11 pr-9 sm:pr-10 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red/20 focus:border-red transition-all shadow-sm"
+                  className="w-full bg-white border border-gray-200 py-2.5 sm:py-3 pl-10 sm:pl-11 pr-9 sm:pr-10 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-red/20 focus:border-red transition-all shadow-sm"
                   placeholder="Search solar articles..."
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}

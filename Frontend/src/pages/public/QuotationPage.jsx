@@ -316,7 +316,7 @@ Please arrange a *Free Site Survey* for my premises!`;
                     type="number"
                     value={customBillInput}
                     onChange={(e) => handleCustomBillChange(e.target.value)}
-                    className="w-20 sm:w-24 bg-transparent text-right font-heading font-bold text-gray-900 text-sm sm:text-base outline-none"
+                    className="w-20 sm:w-24 bg-transparent text-right font-heading font-bold text-gray-900 text-base sm:text-base outline-none"
                     aria-label="Monthly electricity bill"
                   />
                 </div>
@@ -385,7 +385,7 @@ Please arrange a *Free Site Survey* for my premises!`;
                   <select
                     value={cityLocation}
                     onChange={(e) => setCityLocation(e.target.value)}
-                    className="w-full border border-gray-300 p-2 sm:p-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm focus:outline-none focus:border-red bg-white cursor-pointer shadow-xs font-medium"
+                    className="w-full border border-gray-300 p-2 sm:p-2.5 rounded-lg sm:rounded-xl text-base sm:text-sm focus:outline-none focus:border-red bg-white cursor-pointer shadow-xs font-medium"
                   >
                     {TAMIL_NADU_DISTRICTS.map(dist => (
                       <option key={dist} value={dist}>{dist}</option>
@@ -401,7 +401,7 @@ Please arrange a *Free Site Survey* for my premises!`;
                     value={pincodeInput}
                     onChange={(e) => setPincodeInput(e.target.value)}
                     placeholder="e.g. 641101"
-                    className="w-full border border-gray-300 p-2 sm:p-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm focus:outline-none focus:border-red bg-white shadow-xs font-medium"
+                    className="w-full border border-gray-300 p-2 sm:p-2.5 rounded-lg sm:rounded-xl text-base sm:text-sm focus:outline-none focus:border-red bg-white shadow-xs font-medium"
                   />
                 </div>
               </div>
@@ -754,7 +754,7 @@ Please arrange a *Free Site Survey* for my premises!`;
       {/* ======================================================== */}
       {/* Floating Bottom Action Bar */}
       {/* ======================================================== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 p-2 sm:p-4 shadow-2xl z-40">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-4 shadow-2xl z-40 pb-safe">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           
           <div className="hidden md:flex items-center gap-3">

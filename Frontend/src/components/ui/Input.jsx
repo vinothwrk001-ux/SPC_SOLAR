@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 
 const Input = forwardRef(({ label, error, hint, className = '', inputClassName = '', labelClassName = '', dark = false, ...props }, ref) => {
   const inputBase = [
-    'w-full px-4 py-3 text-sm font-body outline-none transition-all duration-250 rounded-btn',
+    'w-full px-4 py-3 text-base sm:text-sm font-body outline-none transition-all duration-250 rounded-btn',
     dark
       ? 'bg-black-muted text-white border border-white/10 placeholder-gray-400 focus:border-red'
       : 'bg-white text-black border placeholder-gray-400 focus:border-black',

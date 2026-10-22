@@ -31,8 +31,14 @@ const ReelCommentDrawer = ({ isOpen, onClose, reelId, comments = [], onCommentAd
 
   const formatDate = (dateStr) => {
     if (!dateStr) return 'Just now';
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+    try {
+      const safeStr = typeof dateStr === 'string' ? dateStr.replace(' ', 'T') : dateStr;
+      const d = new Date(safeStr);
+      if (isNaN(d.getTime())) return 'Just now';
+      return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch {
+      return 'Just now';
+    }
   };
 
   return (
@@ -54,7 +60,7 @@ const ReelCommentDrawer = ({ isOpen, onClose, reelId, comments = [], onCommentAd
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-[#121212] text-white rounded-t-3xl border-t border-white/10 max-w-md mx-auto h-[70vh] flex flex-col shadow-2xl overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-[#121212] text-white rounded-t-3xl border-t border-white/10 max-w-md mx-auto h-[70vh] h-[70dvh] flex flex-col shadow-2xl overflow-hidden pb-safe"
           >
             {/* Header */}
             <div className="p-4 border-b border-white/10 flex items-center justify-between">
@@ -96,7 +102,7 @@ const ReelCommentDrawer = ({ isOpen, onClose, reelId, comments = [], onCommentAd
             </div>
 
             {/* Comment Input */}
-            <form onSubmit={handleSubmit} className="p-4 border-t border-white/10 bg-[#181818]">
+            <form onSubmit={handleSubmit} className="p-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-[#181818]">
               <div className="flex items-center gap-2 mb-2">
                 <div className="relative flex-1">
                   <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-xs" />
@@ -105,7 +111,7 @@ const ReelCommentDrawer = ({ isOpen, onClose, reelId, comments = [], onCommentAd
                     placeholder="Your Name (Optional)"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white/5 text-xs text-white placeholder-white/40 pl-8 pr-3 py-1.5 rounded-lg border border-white/10 focus:outline-none focus:border-red transition-colors"
+                    className="w-full bg-white/5 text-base sm:text-xs text-white placeholder-white/40 pl-8 pr-3 py-1.5 rounded-lg border border-white/10 focus:outline-none focus:border-red transition-colors"
                   />
                 </div>
               </div>
@@ -115,7 +121,7 @@ const ReelCommentDrawer = ({ isOpen, onClose, reelId, comments = [], onCommentAd
                   placeholder="Add a comment..."
                   value={text}
                   onChange={(e) => setText(e.target.value)}
-                  className="flex-1 bg-white/5 text-xs text-white placeholder-white/40 px-3 py-2 rounded-xl border border-white/10 focus:outline-none focus:border-red transition-colors"
+                  className="flex-1 bg-white/5 text-base sm:text-xs text-white placeholder-white/40 px-3 py-2 rounded-xl border border-white/10 focus:outline-none focus:border-red transition-colors"
                 />
                 <button
                   type="submit"

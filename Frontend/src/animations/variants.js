@@ -140,17 +140,17 @@ export const navbarVariants = {
   },
 };
 
-// ---- Mobile Menu ----
+// ---- Mobile Menu (Hardware-accelerated for Safari/iOS WebKit stability) ----
 export const mobileMenuVariants = {
   closed: {
     opacity: 0,
-    clipPath: 'inset(0% 0% 100% 0%)',
+    y: -8,
     transition: { duration: DURATION.normal, ease: EASING.smooth },
   },
   open: {
     opacity: 1,
-    clipPath: 'inset(0% 0% 0% 0%)',
-    transition: { duration: DURATION.slow, ease: EASING.expo },
+    y: 0,
+    transition: { duration: DURATION.normal, ease: EASING.expo },
   },
 };
 

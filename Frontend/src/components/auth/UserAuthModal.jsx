@@ -150,7 +150,7 @@ const UserAuthModal = ({ isOpen, onClose, initialTab = 'login', onAuthSuccess })
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   placeholder="yourname@gmail.com"
-                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
+                  className="w-full pl-10 pr-3 py-2.5 text-base sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
                   required
                 />
               </div>
@@ -167,7 +167,7 @@ const UserAuthModal = ({ isOpen, onClose, initialTab = 'login', onAuthSuccess })
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
+                  className="w-full pl-10 pr-10 py-2.5 text-base sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
                   required
                 />
                 <button
@@ -222,7 +222,7 @@ const UserAuthModal = ({ isOpen, onClose, initialTab = 'login', onAuthSuccess })
                   value={registerName}
                   onChange={(e) => setRegisterName(e.target.value)}
                   placeholder="e.g. Ramesh Kumar"
-                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
+                  className="w-full pl-10 pr-3 py-2.5 text-base sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
                   required
                 />
               </div>
@@ -239,7 +239,7 @@ const UserAuthModal = ({ isOpen, onClose, initialTab = 'login', onAuthSuccess })
                   value={registerPhone}
                   onChange={(e) => setRegisterPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                   placeholder="98765 43210"
-                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
+                  className="w-full pl-10 pr-3 py-2.5 text-base sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
                 />
               </div>
             </div>
@@ -255,7 +255,7 @@ const UserAuthModal = ({ isOpen, onClose, initialTab = 'login', onAuthSuccess })
                   value={registerEmail}
                   onChange={(e) => setRegisterEmail(e.target.value)}
                   placeholder="yourname@gmail.com"
-                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
+                  className="w-full pl-10 pr-3 py-2.5 text-base sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
                   required
                 />
               </div>
@@ -272,7 +272,7 @@ const UserAuthModal = ({ isOpen, onClose, initialTab = 'login', onAuthSuccess })
                   value={registerPassword}
                   onChange={(e) => setRegisterPassword(e.target.value)}
                   placeholder="At least 6 characters"
-                  className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
+                  className="w-full pl-10 pr-10 py-2.5 text-base sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red focus:ring-1 focus:ring-red bg-gray-50/50"
                   required
                   minLength={6}
                 />

@@ -15,8 +15,15 @@ export const slugify = (text) => {
 
 export const formatDate = (dateString) => {
   if (!dateString) return 'Draft';
-  const options = { year: 'numeric', month: 'short', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString('en-US', options);
+  try {
+    const safeDateStr = typeof dateString === 'string' ? dateString.replace(' ', 'T') : dateString;
+    const d = new Date(safeDateStr);
+    if (isNaN(d.getTime())) return 'Recent';
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return d.toLocaleDateString('en-US', options);
+  } catch {
+    return 'Recent';
+  }
 };
 
 export const sanitizeHTML = (content) => {

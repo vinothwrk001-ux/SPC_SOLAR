@@ -194,7 +194,7 @@ const ContactPage = () => {
                       placeholder="Rahul Sharma"
                       className="!mb-2 md:!mb-4"
                       labelClassName="!mb-1 md:!mb-1.5 !text-[11px] md:!text-xs"
-                      inputClassName="!px-3 !py-2 md:!px-4 md:!py-3 !text-xs md:!text-sm"
+                      inputClassName="!px-3 !py-2.5 md:!px-4 md:!py-3 !text-base md:!text-sm"
                       {...register('name', { required: 'Name is required' })}
                       error={errors.name}
                     />
@@ -204,7 +204,7 @@ const ContactPage = () => {
                         placeholder="+91 9876543210"
                         className="!mb-2 md:!mb-4"
                         labelClassName="!mb-1 md:!mb-1.5 !text-[11px] md:!text-xs"
-                        inputClassName="!px-3 !py-2 md:!px-4 md:!py-3 !text-xs md:!text-sm"
+                        inputClassName="!px-3 !py-2.5 md:!px-4 md:!py-3 !text-base md:!text-sm"
                         {...register('phone', { required: 'Phone is required' })}
                         error={errors.phone}
                       />
@@ -214,7 +214,7 @@ const ContactPage = () => {
                         placeholder="rahul@example.com"
                         className="!mb-2 md:!mb-4"
                         labelClassName="!mb-1 md:!mb-1.5 !text-[11px] md:!text-xs"
-                        inputClassName="!px-3 !py-2 md:!px-4 md:!py-3 !text-xs md:!text-sm"
+                        inputClassName="!px-3 !py-2.5 md:!px-4 md:!py-3 !text-base md:!text-sm"
                         {...register('email', { required: 'Email is required' })}
                         error={errors.email}
                       />
@@ -225,7 +225,7 @@ const ContactPage = () => {
                         Service Interested In
                       </label>
                       <select
-                        className="w-full px-3 py-2 md:px-4 md:py-3 text-xs md:text-sm font-body border border-gray-light hover:border-gray-400 focus:border-black outline-none rounded-btn transition-colors duration-250"
+                        className="w-full px-3 py-2.5 md:px-4 md:py-3 text-base md:text-sm font-body border border-gray-light hover:border-gray-400 focus:border-black outline-none rounded-btn transition-colors duration-250 bg-white"
                         {...register('service')}
                       >
                         <option value="Residential Solar">Residential Solar</option>
@@ -241,7 +241,7 @@ const ContactPage = () => {
                         Message
                       </label>
                       <textarea
-                        className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-light hover:border-gray-400 focus:border-black outline-none rounded-btn h-20 sm:h-24 md:h-32 resize-none text-xs md:text-sm font-body transition-colors duration-250"
+                        className="w-full px-3 py-2.5 md:px-4 md:py-3 border border-gray-light hover:border-gray-400 focus:border-black outline-none rounded-btn h-20 sm:h-24 md:h-32 resize-none text-base md:text-sm font-body transition-colors duration-250 bg-white"
                         placeholder="How can we help you?"
                         {...register('message', { required: 'Message is required' })}
                       />

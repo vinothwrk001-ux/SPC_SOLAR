@@ -33,9 +33,8 @@ const WelcomeSplashScreen = () => {
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            scale: 1.02,
-            filter: 'blur(10px)',
-            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+            scale: 1.01,
+            transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
           }}
           className="fixed inset-0 z-[99999] min-h-[100dvh] max-h-[100dvh] w-full bg-[#04060A] text-white flex flex-col justify-between items-center overflow-hidden font-body select-none px-4 py-4 sm:p-6"
         >

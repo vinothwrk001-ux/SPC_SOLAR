@@ -170,7 +170,7 @@ const Navbar = () => {
             initial="closed"
             animate="open"
             exit="closed"
-            className="fixed inset-0 z-40 bg-black lg:hidden flex flex-col overflow-y-auto no-scrollbar"
+            className="fixed inset-0 z-40 bg-black lg:hidden flex flex-col overflow-y-auto overscroll-contain pb-safe no-scrollbar"
             style={{ top: 0 }}
           >
             {/* Background elements */}
@@ -180,7 +180,7 @@ const Navbar = () => {
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red/8 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-red/6 rounded-full blur-3xl pointer-events-none" />
 
-            <nav className="relative flex flex-col items-center justify-between w-full px-6 h-full pt-[116px] sm:pt-[124px] pb-3.5">
+            <nav className="relative flex flex-col items-center justify-between w-full px-6 min-h-full pt-[116px] sm:pt-[124px] pb-[max(1.25rem,env(safe-area-inset-bottom))]">
               <div className="flex flex-col items-center justify-center gap-2 sm:gap-2.5 my-auto w-full pt-2 sm:pt-3">
                 {LINKS.map((link, i) => (
                   <motion.div key={link.name} variants={mobileNavItem} custom={i}>

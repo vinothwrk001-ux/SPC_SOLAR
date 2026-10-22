@@ -21,7 +21,7 @@ const Modal = ({ isOpen, onClose, title, size = 'md', children }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm"
             onClick={onClose}
           />
 
@@ -32,7 +32,7 @@ const Modal = ({ isOpen, onClose, title, size = 'md', children }) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.93, y: 8 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className={`fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none`}
+            className={`fixed inset-0 z-[61] flex items-center justify-center p-4 pointer-events-none`}
           >
             <div className={`bg-white rounded-card shadow-card-lg w-full ${sizes[size]} pointer-events-auto overflow-hidden relative`}>
               {/* Top accent */}
@@ -51,7 +51,7 @@ const Modal = ({ isOpen, onClose, title, size = 'md', children }) => {
               </div>
 
               {/* Body */}
-              <div className="px-6 py-5 max-h-[75vh] overflow-y-auto">
+              <div className="px-6 py-5 max-h-[75vh] max-h-[75dvh] overflow-y-auto overscroll-contain">
                 {children}
               </div>
             </div>
