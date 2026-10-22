@@ -3,6 +3,7 @@ import api from '../../services/api';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
+import { MediaPickerModal } from '../../components/media/MediaPickerModal';
 import toast from 'react-hot-toast';
 import { 
   FiPlus, 
@@ -50,6 +51,7 @@ const AdminProjects = () => {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -182,6 +184,19 @@ const AdminProjects = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  // Handle Selection from Media Manager
+  const handleSelectFromMediaPicker = (selectedAsset) => {
+    if (!selectedAsset) return;
+    const url = selectedAsset.secureUrl || selectedAsset.url;
+    setImageFile(null);
+    setImagePreview(formatImageUrl(url));
+    setFormData(prev => ({ ...prev, image: url }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    toast.success('Project image selected from Media Manager!');
   };
 
   // Submit Form (Create / Update)
@@ -852,9 +867,19 @@ const AdminProjects = () => {
 
             {/* Project Image Section */}
             <div className="md:col-span-2 space-y-2">
-              <label className="block font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
-                Project Image
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="block font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+                  Project Image
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsMediaPickerOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 hover:bg-black text-white text-xs font-accent font-bold rounded-lg transition-colors cursor-pointer shadow-xs"
+                >
+                  <FiImage size={14} className="text-red-400" />
+                  <span>Select from Media Manager</span>
+                </button>
+              </div>
 
               {/* Image Preview Box */}
               {imagePreview ? (
@@ -864,38 +889,63 @@ const AdminProjects = () => {
                     alt="Preview"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setIsMediaPickerOpen(true)}
+                      className="px-3 py-1.5 bg-gray-900 hover:bg-black text-white text-xs font-accent font-bold uppercase rounded-btn flex items-center gap-1.5 cursor-pointer shadow-sm"
+                    >
+                      <FiImage size={14} /> Media Manager
+                    </button>
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-3 py-1.5 bg-white text-black text-xs font-accent font-bold uppercase rounded-btn hover:bg-gray-100 flex items-center gap-1.5"
+                      className="px-3 py-1.5 bg-white text-black text-xs font-accent font-bold uppercase rounded-btn hover:bg-gray-100 flex items-center gap-1.5 cursor-pointer shadow-sm"
                     >
-                      <FiUploadCloud size={14} /> Change
+                      <FiUploadCloud size={14} /> Upload Device
                     </button>
                     <button
                       type="button"
                       onClick={handleRemoveImage}
-                      className="px-3 py-1.5 bg-red text-white text-xs font-accent font-bold uppercase rounded-btn hover:bg-red-700 flex items-center gap-1.5"
+                      className="px-3 py-1.5 bg-red text-white text-xs font-accent font-bold uppercase rounded-btn hover:bg-red-700 flex items-center gap-1.5 cursor-pointer shadow-sm"
                     >
                       <FiTrash2 size={14} /> Remove
                     </button>
                   </div>
                 </div>
               ) : (
-                /* Drag & Drop Upload Zone */
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-gray-300 hover:border-red rounded-xl p-6 text-center cursor-pointer transition-colors bg-gray-50/50 hover:bg-red-50/20"
-                >
-                  <div className="w-12 h-12 rounded-full bg-red-50 text-red mx-auto flex items-center justify-center mb-2">
-                    <FiUploadCloud size={24} />
+                /* Choice when no image yet: Select from Media Manager OR Click to upload */
+                <div className="space-y-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsMediaPickerOpen(true)}
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-gray-900 via-gray-800 to-black hover:from-black hover:to-gray-900 text-white rounded-xl text-xs font-bold font-accent shadow-sm transition-all cursor-pointer border border-gray-800 hover:border-gray-700"
+                  >
+                    <FiImage size={16} className="text-red-400" />
+                    <span>Select from Media Manager Library</span>
+                  </button>
+
+                  <div className="relative flex py-0.5 items-center">
+                    <div className="flex-grow border-t border-gray-200"></div>
+                    <span className="flex-shrink mx-3 text-[10px] uppercase font-bold text-gray-400 tracking-wider">Or Upload from Device</span>
+                    <div className="flex-grow border-t border-gray-200"></div>
                   </div>
-                  <p className="text-sm font-heading font-bold text-black mb-0.5">
-                    Click to upload project photo
-                  </p>
-                  <p className="text-xs text-gray-500 font-body">
-                    Supports JPG, PNG, WEBP (Max 15MB)
-                  </p>
+
+                  {/* Drag & Drop Upload Zone */}
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-2 border-dashed border-gray-300 hover:border-red rounded-xl p-5 text-center cursor-pointer transition-colors bg-gray-50/50 hover:bg-red-50/20"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-red-50 text-red mx-auto flex items-center justify-center mb-1.5">
+                      <FiUploadCloud size={20} />
+                    </div>
+                    <p className="text-sm font-heading font-bold text-black mb-0.5">
+                      Click to upload project photo
+                    </p>
+                    <p className="text-xs text-gray-500 font-body">
+                      Supports JPG, PNG, WEBP (Max 15MB)
+                    </p>
+                  </div>
                 </div>
               )}
 
@@ -1027,6 +1077,17 @@ const AdminProjects = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Media Picker Modal */}
+      <MediaPickerModal
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        onSelect={handleSelectFromMediaPicker}
+        maxSelect={1}
+        resourceType="image"
+        title="Select Project Image from Media Manager"
+        folder="projects"
+      />
     </div>
   );
 };
