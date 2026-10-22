@@ -48,7 +48,7 @@ const AdminBlogPreview = () => {
           {blog.category}
         </span>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading mb-4 leading-[1.4]">{blog.title}</h1>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading mb-4 leading-[1.3]">{blog.title}</h1>
         {blog.subtitle && <p className="text-xl text-gray mb-6 font-body">{blog.subtitle}</p>}
 
         <div className="flex flex-wrap items-center space-x-6 text-sm text-gray font-accent mb-8 border-b border-gray-light pb-4">
