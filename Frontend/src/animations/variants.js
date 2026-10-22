@@ -18,11 +18,11 @@ export const DURATION = {
   xslow: 1.1,
 };
 
-// ---- Page Transitions ----
+// ---- Page Transitions (Flicker-free mobile & iOS transitions) ----
 export const pageVariants = {
-  initial: { opacity: 0, y: 18 },
-  animate: { opacity: 1, y: 0, transition: { duration: DURATION.normal, ease: EASING.expo } },
-  exit: { opacity: 0, y: -10, transition: { duration: DURATION.fast, ease: EASING.smooth } },
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: DURATION.fast, ease: EASING.smooth } },
+  exit: { opacity: 0, transition: { duration: DURATION.fast, ease: EASING.smooth } },
 };
 
 // ---- Fade Up (general reveal) ----

@@ -43,8 +43,21 @@ const ReelCarousel = () => {
   const videoRefs = useRef({});
   const touchStartX = useRef(null);
   const touchEndX = useRef(null);
+  const touchStartY = useRef(null);
+  const touchEndY = useRef(null);
 
   const navigate = useNavigate();
+
+  // Prevent background scrolling when fullscreen reel modal is active
+  useEffect(() => {
+    if (activeReelIndex !== null) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [activeReelIndex]);
 
   useEffect(() => {
     if (preloadedData?.reels) {
@@ -159,26 +172,43 @@ const ReelCarousel = () => {
     setMobileIndex((prev) => (prev >= reels.length - 1 ? 0 : prev + 1));
   };
 
-  // Touch swipe support for mobile
+  // Touch swipe support for mobile (Filtered to prevent vertical scroll jitter)
   const onTouchStart = (e) => {
     touchEndX.current = null;
+    touchEndY.current = null;
     touchStartX.current = e.targetTouches[0].clientX;
+    touchStartY.current = e.targetTouches[0].clientY;
   };
 
   const onTouchMove = (e) => {
     touchEndX.current = e.targetTouches[0].clientX;
+    touchEndY.current = e.targetTouches[0].clientY;
   };
 
   const onTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    const distance = touchStartX.current - touchEndX.current;
-    if (distance > 40) {
-      handleNext();
-    } else if (distance < -40) {
-      handlePrev();
+    if (
+      touchStartX.current === null ||
+      touchEndX.current === null ||
+      touchStartY.current === null ||
+      touchEndY.current === null
+    ) {
+      return;
+    }
+    const distanceX = touchStartX.current - touchEndX.current;
+    const distanceY = touchStartY.current - touchEndY.current;
+
+    // Only swipe if horizontal movement clearly dominates vertical movement (preventing scroll flicker)
+    if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > 40) {
+      if (distanceX > 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
     }
     touchStartX.current = null;
     touchEndX.current = null;
+    touchStartY.current = null;
+    touchEndY.current = null;
   };
 
   // If loading is done and there are no reels, return null safely after all hooks are executed

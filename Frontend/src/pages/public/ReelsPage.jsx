@@ -34,6 +34,8 @@ const ReelsPage = () => {
   const [shareSheetOpen, setShareSheetOpen] = useState(false);
 
   const videoRefs = useRef({});
+  const touchStartY = useRef(null);
+  const touchEndY = useRef(null);
 
   const getMediaUrl = (url) => {
     if (!url) return '';
@@ -149,6 +151,28 @@ const ReelsPage = () => {
     navigate('/quotation');
   };
 
+  // Touch gestures for mobile vertical swipe navigation
+  const handleTouchStart = (e) => {
+    touchEndY.current = null;
+    touchStartY.current = e.targetTouches[0].clientY;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndY.current = e.targetTouches[0].clientY;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartY.current === null || touchEndY.current === null) return;
+    const deltaY = touchStartY.current - touchEndY.current;
+    if (deltaY > 50) {
+      handleNextReel();
+    } else if (deltaY < -50) {
+      handlePrevReel();
+    }
+    touchStartY.current = null;
+    touchEndY.current = null;
+  };
+
   const currentReel = reels[currentIndex];
 
   return (
@@ -216,6 +240,9 @@ const ReelsPage = () => {
         ) : (
           <div 
             onClick={handleTogglePlay}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             className="relative w-full h-full max-w-md mx-auto overflow-hidden bg-black flex items-center justify-center cursor-pointer"
           >
             <video

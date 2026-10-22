@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX } from 'react-icons/fi';
 
@@ -10,6 +10,16 @@ const Modal = ({ isOpen, onClose, title, size = 'md', children }) => {
     xl: 'max-w-4xl',
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -20,8 +30,8 @@ const Modal = ({ isOpen, onClose, title, size = 'md', children }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm"
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[60] bg-black/75"
             onClick={onClose}
           />
 

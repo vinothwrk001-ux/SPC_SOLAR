@@ -753,7 +753,7 @@ Please arrange a *Free Site Survey* for my premises!`;
       {/* ======================================================== */}
       {/* Floating Bottom Action Bar */}
       {/* ======================================================== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-4 shadow-2xl z-40 pb-safe">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-4 shadow-2xl z-40 pb-safe">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           
           <div className="hidden md:flex items-center gap-3">

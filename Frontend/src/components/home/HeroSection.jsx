@@ -171,18 +171,18 @@ const HeroSection = () => {
                 <>
                   {/* Smartphone View (Mobile Screen) */}
                   <div
-                    className="block sm:hidden w-full h-full bg-cover bg-center transition-transform duration-10000 ease-out"
+                    className="block sm:hidden w-full h-full bg-cover bg-center"
                     style={{ backgroundImage: `url('${mobileMediaSrc}')` }}
                   />
                   {/* Desktop / Laptop View (Tablet & Up) */}
                   <div
-                    className="hidden sm:block w-full h-full bg-cover bg-center transition-transform duration-10000 ease-out"
+                    className="hidden sm:block w-full h-full bg-cover bg-center"
                     style={{ backgroundImage: `url('${mediaSrc}')` }}
                   />
                 </>
               ) : (
                 <div
-                  className="w-full h-full bg-cover bg-center transition-transform duration-10000 ease-out"
+                  className="w-full h-full bg-cover bg-center"
                   style={{ backgroundImage: `url('${mediaSrc}')` }}
                 />
               )}
