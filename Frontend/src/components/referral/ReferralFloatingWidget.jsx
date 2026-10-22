@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiGift, FiArrowRight, FiX } from 'react-icons/fi';
 
-const ReferralFloatingWidget = ({ onOpenModal }) => {
+const ReferralFloatingWidget = () => {
   const [isMinimized, setIsMinimized] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isQuotationPage = location.pathname.startsWith('/quotation');
 
-  const handleOpen = () => {
-    if (onOpenModal) {
-      onOpenModal();
-    } else {
-      window.dispatchEvent(new CustomEvent('open-referral-modal'));
+  const handleClick = () => {
+    if (location.pathname === '/services') {
+      const el = document.getElementById('referral-program');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
     }
+    navigate('/services#referral-program');
   };
 
   return (
@@ -32,7 +36,7 @@ const ReferralFloatingWidget = ({ onOpenModal }) => {
 
             {/* Main Pill Button */}
             <div
-              onClick={handleOpen}
+              onClick={handleClick}
               className="relative flex items-center gap-2.5 sm:gap-3 bg-[#0D0F14] hover:bg-[#151921] text-white pl-2.5 pr-3.5 py-2 sm:py-2.5 rounded-full border border-amber-400/50 shadow-2xl shadow-black/80 cursor-pointer transition-all duration-300"
             >
               {/* Left Gift Icon with Circular Gradient */}

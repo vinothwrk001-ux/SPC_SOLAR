@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
@@ -148,8 +148,22 @@ const buildBenefits = (item) => {
 };
 
 const ServicesPage = () => {
+  const location = useLocation();
   const [services, setServices] = useState(STATIC_SERVICES);
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
+
+  useEffect(() => {
+    if (location.hash) {
+      const targetId = location.hash.replace('#', '');
+      const timer = setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [location.hash]);
 
   useEffect(() => {
     let isMounted = true;

@@ -12,7 +12,7 @@ const REWARD_CHIPS = [
 
 const ReferralCard = ({ className = '' }) => {
   const handleOpenModal = () => {
-    window.dispatchEvent(new CustomEvent('open-referral-modal'));
+    window.dispatchEvent(new CustomEvent('open-lead-modal'));
   };
 
   const handleShareWhatsApp = (e) => {

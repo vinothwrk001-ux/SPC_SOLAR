@@ -91,14 +91,13 @@ const Footer = () => {
                 {QUICK_LINKS.map((l) => (
                   <li key={l.name}>
                     {l.isSpecial ? (
-                      <button
-                        type="button"
-                        onClick={() => window.dispatchEvent(new CustomEvent('open-referral-modal'))}
+                      <Link
+                        to={l.path}
                         className="text-amber-400 hover:text-amber-300 font-bold text-sm font-body flex items-center gap-1.5 sm:gap-2 group transition-colors duration-200 text-left"
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse flex-shrink-0" />
                         <span>{l.name}</span>
-                      </button>
+                      </Link>
                     ) : (
                       <Link
                         to={l.path}
