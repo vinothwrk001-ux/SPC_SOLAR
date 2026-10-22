@@ -155,17 +155,34 @@ export const getWebSiteSchema = () => ({
 
 /**
  * BreadcrumbList Schema
- * @param {Array<{ name: string, url: string }>} items
+ * Supports both { name, url } and { label, to } formats, resilient to undefined
+ * @param {Array<{ name?: string, label?: string, url?: string, to?: string }>} items
  */
 export const getBreadcrumbSchema = (items = []) => {
-  const itemListElement = items.map((item, index) => ({
-    '@type': 'ListItem',
-    position: index + 1,
-    name: item.name,
-    item: item.url.startsWith('http')
-      ? item.url
-      : `${DEFAULT_SEO.siteUrl}${item.url.startsWith('/') ? item.url : `/${item.url}`}`,
-  }));
+  if (!Array.isArray(items) || items.length === 0) return null;
+
+  const validItems = items.filter(Boolean);
+  const itemListElement = validItems.map((item, index) => {
+    const rawName = item?.name || item?.label || item?.title || `Item ${index + 1}`;
+    const rawUrl = item?.url || item?.to || item?.href || item?.path || '';
+
+    let fullUrl = DEFAULT_SEO.siteUrl;
+    if (rawUrl) {
+      const strUrl = String(rawUrl).trim();
+      if (strUrl.startsWith('http://') || strUrl.startsWith('https://')) {
+        fullUrl = strUrl;
+      } else {
+        fullUrl = `${DEFAULT_SEO.siteUrl}${strUrl.startsWith('/') ? strUrl : `/${strUrl}`}`;
+      }
+    }
+
+    return {
+      '@type': 'ListItem',
+      position: index + 1,
+      name: rawName,
+      item: fullUrl,
+    };
+  });
 
   return {
     '@context': 'https://schema.org',
@@ -179,12 +196,15 @@ export const getBreadcrumbSchema = (items = []) => {
  * @param {Array<{ question: string, answer: string }>} faqs
  */
 export const getFAQSchema = (faqs = []) => {
-  if (!faqs || faqs.length === 0) return null;
+  if (!Array.isArray(faqs) || faqs.length === 0) return null;
+
+  const validFaqs = faqs.filter((f) => f && f.question && f.answer);
+  if (validFaqs.length === 0) return null;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
+    mainEntity: validFaqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,
       acceptedAnswer: {
@@ -199,37 +219,53 @@ export const getFAQSchema = (faqs = []) => {
  * Article / BlogPosting Schema
  */
 export const getArticleSchema = ({
-  title,
-  description,
-  url,
-  image,
+  title = '',
+  description = '',
+  url = '',
+  image = '',
   datePublished,
   dateModified,
   authorName = 'SPC Solar Technical Editorial Team',
   tags = [],
-}) => ({
-  '@context': 'https://schema.org',
-  '@type': 'BlogPosting',
-  mainEntityOfPage: {
-    '@type': 'WebPage',
-    '@id': url.startsWith('http') ? url : `${DEFAULT_SEO.siteUrl}${url.startsWith('/') ? url : `/${url}`}`,
-  },
-  headline: title,
-  description: description,
-  image: image ? (image.startsWith('http') ? image : `${DEFAULT_SEO.siteUrl}${image.startsWith('/') ? image : `/${image}`}`) : DEFAULT_SEO.defaultImage,
-  datePublished: datePublished ? new Date(datePublished).toISOString() : new Date().toISOString(),
-  dateModified: dateModified ? new Date(dateModified).toISOString() : new Date().toISOString(),
-  author: {
-    '@type': 'Person',
-    name: authorName,
-  },
-  publisher: {
-    '@type': 'Organization',
-    name: DEFAULT_SEO.siteName,
-    logo: {
-      '@type': 'ImageObject',
-      url: DEFAULT_SEO.defaultLogo,
+} = {}) => {
+  const strUrl = url ? String(url).trim() : '';
+  const fullUrl = strUrl
+    ? (strUrl.startsWith('http://') || strUrl.startsWith('https://') 
+        ? strUrl 
+        : `${DEFAULT_SEO.siteUrl}${strUrl.startsWith('/') ? strUrl : `/${strUrl}`}`)
+    : DEFAULT_SEO.siteUrl;
+
+  const strImage = image ? String(image).trim() : '';
+  const fullImage = strImage
+    ? (strImage.startsWith('http://') || strImage.startsWith('https://')
+        ? strImage
+        : `${DEFAULT_SEO.siteUrl}${strImage.startsWith('/') ? strImage : `/${strImage}`}`)
+    : DEFAULT_SEO.defaultImage;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': fullUrl,
     },
-  },
-  keywords: tags.join(', '),
-});
+    headline: title,
+    description: description,
+    image: fullImage,
+    datePublished: datePublished ? new Date(datePublished).toISOString() : new Date().toISOString(),
+    dateModified: dateModified ? new Date(dateModified).toISOString() : new Date().toISOString(),
+    author: {
+      '@type': 'Person',
+      name: authorName,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: DEFAULT_SEO.siteName,
+      logo: {
+        '@type': 'ImageObject',
+        url: DEFAULT_SEO.defaultLogo,
+      },
+    },
+    keywords: Array.isArray(tags) ? tags.join(', ') : String(tags || ''),
+  };
+};

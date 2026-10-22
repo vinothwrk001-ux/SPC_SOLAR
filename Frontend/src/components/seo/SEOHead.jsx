@@ -48,10 +48,13 @@ const updateJsonLd = (schema, id = 'spc-seo-schema') => {
 
   if (!schema) return;
 
+  const cleanSchema = Array.isArray(schema) ? schema.filter(Boolean) : schema;
+  if (Array.isArray(cleanSchema) && cleanSchema.length === 0) return;
+
   const script = document.createElement('script');
   script.id = id;
   script.type = 'application/ld+json';
-  script.text = JSON.stringify(schema, null, 2);
+  script.text = JSON.stringify(cleanSchema, null, 2);
   document.head.appendChild(script);
 };
 
@@ -86,16 +89,18 @@ export const SEOHead = ({
       ? keywords.join(', ')
       : keywords || DEFAULT_SEO.defaultKeywords.join(', ');
 
-    const currentUrl = canonical
-      ? canonical.startsWith('http')
-        ? canonical
-        : `${DEFAULT_SEO.siteUrl}${canonical.startsWith('/') ? canonical : `/${canonical}`}`
+    const canonicalStr = typeof canonical === 'string' ? canonical.trim() : '';
+    const currentUrl = canonicalStr
+      ? (canonicalStr.startsWith('http://') || canonicalStr.startsWith('https://')
+          ? canonicalStr
+          : `${DEFAULT_SEO.siteUrl}${canonicalStr.startsWith('/') ? canonicalStr : `/${canonicalStr}`}`)
       : `${DEFAULT_SEO.siteUrl}${location.pathname === '/' ? '' : location.pathname}`;
 
-    const finalImage = ogImage
-      ? ogImage.startsWith('http')
-        ? ogImage
-        : `${DEFAULT_SEO.siteUrl}${ogImage.startsWith('/') ? ogImage : `/${ogImage}`}`
+    const ogImageStr = typeof ogImage === 'string' ? ogImage.trim() : '';
+    const finalImage = ogImageStr
+      ? (ogImageStr.startsWith('http://') || ogImageStr.startsWith('https://')
+          ? ogImageStr
+          : `${DEFAULT_SEO.siteUrl}${ogImageStr.startsWith('/') ? ogImageStr : `/${ogImageStr}`}`)
       : DEFAULT_SEO.defaultImage;
 
     const finalImageAlt = ogImageAlt || `${title || 'SPC Solar'} — Smart Power Controls Coimbatore`;
@@ -203,16 +208,18 @@ export const useSEO = (seoProps = {}) => {
       ? seoProps.keywords.join(', ')
       : seoProps.keywords || DEFAULT_SEO.defaultKeywords.join(', ');
 
-    const currentUrl = seoProps.canonical
-      ? seoProps.canonical.startsWith('http')
-        ? seoProps.canonical
-        : `${DEFAULT_SEO.siteUrl}${seoProps.canonical.startsWith('/') ? seoProps.canonical : `/${seoProps.canonical}`}`
+    const canonicalStr = typeof seoProps.canonical === 'string' ? seoProps.canonical.trim() : '';
+    const currentUrl = canonicalStr
+      ? (canonicalStr.startsWith('http://') || canonicalStr.startsWith('https://')
+          ? canonicalStr
+          : `${DEFAULT_SEO.siteUrl}${canonicalStr.startsWith('/') ? canonicalStr : `/${canonicalStr}`}`)
       : `${DEFAULT_SEO.siteUrl}${location.pathname === '/' ? '' : location.pathname}`;
 
-    const finalImage = seoProps.ogImage
-      ? seoProps.ogImage.startsWith('http')
-        ? seoProps.ogImage
-        : `${DEFAULT_SEO.siteUrl}${seoProps.ogImage.startsWith('/') ? seoProps.ogImage : `/${seoProps.ogImage}`}`
+    const ogImageStr = typeof seoProps.ogImage === 'string' ? seoProps.ogImage.trim() : '';
+    const finalImage = ogImageStr
+      ? (ogImageStr.startsWith('http://') || ogImageStr.startsWith('https://')
+          ? ogImageStr
+          : `${DEFAULT_SEO.siteUrl}${ogImageStr.startsWith('/') ? ogImageStr : `/${ogImageStr}`}`)
       : DEFAULT_SEO.defaultImage;
 
     document.title = formattedTitle;
