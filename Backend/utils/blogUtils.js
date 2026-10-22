@@ -1,4 +1,6 @@
-const DOMPurify = require('isomorphic-dompurify');
+/**
+ * Blog Utilities (Pure CommonJS - No ESM or heavy JSDOM dependencies)
+ */
 
 const slugify = (text) => {
   if (!text) return '';
@@ -40,12 +42,26 @@ const extractTOC = (htmlContent) => {
   return toc;
 };
 
+/**
+ * Pure CommonJS HTML Sanitizer
+ * Strips script tags, style injections, dangerous event handlers, and javascript: URIs.
+ * Avoids isomorphic-dompurify/jsdom/encoding-lite ESM incompatibility on Node/Hostinger.
+ */
 const sanitizeHTML = (htmlContent) => {
-  if (!htmlContent) return '';
-  return DOMPurify.sanitize(htmlContent, {
-    ADD_TAGS: ['iframe'], // Allow Youtube/Vimeo embeds safely
-    ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'target', 'rel']
-  });
+  if (!htmlContent || typeof htmlContent !== 'string') return '';
+
+  return htmlContent
+    // Remove script tags and contents
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    // Remove object, embed, applet tags and contents
+    .replace(/<(object|embed|applet)\b[^<]*(?:(?!<\/\1>)<[^<]*)*<\/\1>/gi, '')
+    // Remove inline event handlers (e.g. onclick, onerror, onload)
+    .replace(/\s+on[a-z]+\s*=\s*(['\"][^'\"]*['\"]|[^\s>]+)/gi, '')
+    // Disarm javascript: and vbscript: URIs in href and src
+    .replace(/(href|src)\s*=\s*['"]\s*(?:javascript|vbscript|data(?!\s*:\s*image)):[^'"]*['"]/gi, '$1="#"')
+    // Remove dangerous meta/link/base tags
+    .replace(/<(meta|link|base)\b[^>]*>/gi, '')
+    .trim();
 };
 
 module.exports = {
