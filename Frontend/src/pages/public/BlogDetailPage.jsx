@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
 import SEOHead from '../../components/ui/SEOHead';
+import Breadcrumbs from '../../components/layout/Breadcrumbs';
+import { getBreadcrumbSchema } from '../../components/seo/schemas';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { blogService } from '../../services/blogService';
@@ -94,23 +96,45 @@ const BlogDetailPage = () => {
     );
   }
 
+  const breadcrumbItems = [
+    { label: 'Blog', to: '/blog' },
+    ...(blog.category ? [{ 
+      label: blog.category.name || 'Category', 
+      to: `/blog/category/${blog.category.slug || encodeURIComponent(blog.category.name || '')}` 
+    }] : []),
+    { label: blog.title }
+  ];
+
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { label: 'Blog', to: '/blog' },
+    ...(blog.category ? [{ 
+      label: blog.category.name || 'Category', 
+      to: `/blog/category/${blog.category.slug || encodeURIComponent(blog.category.name || '')}` 
+    }] : []),
+    { label: blog.title, to: `/blog/${blog.slug || slug}` }
+  ]);
+
   const articleSchema = generateArticleSchema(blog);
   const faqSchema = generateFAQSchema(blog.faq);
+  const combinedSchemas = [breadcrumbSchema, articleSchema, faqSchema].filter(Boolean);
 
   return (
     <div className="bg-bg min-h-screen pb-20">
       <SEOHead
         title={blog.seo?.metaTitle || `${blog.title} | SPC Solar`}
         description={blog.seo?.metaDescription || blog.excerpt || blog.title}
+        canonical={`/blog/${blog.slug || slug}`}
+        image={getImageUrl(blog.featuredImage)}
+        ogType="article"
+        keywords={blog.tags && blog.tags.length > 0 ? blog.tags : ['solar energy', 'spc solar', 'solar guide']}
+        article={{
+          publishedTime: blog.createdAt,
+          modifiedTime: blog.updatedAt,
+          author: blog.author || 'SPC Solar Expert',
+          tags: blog.tags
+        }}
+        schema={combinedSchemas}
       />
-
-      {/* Structured Data JSON-LD */}
-      {articleSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
-      )}
-      {faqSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      )}
 
       {/* Admin Preview Mode Banner */}
       {isPreview && (
@@ -121,6 +145,10 @@ const BlogDetailPage = () => {
 
       {/* Main Container */}
       <div className="max-w-[1200px] mx-auto px-3.5 sm:px-6 lg:px-8 pt-36 sm:pt-40 lg:pt-44">
+        {/* Visual Breadcrumb Navigation */}
+        <div className="mb-4 sm:mb-6">
+          <Breadcrumbs items={breadcrumbItems} variant="light" />
+        </div>
         {/* Category & Title Header */}
         <div className="mb-6 sm:mb-10 relative">
           {/* Back Button (On mobile: compact button above title; On desktop: absolute on the left) */}

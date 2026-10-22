@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
+import { getBreadcrumbSchema, getLocalBusinessSchema } from '../../components/seo/schemas';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import { Reveal } from '../../components/motion';
@@ -37,8 +38,23 @@ const ContactPage = () => {
   return (
     <div>
       <SEOHead
-        title="Contact Us | SPC Solar"
-        description="Get in touch with SPC Solar for residential, commercial, or industrial solar panel installations."
+        title="Contact SPC Solar Coimbatore — Office Address, Phone & Free Site Visit"
+        description="Contact SPC Solar at RS Puram, Coimbatore. Call +91 80987 44044 for free rooftop solar site assessment, subsidy consultation, and solar installation queries."
+        canonical="/contact"
+        keywords={[
+          'contact spc solar',
+          'solar company in rs puram coimbatore',
+          'solar panel dealer coimbatore contact',
+          'best solar company coimbatore address',
+          'solar consultation coimbatore phone number',
+          'solar panel office near me coimbatore'
+        ]}
+        schema={[
+          getBreadcrumbSchema([
+            { label: 'Contact Us', to: '/contact' }
+          ]),
+          getLocalBusinessSchema()
+        ]}
       />
 
       <PageHero
@@ -46,6 +62,7 @@ const ContactPage = () => {
         title="CONTACT "
         highlight="US"
         subtitle="We're here to answer all your questions about transitioning to solar energy."
+        breadcrumbs={[{ label: 'Contact Us' }]}
       />
 
       <section className="py-10 sm:py-16 lg:py-20 bg-white">

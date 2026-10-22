@@ -6,6 +6,7 @@ import {
   FiPlay, FiArrowLeft, FiZap, FiMapPin, FiX
 } from 'react-icons/fi';
 import SEOHead from '../../components/ui/SEOHead';
+import { getBreadcrumbSchema } from '../../components/seo/schemas';
 import ReelShareSheet from '../../components/reels/ReelShareSheet';
 import { 
   getPublicReels, 
@@ -178,8 +179,22 @@ const ReelsPage = () => {
   return (
     <div className="fixed inset-0 bg-black text-white z-50 flex flex-col justify-between overflow-hidden select-none">
       <SEOHead 
-        title="Solar Reels & Installation Timelapses | SPC Solar" 
-        description="Watch short vertical video reels of rooftop solar installations, client testimonials, and subsidy explainers." 
+        title="Solar Installation Reels & Video Reviews | SPC Solar Coimbatore" 
+        description="Watch high-definition video walkthroughs, drone footage, customer testimonials, and rooftop solar installation timelapses from SPC Solar Coimbatore."
+        canonical="/reels"
+        keywords={[
+          'solar reels coimbatore',
+          'solar installation video clips',
+          'solar energy shorts tamil nadu',
+          'rooftop solar walkthrough coimbatore',
+          'spc solar reviews video',
+          'solar customer testimonials coimbatore'
+        ]}
+        schema={[
+          getBreadcrumbSchema([
+            { label: 'Solar Reels', to: '/reels' }
+          ])
+        ]}
       />
 
       {/* TOP BAR OVERLAY */}

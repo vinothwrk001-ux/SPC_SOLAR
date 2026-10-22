@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
+import { getBreadcrumbSchema } from '../../components/seo/schemas';
 import { Stagger, Reveal } from '../../components/motion';
 import { motion } from 'framer-motion';
 import api from '../../services/api';
@@ -268,8 +269,22 @@ const ProjectsPage = () => {
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <SEOHead 
-        title="Our Solar Projects & Client Portfolio | SPC Solar" 
-        description="Browse landmark solar installations by SPC Solar across Tamil Nadu: Gamesa 1500 kW, Nazareth Mill 1000 kW, Jyoti 350 kW, IndianOil, G Square 320 Street Lights, and more."
+        title="Solar Installation Projects & Portfolio Tamil Nadu | SPC Solar" 
+        description="Explore 500+ landmark rooftop and utility-scale solar projects by SPC Solar in Coimbatore and Tamil Nadu. 1500 kW Gamesa, 1000 kW Nazareth Mill, commercial & residential."
+        canonical="/projects"
+        keywords={[
+          'solar installation projects coimbatore',
+          'industrial rooftop solar tamil nadu',
+          'commercial solar installations coimbatore',
+          'residential rooftop solar projects',
+          'spc solar project portfolio',
+          'solar power plant installer tamil nadu'
+        ]}
+        schema={[
+          getBreadcrumbSchema([
+            { label: 'Projects', to: '/projects' }
+          ])
+        ]}
       />
 
       <PageHero
@@ -277,6 +292,7 @@ const ProjectsPage = () => {
         title="OUR "
         highlight="PROJECTS"
         subtitle="Explore our footprint of successfully commissioned utility-scale, commercial, industrial, residential, and infrastructure solar installations since 2010."
+        breadcrumbs={[{ label: 'Projects' }]}
       />
 
       {/* ======================================================== */}

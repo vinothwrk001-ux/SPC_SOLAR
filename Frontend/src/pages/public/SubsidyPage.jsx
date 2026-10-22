@@ -5,6 +5,7 @@ import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
 import Button from '../../components/ui/Button';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getBreadcrumbSchema, getFAQSchema } from '../../components/seo/schemas';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,11 +56,28 @@ const SubsidyPage = () => {
     { q: "Can SPC Solar help me with the application?", a: "Absolutely! We are an authorized vendor and will assist you end-to-end, from application to installation and subsidy claiming." }
   ];
 
+  const subsidySchema = [
+    getBreadcrumbSchema([
+      { label: 'PM Surya Ghar Subsidy', to: '/subsidy' }
+    ]),
+    getFAQSchema(faqs.map(f => ({ question: f.q, answer: f.a })))
+  ];
+
   return (
     <div>
       <SEOHead
-        title="PM Surya Ghar Muft Bijli Yojana — ₹78,000 Solar Subsidy | SPC Solar"
-        description="Learn everything about the PM Surya Ghar scheme. Get up to ₹78,000 central subsidy for your rooftop solar installation with SPC Solar."
+        title="PM Surya Ghar Muft Bijli Yojana Subsidy Guide | ₹78,000 Subsidy Coimbatore"
+        description="Complete guide to PM Surya Ghar Muft Bijli Yojana in Tamil Nadu. Claim up to ₹78,000 direct bank subsidy with zero-cost site survey and TANGEDCO net metering by SPC Solar."
+        canonical="/subsidy"
+        keywords={[
+          'pm surya ghar subsidy coimbatore',
+          'pm surya ghar muft bijli yojana tamil nadu',
+          'solar subsidy 78000 coimbatore',
+          'tangedco net metering application',
+          'rooftop solar subsidy scheme coimbatore',
+          'free electricity scheme tamil nadu'
+        ]}
+        schema={subsidySchema}
       />
 
       <PageHero
@@ -67,6 +85,7 @@ const SubsidyPage = () => {
         title="PM SURYA GHAR "
         highlight="SUBSIDY"
         subtitle="Get up to ₹78,000 central government subsidy for your rooftop solar installation — we handle everything."
+        breadcrumbs={[{ label: 'Solar Subsidy Guide' }]}
       />
 
 

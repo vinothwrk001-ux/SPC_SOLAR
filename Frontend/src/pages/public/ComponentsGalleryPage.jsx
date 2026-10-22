@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
+import { getBreadcrumbSchema } from '../../components/seo/schemas';
 import { Stagger, Reveal } from '../../components/motion';
 import { motion } from 'framer-motion';
 
@@ -44,15 +45,30 @@ const ComponentsGalleryPage = () => {
   return (
     <div className="min-h-screen">
       <SEOHead 
-        title="Solar Components Gallery | SPC Solar" 
-        description="Browse through our gallery of high-quality solar components, panels, inverters, and accessories."
+        title="Solar Panels & Inverters Components Gallery | SPC Solar Coimbatore" 
+        description="Explore Tier-1 monocrystalline panels, bifacial modules, on-grid & hybrid solar inverters, and heavy-duty galvanized mounting structures by SPC Solar."
+        canonical="/components"
+        keywords={[
+          'solar components coimbatore',
+          'bifacial solar panels tamil nadu',
+          'ongrid solar inverters coimbatore',
+          'solar mounting structure galvanized',
+          'solar accessories supplier coimbatore',
+          'tier 1 solar panels coimbatore'
+        ]}
+        schema={[
+          getBreadcrumbSchema([
+            { label: 'Components Gallery', to: '/components' }
+          ])
+        ]}
       />
 
       <PageHero
-        label="Gallery"
+        label="Product Catalog"
         title="OUR "
         highlight="GALLERY"
-        subtitle="Explore our catalog of premium solar energy products and components."
+        subtitle="Explore our catalog of premium solar energy products, Tier-1 panels, and inverter systems."
+        breadcrumbs={[{ label: 'Components' }]}
       />
 
       <section className="py-16 bg-white">

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
+import { getBreadcrumbSchema } from '../../components/seo/schemas';
 import { blogService } from '../../services/blogService';
 import { formatDate, getImageUrl } from '../../utils/blogHelpers';
 import { FiSearch, FiClock, FiX, FiChevronDown, FiCheck } from 'react-icons/fi';
@@ -175,15 +176,30 @@ const BlogPage = () => {
   return (
     <div className="min-h-screen bg-[#FAFAFA] font-sans pb-20">
       <SEOHead
-        title="Solar Energy Blog, Guides & Subsidy Updates | SPC Solar"
-        description="Expert insights, solar installation guides, PM Surya Ghar subsidy details, and energy saving tips from SPC Solar."
+        title="Solar Energy Blog & PM Surya Ghar Guides | SPC Solar Coimbatore"
+        description="Stay informed with expert solar articles, rooftop solar maintenance guides, government subsidy policies, and net-metering tutorials in Tamil Nadu."
+        canonical="/blog"
+        keywords={[
+          'solar energy blog tamil nadu',
+          'pm surya ghar news coimbatore',
+          'solar panel installation guide',
+          'rooftop solar savings tips',
+          'solar inverter comparison india',
+          'tangedco bi-directional meter guide'
+        ]}
+        schema={[
+          getBreadcrumbSchema([
+            { label: 'Blog', to: '/blog' }
+          ])
+        ]}
       />
 
       <PageHero
-        label="Resources"
+        label="Resources & Knowledge Base"
         title="OUR "
         highlight="BLOGS"
         subtitle="Expert insights, solar installation guides, PM Surya Ghar subsidy details, and energy saving tips."
+        breadcrumbs={[{ label: 'Blog' }]}
       />
 
       <div className="max-w-[1400px] mx-auto px-3.5 sm:px-6 lg:px-8 mt-5 sm:mt-8 lg:mt-10">

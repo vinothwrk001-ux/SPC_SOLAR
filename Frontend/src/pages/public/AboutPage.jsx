@@ -1,6 +1,7 @@
 import React from 'react';
 import SEOHead from '../../components/ui/SEOHead';
 import PageHero from '../../components/ui/PageHero';
+import { getBreadcrumbSchema, getOrganizationSchema } from '../../components/seo/schemas';
 import { Reveal, Stagger, AnimatedCounter, EnergyGrid } from '../../components/motion';
 import { 
   FiCheckCircle, 
@@ -80,11 +81,29 @@ const STATS = [
 ];
 
 const AboutPage = () => {
+  const breadcrumbItems = [
+    { label: 'About Us', to: '/about' }
+  ];
+
+  const aboutSchema = [
+    getBreadcrumbSchema(breadcrumbItems),
+    getOrganizationSchema()
+  ];
+
   return (
     <div>
       <SEOHead
-        title="About Us | SPC Solar"
-        description="Learn more about SPC Solar, our mission, vision, and journey in providing clean and sustainable energy solutions across India."
+        title="About Us — Leading Solar EPC Company in Coimbatore | SPC Solar"
+        description="Learn about SPC Solar (Smart Power Controls), Coimbatore's trusted solar engineering company. Discover our mission, leadership, 25-year warranty, and sustainable rooftop energy solutions."
+        canonical="/about"
+        keywords={[
+          'about spc solar coimbatore',
+          'solar company in coimbatore',
+          'solar epc contractor tamil nadu',
+          'rooftop solar panel experts coimbatore',
+          'solar panel installation company coimbatore'
+        ]}
+        schema={aboutSchema}
       />
 
       <PageHero
@@ -92,6 +111,7 @@ const AboutPage = () => {
         title="ABOUT SPC "
         highlight="SOLAR"
         subtitle="Empowering the nation with clean, sustainable, and affordable solar energy solutions."
+        breadcrumbs={[{ label: 'About Us' }]}
       />
 
       {/* 1. Leadership Photos (Left) & Our Journey (Right) — Side by Side */}

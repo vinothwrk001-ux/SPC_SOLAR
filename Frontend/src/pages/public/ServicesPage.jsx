@@ -7,6 +7,7 @@ import Button from '../../components/ui/Button';
 import { Reveal, EnergyGrid } from '../../components/motion';
 import api from '../../services/api';
 import ReferralCard from '../../components/referral/ReferralCard';
+import { getBreadcrumbSchema, getFAQSchema } from '../../components/seo/schemas';
 import { 
   FiHome, FiBriefcase, FiSettings, FiActivity, FiCheckCircle, 
   FiArrowRight, FiChevronDown, FiZap, FiSun
@@ -198,11 +199,43 @@ const ServicesPage = () => {
     };
   }, []);
 
+  const breadcrumbItems = [{ label: 'Services', to: '/services' }];
+
+  const serviceFaqs = [
+    {
+      question: 'What is the difference between On-Grid and Hybrid solar systems in Coimbatore?',
+      answer: 'On-grid solar connects directly to the TANGEDCO grid with bi-directional net metering, saving up to 90% on electricity bills without batteries. Hybrid solar combines grid connectivity with battery storage, providing continuous power even during power cuts.'
+    },
+    {
+      question: 'How much rooftop solar capacity do I need for my home in Coimbatore?',
+      answer: 'Typically, a 3kW to 5kW solar system fulfills the electricity needs of a standard 3-4 BHK home in Coimbatore, generating approximately 12-20 units of clean electricity daily.'
+    },
+    {
+      question: 'What warranty is provided on SPC Solar installations?',
+      answer: 'SPC Solar provides a 25-to-30-year performance warranty on Tier-1 solar panels, 5-to-10-year warranty on inverters, and 1 year of complimentary maintenance service.'
+    }
+  ];
+
+  const servicesSchema = [
+    getBreadcrumbSchema(breadcrumbItems),
+    getFAQSchema(serviceFaqs)
+  ];
+
   return (
     <div>
       <SEOHead
-        title="Our Solar Services | SPC Solar"
-        description="Explore residential, commercial, and industrial solar panel installation services. Comprehensive EPC and AMC solutions by SPC Solar."
+        title="Rooftop Solar Installation & Services in Coimbatore | SPC Solar"
+        description="Explore residential rooftop solar, commercial & industrial solar EPC, on-grid & hybrid solar power systems in Coimbatore. Up to ₹78,000 PM Surya Ghar subsidy with 25-year warranty."
+        canonical="/services"
+        keywords={[
+          'rooftop solar installation coimbatore',
+          'on-grid solar system coimbatore',
+          'hybrid solar power coimbatore',
+          'commercial solar epc coimbatore',
+          'industrial solar power solutions tamil nadu',
+          'solar panel service coimbatore'
+        ]}
+        schema={servicesSchema}
       />
 
       <PageHero
@@ -210,6 +243,7 @@ const ServicesPage = () => {
         title="OUR "
         highlight="SERVICES"
         subtitle="Hover over or tap each service to view technical specifications, subsidies, and benefits."
+        breadcrumbs={[{ label: 'Services' }]}
       />
 
       <section className="py-8 sm:py-12 lg:py-16 bg-white text-black relative overflow-hidden border-b border-gray-100">

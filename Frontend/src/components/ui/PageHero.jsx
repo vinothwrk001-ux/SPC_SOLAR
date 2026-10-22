@@ -1,12 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { EnergyGrid } from '../motion';
+import Breadcrumbs from '../layout/Breadcrumbs';
 
 /**
  * PageHero — Shared hero for inner pages (About, Services, etc.)
- * Handles the fixed navbar offset and renders a consistent header.
+ * Handles the fixed navbar offset and renders a consistent header with breadcrumbs.
  */
-const PageHero = ({ label, title = '', highlight, subtitle, children, normalCase }) => {
+const PageHero = ({ label, title = '', highlight, subtitle, children, normalCase, breadcrumbs }) => {
   // Render title with highlighted word safely whether highlight is part of title or separate
   const renderTitle = () => {
     if (!title && !highlight) return null;
@@ -51,6 +52,17 @@ const PageHero = ({ label, title = '', highlight, subtitle, children, normalCase
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red/40 to-transparent" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {breadcrumbs && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-3 sm:mb-4 flex justify-center"
+          >
+            <Breadcrumbs items={breadcrumbs} variant="dark" className="py-0 px-0" />
+          </motion.div>
+        )}
+
         {label && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}

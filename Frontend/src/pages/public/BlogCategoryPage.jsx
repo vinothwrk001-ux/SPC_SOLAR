@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { blogService } from '../../services/blogService';
 import SEOHead from '../../components/ui/SEOHead';
+import Breadcrumbs from '../../components/layout/Breadcrumbs';
+import { getBreadcrumbSchema } from '../../components/seo/schemas';
 import Card from '../../components/ui/Card';
 import { getImageUrl } from '../../utils/blogHelpers';
 import { FiArrowLeft, FiClock, FiArrowRight } from 'react-icons/fi';
@@ -10,6 +12,15 @@ const BlogCategoryPage = () => {
   const { slug } = useParams();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const categoryName = slug 
+    ? slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) 
+    : 'Category';
+
+  const breadcrumbItems = [
+    { label: 'Blog', to: '/blog' },
+    { label: categoryName }
+  ];
 
   useEffect(() => {
     const fetchCategoryBlogs = async () => {
@@ -28,16 +39,32 @@ const BlogCategoryPage = () => {
 
   return (
     <div className="bg-bg min-h-screen pt-36 sm:pt-40 pb-16">
-      <SEOHead title={`${slug.toUpperCase()} Solar Articles | SPC Solar`} description={`Browse all articles categorized under ${slug}`} />
+      <SEOHead 
+        title={`${categoryName} Articles & Guides | SPC Solar Blog`} 
+        description={`Explore articles, guides, and tips categorized under ${categoryName} from SPC Solar.`}
+        canonical={`/blog/category/${slug}`}
+        keywords={[
+          `${categoryName.toLowerCase()} solar`,
+          'solar energy coimbatore',
+          'solar panels guide tamil nadu',
+          'spc solar blog'
+        ]}
+        schema={[
+          getBreadcrumbSchema([
+            { label: 'Blog', to: '/blog' },
+            { label: categoryName, to: `/blog/category/${slug}` }
+          ])
+        ]}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link to="/blog" className="inline-flex items-center text-gray hover:text-red font-accent text-xs uppercase font-bold tracking-wider mb-6">
-          <FiArrowLeft className="mr-2" /> Back to All Articles
-        </Link>
+        <div className="mb-6">
+          <Breadcrumbs items={breadcrumbItems} variant="light" />
+        </div>
 
         <div className="mb-10 border-b border-gray-light pb-6">
           <span className="text-red font-accent font-bold text-xs uppercase tracking-widest">CATEGORY</span>
-          <h1 className="text-3xl sm:text-4xl font-heading uppercase text-black mt-2">{slug.replace(/-/g, ' ')}</h1>
+          <h1 className="text-3xl sm:text-4xl font-heading uppercase text-black mt-2">{categoryName}</h1>
         </div>
 
         {loading ? (

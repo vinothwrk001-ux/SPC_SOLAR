@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SEOHead from '../../components/ui/SEOHead';
+import { getBreadcrumbSchema } from '../../components/seo/schemas';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
@@ -277,8 +278,22 @@ Please arrange a *Free Site Survey* for my premises!`;
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-32 text-gray-900 font-sans">
       <SEOHead
-        title="Instant Solar Quotation & Subsidy Calculator | SPC Solar"
-        description="Calculate your required solar capacity, roof space, PM Surya Ghar subsidy up to ₹78,000, and 25-year return on investment."
+        title="Solar Calculator & Instant Quotation Coimbatore | SPC Solar"
+        description="Calculate rooftop solar requirements, required roof area, upfront cost, ₹78,000 PM Surya Ghar subsidy, and 25-year return on investment for Tamil Nadu homes & businesses."
+        canonical="/quotation"
+        keywords={[
+          'solar calculator coimbatore',
+          'solar quotation tamil nadu',
+          'solar rooftop cost estimator',
+          'pm surya ghar subsidy calculator',
+          'best solar price coimbatore',
+          'commercial solar savings calculator'
+        ]}
+        schema={[
+          getBreadcrumbSchema([
+            { label: 'Solar Calculator & Quotation', to: '/quotation' }
+          ])
+        ]}
       />
 
       {/* Hero Header */}
@@ -287,6 +302,7 @@ Please arrange a *Free Site Survey* for my premises!`;
         title="CALCULATE YOUR SOLAR "
         highlight="SAVINGS"
         subtitle="Discover your required capacity, government subsidy, and estimated 25-year lifetime return on investment in seconds."
+        breadcrumbs={[{ label: 'Solar Calculator' }]}
       />
 
       {/* Main Container */}
