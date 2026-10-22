@@ -41,17 +41,22 @@ const CTABanner = () => {
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
             <Button 
               size="lg" 
-              className="w-full sm:w-auto justify-center" 
-              icon={<FiArrowRight />}
+              className="w-full max-w-[280px] sm:max-w-none sm:w-auto justify-center !py-2.5 !px-5 sm:!py-4 sm:!px-8 !text-xs sm:!text-base !tracking-wider sm:!tracking-widest" 
+              icon={<FiArrowRight className="text-sm sm:text-base" />}
               onClick={() => window.dispatchEvent(new CustomEvent('open-lead-modal'))}
             >
               Get Free Quotation
             </Button>
-            <a href="tel:+919876543210" className="w-full sm:w-auto">
-              <Button variant="outline-white" size="lg" className="w-full justify-center" icon={<FiPhone size={16} />}>
+            <a href="tel:+919876543210" className="w-full max-w-[280px] sm:max-w-none sm:w-auto">
+              <Button 
+                variant="outline-white" 
+                size="lg" 
+                className="w-full justify-center !py-2.5 !px-5 sm:!py-4 sm:!px-8 !text-xs sm:!text-base !tracking-wider sm:!tracking-widest" 
+                icon={<FiPhone className="text-sm sm:text-base" size={14} />}
+              >
                 Call Us Now
               </Button>
             </a>
