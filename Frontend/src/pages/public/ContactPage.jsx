@@ -91,7 +91,7 @@ const ContactPage = () => {
                       <h4 className="font-heading text-base text-black">Business Hours</h4>
                     </div>
                     <div className="space-y-1 text-gray-500 text-sm font-body pl-7">
-                      <p>Monday – Saturday: 9:00 AM – 6:00 PM</p>
+                      <p>Monday – Saturday: 10:00 AM – 7:00 PM</p>
                       <p>Sunday: Closed</p>
                     </div>
                   </div>
@@ -117,7 +117,7 @@ const ContactPage = () => {
                     </div>
                     <h4 className="font-heading text-xs sm:text-sm font-bold text-black mb-1">Business Hours</h4>
                     <p className="text-gray-600 font-body text-[10.5px] sm:text-xs leading-snug">
-                      Mon – Sat: 9AM – 6PM<br />
+                      Mon – Sat: 10AM – 7PM<br />
                       <span className="text-red font-semibold">Sunday: Closed</span>
                     </p>
                   </div>
