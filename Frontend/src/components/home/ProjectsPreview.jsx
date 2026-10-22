@@ -116,7 +116,9 @@ const ProjectsPreview = () => {
                 <div className="overflow-hidden h-80 bg-gray-900">
                   <motion.img
                     src={formatImageUrl(project.image)}
-                    alt={project.title}
+                    alt={`${project.title} - ${project.capacity || ''} Solar Installation in Coimbatore Tamil Nadu by SPC Solar`}
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.currentTarget.src = DEFAULT_IMAGE_FALLBACK;
                     }}

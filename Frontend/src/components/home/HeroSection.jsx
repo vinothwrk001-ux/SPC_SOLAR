@@ -186,6 +186,14 @@ const HeroSection = () => {
                   style={{ backgroundImage: `url('${mediaSrc}')` }}
                 />
               )}
+              {/* Semantic image for Google Image Indexing and LCP Core Web Vitals */}
+              <img
+                src={mediaSrc}
+                alt={currentBanner.title ? `${currentBanner.title} - Best Solar in Coimbatore by SPC Solar` : 'Best Solar in Coimbatore - SPC Solar Rooftop System'}
+                fetchPriority="high"
+                decoding="async"
+                className="sr-only"
+              />
             </>
           )}
 

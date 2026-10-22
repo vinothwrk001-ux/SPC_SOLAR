@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiTag, FiImage, FiUsers, FiHardDrive } from 'react-icons/fi';
+import { FiHome, FiFileText, FiBriefcase, FiSettings, FiMessageSquare, FiStar, FiLogOut, FiVideo, FiMenu, FiTag, FiImage, FiUsers, FiHardDrive, FiGlobe } from 'react-icons/fi';
 import Logo from '../../assets/Logo.png';
 
 const AdminLayout = () => {
@@ -30,6 +30,7 @@ const AdminLayout = () => {
     { name: 'Testimonials', path: '/admin/testimonials', icon: <FiStar /> },
     { name: 'Gallery Components', path: '/admin/gallery-components', icon: <FiImage /> },
     { name: 'Home Banner', path: '/admin/home-banner', icon: <FiImage /> },
+    { name: 'Master SEO & Indexing', path: '/admin/seo', icon: <FiGlobe /> },
   ];
 
   return (

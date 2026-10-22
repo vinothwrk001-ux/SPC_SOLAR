@@ -47,6 +47,7 @@ const AdminGalleryComponents = lazy(() => import('./pages/admin/AdminGalleryComp
 const AdminHomeBanner = lazy(() => import('./pages/admin/AdminHomeBanner'));
 const AdminLeads = lazy(() => import('./pages/admin/AdminLeads'));
 const AdminMediaManager = lazy(() => import('./pages/admin/AdminMediaManager'));
+const AdminSEOPage = lazy(() => import('./pages/admin/AdminSEOPage'));
 
 function App() {
   return (
@@ -98,6 +99,7 @@ function App() {
                     <Route path="gallery-components" element={<AdminGalleryComponents />} />
                     <Route path="home-banner" element={<AdminHomeBanner />} />
                     <Route path="media" element={<AdminMediaManager />} />
+                    <Route path="seo" element={<AdminSEOPage />} />
                   </Route>
                 </Routes>
               </Suspense>

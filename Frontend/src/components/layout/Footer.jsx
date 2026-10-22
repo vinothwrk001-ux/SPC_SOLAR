@@ -137,20 +137,38 @@ const Footer = () => {
             </div>
           </Reveal>
 
-          {/* Column 4 — Contact */}
+          {/* Column 4 — Contact with LocalBusiness Microdata */}
           <Reveal delay={0.14} className="col-span-2 lg:col-span-1">
-            <div>
+            <div itemScope itemType="https://schema.org/LocalBusiness">
+              <meta itemProp="name" content="SPC Solar (Smart Power Controls)" />
+              <meta itemProp="url" content="https://spcsolarcbe.com/" />
+              <div itemProp="geo" itemScope itemType="https://schema.org/GeoCoordinates" className="hidden">
+                <meta itemProp="latitude" content="11.0168" />
+                <meta itemProp="longitude" content="76.9558" />
+              </div>
+
               <h4 className="font-heading text-xs sm:text-sm uppercase tracking-widest text-white mb-3 sm:mb-4 after:block after:w-6 after:h-px after:bg-red after:mt-1.5">
-                Contact
+                Contact & Office
               </h4>
               <ul className="space-y-2 sm:space-y-2.5">
-                <li className="flex items-start gap-2.5 text-gray-400 text-xs sm:text-sm font-body leading-relaxed">
+                <li 
+                  className="flex items-start gap-2.5 text-gray-400 text-xs sm:text-sm font-body leading-relaxed"
+                  itemProp="address" 
+                  itemScope 
+                  itemType="https://schema.org/PostalAddress"
+                >
                   <FiMapPin size={15} className="text-red flex-shrink-0 mt-0.5" />
-                  <span>No-115-117, Easwari Towers, Devanga High School Road, RS Puram, Coimbatore - 641002.</span>
+                  <span>
+                    <span itemProp="streetAddress">No-115-117, Easwari Towers, Devanga High School Road</span>,{' '}
+                    <span itemProp="addressLocality">RS Puram, Coimbatore</span> -{' '}
+                    <span itemProp="postalCode">641002</span>,{' '}
+                    <span itemProp="addressRegion">Tamil Nadu</span>.
+                  </span>
                 </li>
                 <li>
                   <a
                     href="mailto:spctechnologycoimbatore@gmail.com"
+                    itemProp="email"
                     className="flex items-center gap-2.5 text-gray-400 hover:text-white text-xs sm:text-sm font-body transition-colors duration-200"
                   >
                     <FiMail size={15} className="text-red flex-shrink-0" />
@@ -160,6 +178,7 @@ const Footer = () => {
                 <li>
                   <a
                     href="tel:+918098744044"
+                    itemProp="telephone"
                     className="flex items-center gap-2.5 text-gray-400 hover:text-white text-xs sm:text-sm font-body transition-colors duration-200"
                   >
                     <FiPhone size={15} className="text-red flex-shrink-0" />
@@ -199,13 +218,32 @@ const Footer = () => {
           </Reveal>
         </div>
 
+        {/* ---- Service Areas Local SEO Bar ---- */}
+        <div className="border-t border-white/6 pt-4 pb-2 text-[11px] sm:text-xs text-gray-400 flex flex-wrap items-center justify-between gap-2">
+          <span className="text-gray-300 font-semibold">Service Areas in Tamil Nadu:</span>
+          <div className="flex flex-wrap gap-x-3 gap-y-1 text-gray-400">
+            <span>Coimbatore (RS Puram, Gandhipuram, Peelamedu, Saravanampatti)</span>
+            <span>•</span>
+            <span>Tirupur</span>
+            <span>•</span>
+            <span>Erode</span>
+            <span>•</span>
+            <span>Salem</span>
+            <span>•</span>
+            <span>Pollachi</span>
+            <span>•</span>
+            <span>Across Tamil Nadu</span>
+          </div>
+        </div>
+
         {/* ---- Bottom Bar ---- */}
         <div className="border-t border-white/8 py-3.5 sm:py-4 flex flex-col sm:flex-row justify-between items-center gap-2.5 sm:gap-4 text-[11px] sm:text-xs text-gray-500">
-          <p className="font-body">© {new Date().getFullYear()} SPC Solar. All rights reserved.</p>
+          <p className="font-body">© {new Date().getFullYear()} SPC Solar (Smart Power Controls). All rights reserved.</p>
           <div className="flex gap-4 sm:gap-6 font-body">
-            <a href="#" className="hover:text-white transition-colors duration-200">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors duration-200">Terms</a>
-            <a href="#" className="hover:text-white transition-colors duration-200">Sitemap</a>
+            <Link to="/about" className="hover:text-white transition-colors duration-200">About</Link>
+            <Link to="/services" className="hover:text-white transition-colors duration-200">Services</Link>
+            <Link to="/contact" className="hover:text-white transition-colors duration-200">Contact</Link>
+            <a href="/sitemap.xml" target="_blank" rel="noreferrer" className="hover:text-white transition-colors duration-200">XML Sitemap</a>
           </div>
         </div>
       </div>
