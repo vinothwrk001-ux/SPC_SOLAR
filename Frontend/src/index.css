@@ -24,11 +24,30 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: #CC2222 #F5F5F5;
   }
 
   body {
     @apply bg-white text-black font-body antialiased;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Universal tap-highlight elimination for iPhone iOS WebKit and Android touches */
+  *, *::before, *::after {
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  button, a, input, select, textarea, [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent !important;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -265,13 +284,10 @@
     @apply text-red underline hover:no-underline;
   }
 
-  /* ---- Safari WebKit Backdrop Filter Stabilization ---- */
+  /* ---- Safari WebKit Backdrop Filter Stabilization (Without 3D layer promote to prevent iPhone flicker) ---- */
   [class*="backdrop-blur"] {
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    transform: translateZ(0);
   }
 
   /* ---- iOS Safe Area Insets ---- */

@@ -54,8 +54,9 @@ export const PreloadProvider = ({ children }) => {
     }
 
     const startTime = Date.now();
-    const MINIMUM_SPLASH_TIME = 2100; // 2.1s guarantees user enjoys the luxurious Welcome screen
-    const SAFETY_TIMEOUT = 5000; // max safety timeout so user is never blocked
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const MINIMUM_SPLASH_TIME = isMobile ? 1100 : 1500; // Snappy, luxurious splash experience
+    const SAFETY_TIMEOUT = 4000; // max safety timeout so user is never blocked
 
     let currentProgress = 15;
     const updateProgress = (target, msg) => {
@@ -64,9 +65,14 @@ export const PreloadProvider = ({ children }) => {
       if (msg) setStatusMessage(msg);
     };
 
-    // Preload logo and local fallback hero banner immediately
+    // Preload logo immediately (vital for splash)
     preloadImage(Logo);
-    preloadImage(defaultHeroBanner);
+    // Defer heavy fallback hero banner to avoid blocking mobile bandwidth
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      window.requestIdleCallback(() => preloadImage(defaultHeroBanner));
+    } else {
+      setTimeout(() => preloadImage(defaultHeroBanner), 1200);
+    }
 
     // Warm up all core public endpoints in parallel
     const taskBanner = api.get('/banner')
@@ -176,10 +182,10 @@ export const PreloadProvider = ({ children }) => {
       // Smooth completion to 100%
       setTimeout(() => {
         updateProgress(100, 'Welcome to SPC Solar • Powering Tomorrow');
-        // Give 450ms at 100% for user to read completion before graceful fade
+        // Swift completion before graceful fade
         setTimeout(() => {
           setIsReady(true);
-        }, 450);
+        }, 200);
       }, remaining);
     });
 

@@ -7,18 +7,18 @@ import { FiZap, FiSun, FiCheckCircle } from 'react-icons/fi';
 const WelcomeSplashScreen = () => {
   const { isReady, showSplash, progress, statusMessage, handleSplashExited } = usePreload();
 
-  // Natural atmospheric golden solar dust particles (Brownian drift)
+  // Natural atmospheric golden solar dust particles (Brownian drift - optimized for 60fps mobile)
   const solarDustMotes = useMemo(() => {
-    return Array.from({ length: 12 }).map((_, i) => ({
+    return Array.from({ length: 6 }).map((_, i) => ({
       id: i,
-      left: `${8 + (i * 7.5)}%`,
-      bottom: `${15 + (i % 6) * 12}%`,
-      driftX: ((i % 5) - 2) * 22,
-      driftY: - (40 + (i % 4) * 25),
-      size: 1.8 + (i % 3) * 1.2,
-      duration: 5 + (i % 4) * 1.5,
-      delay: (i * 0.4) % 4,
-      maxOpacity: 0.25 + (i % 3) * 0.15,
+      left: `${10 + (i * 15)}%`,
+      bottom: `${18 + (i % 3) * 14}%`,
+      driftX: ((i % 3) - 1) * 18,
+      driftY: - (35 + (i % 3) * 20),
+      size: 2 + (i % 2) * 1.2,
+      duration: 5 + (i % 3) * 1.2,
+      delay: i * 0.4,
+      maxOpacity: 0.35,
       color: i % 2 === 0 ? '#FEF08A' : '#FBBF24',
     }));
   }, []);
@@ -34,7 +34,7 @@ const WelcomeSplashScreen = () => {
           exit={{
             opacity: 0,
             scale: 1.01,
-            transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+            transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
           }}
           className="fixed inset-0 z-[99999] min-h-[100dvh] max-h-[100dvh] w-full bg-[#04060A] text-white flex flex-col justify-between items-center overflow-hidden font-body select-none px-4 py-4 sm:p-6"
         >
@@ -42,14 +42,18 @@ const WelcomeSplashScreen = () => {
           {/* 1. REALISTIC SUNLIGHT, CREPUSCULAR RAYS & OPTICAL FLARE   */}
           {/* ========================================================= */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-            {/* Deep Solar Ambient Light Dome (Golden Hour) */}
+            {/* Deep Solar Ambient Light Dome (Golden Hour - Zero-overhead Radial Gradient) */}
             <motion.div
               animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.35, 0.5, 0.35],
+                scale: [1, 1.06, 1],
+                opacity: [0.7, 0.9, 0.7],
               }}
               transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute -top-32 -right-32 sm:-top-44 sm:-right-44 w-[420px] sm:w-[650px] h-[420px] sm:h-[650px] rounded-full bg-gradient-to-br from-amber-300/35 via-orange-500/20 to-transparent blur-[110px]"
+              className="absolute -top-32 -right-32 sm:-top-44 sm:-right-44 w-[420px] sm:w-[650px] h-[420px] sm:h-[650px] rounded-full pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle, rgba(254, 240, 138, 0.32) 0%, rgba(245, 158, 11, 0.16) 38%, rgba(234, 88, 12, 0.05) 58%, transparent 72%)',
+                willChange: 'transform, opacity',
+              }}
             />
 
             {/* Radiant Sun Corona */}
@@ -150,14 +154,18 @@ const WelcomeSplashScreen = () => {
               className="absolute top-1/3 right-1/3 w-16 h-16 sm:w-24 sm:h-24 rounded-full border border-amber-300/30 bg-amber-400/5 blur-[2px] pointer-events-none"
             />
 
-            {/* Subtle Brand Center Glow */}
+            {/* Subtle Brand Center Glow (Hardware-accelerated radial glow) */}
             <motion.div
               animate={{
-                scale: [1, 1.15, 1],
-                opacity: [0.22, 0.38, 0.22],
+                scale: [1, 1.08, 1],
+                opacity: [0.35, 0.55, 0.35],
               }}
               transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[540px] h-[340px] sm:h-[540px] bg-gradient-to-r from-red-600/25 via-red/15 to-amber-500/10 rounded-full blur-[110px] pointer-events-none"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[540px] h-[340px] sm:h-[540px] rounded-full pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle, rgba(204, 34, 34, 0.22) 0%, rgba(245, 158, 11, 0.08) 42%, transparent 70%)',
+                willChange: 'transform, opacity',
+              }}
             />
 
             {/* Fine Atmospheric Grid Pattern */}
@@ -196,7 +204,8 @@ const WelcomeSplashScreen = () => {
                   width: `${mote.size}px`,
                   height: `${mote.size}px`,
                   backgroundColor: mote.color,
-                  boxShadow: `0 0 ${mote.size * 2}px ${mote.color}`,
+                  willChange: 'transform, opacity',
+                  transform: 'translateZ(0)',
                 }}
               />
             ))}
@@ -347,71 +356,54 @@ const WelcomeSplashScreen = () => {
           {/* ========================================================= */}
           {/* 3. REALISTIC 3D PERSPECTIVE MONOCRYSTALLINE SOLAR ARRAY   */}
           {/* ========================================================= */}
-          {/* Bottom Horizon Dock: Responsive Height and Realistic Hardware Details */}
-          <div className="w-full h-28 sm:h-40 md:h-52 relative pointer-events-none flex items-end justify-center overflow-hidden z-10 flex-shrink-0">
+          <div className="w-full h-24 sm:h-36 md:h-44 relative pointer-events-none flex items-end justify-center overflow-hidden z-10 flex-shrink-0">
             {/* Ground Ambient Reflection & Photovoltaic Luminescence */}
-            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-sky-400/15 via-amber-400/5 to-transparent blur-lg" />
+            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-sky-400/15 via-amber-400/5 to-transparent blur-md" />
 
-            {/* Aluminum Racking Rail Foundation (Ground Mount Infrastructure) */}
-            <div className="absolute bottom-1 inset-x-4 sm:inset-x-12 h-2.5 bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 rounded-sm border-t border-slate-500/40 opacity-80" />
-            <div className="absolute bottom-3 inset-x-6 sm:inset-x-16 h-2 bg-gradient-to-r from-slate-950 via-slate-800 to-slate-950 rounded-sm border-t border-slate-600/30 opacity-70" />
+            {/* Aluminum Racking Rail Foundation */}
+            <div className="absolute bottom-1 inset-x-4 sm:inset-x-12 h-2 bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 rounded-sm border-t border-slate-500/40 opacity-80" />
 
-            {/* Realistic Photovoltaic Array Deck with 3D Perspective */}
+            {/* Realistic Photovoltaic Array Deck with Hardware-Accelerated Perspective */}
             <div
-              className="w-full max-w-[1240px] h-[200px] sm:h-[260px] md:h-[290px] origin-bottom flex gap-2 sm:gap-3.5 px-3 sm:px-6"
+              className="w-full max-w-[1100px] h-[170px] sm:h-[220px] md:h-[250px] origin-bottom flex gap-2 sm:gap-3 px-3 sm:px-6"
               style={{
-                transform: 'perspective(680px) rotateX(52deg) translateY(14px)',
-                transformStyle: 'preserve-3d',
+                transform: 'perspective(600px) rotateX(46deg) translateY(8px)',
+                willChange: 'transform',
               }}
             >
-              {/* 
-                Responsive Panels:
-                - On mobile (<640px): Show 3 panels (indices 1, 2, 3) with rich width & cell clarity.
-                - On desktop (>=640px): Show all 5 panels (indices 0, 1, 2, 3, 4) for panoramic expanse.
-              */}
               {[0, 1, 2, 3, 4].map((panelIdx) => {
                 const isOuter = panelIdx === 0 || panelIdx === 4;
                 return (
                   <div
                     key={panelIdx}
-                    className={`flex-1 h-full rounded-md sm:rounded-lg border-[1.5px] border-slate-400/35 bg-gradient-to-b from-[#0F223D] via-[#091526] to-[#040A12] shadow-[0_10px_25px_rgba(0,0,0,0.8),inset_0_1px_2px_rgba(255,255,255,0.25)] p-1 sm:p-1.5 flex flex-col justify-between relative overflow-hidden ${
+                    className={`flex-1 h-full rounded-md sm:rounded-lg border border-slate-400/35 bg-gradient-to-b from-[#0F223D] via-[#091526] to-[#040A12] shadow-[0_8px_20px_rgba(0,0,0,0.8),inset_0_1px_2px_rgba(255,255,255,0.2)] p-1 flex flex-col justify-between relative overflow-hidden ${
                       isOuter ? 'hidden sm:flex' : 'flex'
                     }`}
                   >
                     {/* Anodized Aluminum Outer Frame Bevel & Top Specular Lip */}
-                    <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-slate-300 via-white/70 to-slate-300 shadow-[0_1px_2px_rgba(255,255,255,0.4)]" />
+                    <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-slate-400 via-white/80 to-slate-400" />
 
-                    {/* Monocrystalline Silicon Cells Grid (2 columns x 4 rows = 8 authentic cells) */}
+                    {/* Monocrystalline Silicon Cells Grid */}
                     <div className="w-full h-full grid grid-cols-2 gap-1 p-0.5 relative z-0">
-                      {[...Array(8)].map((_, cellIdx) => (
+                      {[...Array(6)].map((_, cellIdx) => (
                         <div
                           key={cellIdx}
-                          className="relative rounded-[2px] bg-gradient-to-br from-[#0D1D33] via-[#081220] to-[#040910] border border-sky-400/20 overflow-hidden flex flex-col justify-between p-0.5 group"
+                          className="relative rounded-[2px] bg-gradient-to-br from-[#0B1A2D] via-[#071220] to-[#040910] border border-sky-400/20 overflow-hidden flex flex-col justify-between py-1"
+                          style={{
+                            backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(to right, rgba(56,189,248,0.22) 1px, transparent 1px, rgba(56,189,248,0.22) 1px, transparent 1px)',
+                            backgroundSize: '100% 7px, 33.3% 100%',
+                          }}
                         >
-                          {/* Micro-wire Horizontal Finger Lines */}
-                          <div className="w-full h-[0.5px] bg-white/[0.08]" />
-                          <div className="w-full h-[0.5px] bg-white/[0.08]" />
-                          <div className="w-full h-[0.5px] bg-white/[0.08]" />
-                          <div className="w-full h-[0.5px] bg-white/[0.08]" />
-
-                          {/* Multi-Busbar (MBB) Silver Ribbon Conductors (3 vertical wires per cell) */}
-                          <div className="absolute inset-y-0 left-[25%] w-[1px] bg-gradient-to-b from-sky-200/50 via-slate-200/40 to-sky-300/30" />
-                          <div className="absolute inset-y-0 left-[50%] w-[1px] bg-gradient-to-b from-sky-200/60 via-slate-200/50 to-sky-300/40" />
-                          <div className="absolute inset-y-0 left-[75%] w-[1px] bg-gradient-to-b from-sky-200/50 via-slate-200/40 to-sky-300/30" />
-
-                          {/* Authentic Monocrystalline Wafer Corner Chamfers (Diamond junctions) */}
-                          <div className="absolute -top-1 -left-1 w-2 h-2 rotate-45 bg-[#040810] border border-white/20" />
-                          <div className="absolute -top-1 -right-1 w-2 h-2 rotate-45 bg-[#040810] border border-white/20" />
-                          <div className="absolute -bottom-1 -left-1 w-2 h-2 rotate-45 bg-[#040810] border border-white/20" />
-                          <div className="absolute -bottom-1 -right-1 w-2 h-2 rotate-45 bg-[#040810] border border-white/20" />
-
-                          {/* Anti-Reflective Coating Sheen */}
-                          <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/10 via-transparent to-indigo-500/10 pointer-events-none" />
+                          {/* Corner Diamond Junction Accents */}
+                          <div className="absolute -top-1 -left-1 w-1.5 h-1.5 rotate-45 bg-[#03070E] border border-white/10" />
+                          <div className="absolute -top-1 -right-1 w-1.5 h-1.5 rotate-45 bg-[#03070E] border border-white/10" />
+                          <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 rotate-45 bg-[#03070E] border border-white/10" />
+                          <div className="absolute -bottom-1 -right-1 w-1.5 h-1.5 rotate-45 bg-[#03070E] border border-white/10" />
                         </div>
                       ))}
                     </div>
 
-                    {/* Realistic Sweeping Sunlight Specular Glint Across Glass */}
+                    {/* Sweeping Sunlight Specular Glint Across Glass */}
                     <motion.div
                       animate={{
                         x: ['-160%', '280%'],
@@ -419,18 +411,15 @@ const WelcomeSplashScreen = () => {
                       transition={{
                         duration: 3.6,
                         repeat: Infinity,
-                        repeatDelay: 1.4 + panelIdx * 0.3,
+                        repeatDelay: 1.4 + panelIdx * 0.35,
                         ease: [0.4, 0, 0.2, 1],
                       }}
-                      className="absolute inset-0 w-3/5 h-full bg-gradient-to-r from-transparent via-white/25 via-amber-200/15 to-transparent -skew-x-12 pointer-events-none z-10"
+                      className="absolute inset-0 w-3/5 h-full bg-gradient-to-r from-transparent via-white/20 via-amber-200/10 to-transparent -skew-x-12 pointer-events-none z-10"
+                      style={{ willChange: 'transform' }}
                     />
 
-                    {/* Active Busbar Power Conduit (Bottom Edge Junction Connection) */}
-                    <div className="relative z-10 mt-1 h-[2px] w-full bg-gradient-to-r from-transparent via-amber-400/80 via-orange-400/70 to-transparent shadow-[0_0_8px_#F59E0B]" />
-
-                    {/* Aluminum Silver Mid-Clamp Anchors */}
-                    <div className="absolute top-1/2 -left-1 w-1.5 h-3 -translate-y-1/2 bg-slate-300 rounded-[1px] border border-slate-600 shadow-sm z-20" />
-                    <div className="absolute top-1/2 -right-1 w-1.5 h-3 -translate-y-1/2 bg-slate-300 rounded-[1px] border border-slate-600 shadow-sm z-20" />
+                    {/* Bottom Edge Junction Busbar */}
+                    <div className="relative z-10 mt-0.5 h-[2px] w-full bg-gradient-to-r from-transparent via-amber-400/80 via-orange-400/70 to-transparent" />
                   </div>
                 );
               })}
