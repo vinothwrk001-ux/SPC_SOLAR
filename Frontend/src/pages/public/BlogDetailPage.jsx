@@ -142,7 +142,7 @@ const BlogDetailPage = () => {
             </button>
           </div>
 
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-[42px] font-bold leading-snug sm:leading-tight text-[#1A1A1A] mb-3 sm:mb-4">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-[42px] font-bold leading-[1.38] sm:leading-[1.42] lg:leading-[1.45] text-[#1A1A1A] mb-4 sm:mb-5">
             {blog.title}
           </h1>
 
