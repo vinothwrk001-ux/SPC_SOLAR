@@ -1,6 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import Button from '../ui/Button';
 import { Reveal, EnergyGrid } from '../motion';
 import { FiArrowRight, FiPhone } from 'react-icons/fi';
@@ -44,11 +42,14 @@ const CTABanner = () => {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/quotation" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full justify-center" icon={<FiArrowRight />}>
-                Get Free Quotation
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="w-full sm:w-auto justify-center" 
+              icon={<FiArrowRight />}
+              onClick={() => window.dispatchEvent(new CustomEvent('open-lead-modal'))}
+            >
+              Get Free Quotation
+            </Button>
             <a href="tel:+919876543210" className="w-full sm:w-auto">
               <Button variant="outline-white" size="lg" className="w-full justify-center" icon={<FiPhone size={16} />}>
                 Call Us Now
