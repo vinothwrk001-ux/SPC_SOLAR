@@ -9,10 +9,15 @@ import {
   FiPrinter, 
   FiSave, 
   FiUser, 
-  FiArrowLeft,
-  FiPlus,
-  FiFileText,
-  FiLayers
+  FiArrowLeft, 
+  FiPlus, 
+  FiFileText, 
+  FiLayers,
+  FiCreditCard,
+  FiSmartphone,
+  FiUploadCloud,
+  FiTrash2,
+  FiCheck
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 
@@ -47,8 +52,48 @@ const AdminQuotationMaker = () => {
     advPercent: 10,
     secPercent: 70,
     thirdPercent: 20,
+
+    // Banker Section controls & details
+    showBankDetails: true,
+    bankCompanyName: 'SPC SOLAR TECHNOLOGY',
+    bankName: 'HDFC BANK',
+    bankAccountNo: '50200020555742',
+    bankBranch: 'RS PURAM BRANCH, COIMBATORE',
+    bankIfsc: 'HDFC0000000',
+
+    // Scanner (UPI) Section controls & details
+    showScannerDetails: true,
     gpayNumber: '8489644044',
+    upiTitle: 'G.PAY / PHONEPE / ALL UPI',
+    upiSubtitle: 'Accepts GPay, PhonePe, Paytm, BHIM & All UPI Apps',
+    upiQrImage: '',
   });
+
+  // Load saved Banker and Scanner payment settings from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedConfig = localStorage.getItem('spc_quotation_payment_config');
+      if (savedConfig) {
+        const parsed = JSON.parse(savedConfig);
+        setFormData(prev => ({
+          ...prev,
+          showBankDetails: parsed.showBankDetails !== undefined ? parsed.showBankDetails : prev.showBankDetails,
+          bankCompanyName: parsed.bankCompanyName || prev.bankCompanyName,
+          bankName: parsed.bankName || prev.bankName,
+          bankAccountNo: parsed.bankAccountNo || prev.bankAccountNo,
+          bankBranch: parsed.bankBranch || prev.bankBranch,
+          bankIfsc: parsed.bankIfsc || prev.bankIfsc,
+          showScannerDetails: parsed.showScannerDetails !== undefined ? parsed.showScannerDetails : prev.showScannerDetails,
+          gpayNumber: parsed.gpayNumber || prev.gpayNumber,
+          upiTitle: parsed.upiTitle || prev.upiTitle,
+          upiSubtitle: parsed.upiSubtitle || prev.upiSubtitle,
+          upiQrImage: parsed.upiQrImage || prev.upiQrImage,
+        }));
+      }
+    } catch (e) {
+      console.warn('Could not load saved payment config', e);
+    }
+  }, []);
 
   const ON_GRID_DATA = {
     1: { panelQty: 2, panelMake: 'EASTMAN/EMMVEE\nADDO/VIKRAM SOLAR\nKIRLOSKAR/LUMINOUS', inverterCapacity: 1, inverterMake: 'ADDO\nPOLYCAB/EASTMAN', pricePerKw: 102000, subsidy: 30000, gst: 0, adv: 100, sec: 0, third: 0 },
@@ -152,8 +197,71 @@ const AdminQuotationMaker = () => {
     }
   };
 
+  const savePaymentConfigToStorage = (updatedFields) => {
+    try {
+      const current = {
+        showBankDetails: formData.showBankDetails,
+        bankCompanyName: formData.bankCompanyName,
+        bankName: formData.bankName,
+        bankAccountNo: formData.bankAccountNo,
+        bankBranch: formData.bankBranch,
+        bankIfsc: formData.bankIfsc,
+        showScannerDetails: formData.showScannerDetails,
+        gpayNumber: formData.gpayNumber,
+        upiTitle: formData.upiTitle,
+        upiSubtitle: formData.upiSubtitle,
+        upiQrImage: formData.upiQrImage,
+        ...updatedFields
+      };
+      localStorage.setItem('spc_quotation_payment_config', JSON.stringify(current));
+    } catch (e) {}
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    const val = type === 'checkbox' ? checked : value;
+    setFormData(prev => ({ ...prev, [name]: val }));
+
+    if (['showBankDetails', 'bankCompanyName', 'bankName', 'bankAccountNo', 'bankBranch', 'bankIfsc', 'showScannerDetails', 'gpayNumber', 'upiTitle', 'upiSubtitle'].includes(name)) {
+      savePaymentConfigToStorage({ [name]: val });
+    }
+  };
+
+  const toggleBankDetails = () => {
+    const nextState = !formData.showBankDetails;
+    setFormData(prev => ({ ...prev, showBankDetails: nextState }));
+    savePaymentConfigToStorage({ showBankDetails: nextState });
+    toast.success(nextState ? 'Banker Section Enabled' : 'Banker Section Disabled & Removed from Proposal');
+  };
+
+  const toggleScannerDetails = () => {
+    const nextState = !formData.showScannerDetails;
+    setFormData(prev => ({ ...prev, showScannerDetails: nextState }));
+    savePaymentConfigToStorage({ showScannerDetails: nextState });
+    toast.success(nextState ? 'Scanner Section Enabled' : 'Scanner Section Disabled & Removed from Proposal');
+  };
+
+  const handleQrUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error('QR image must be under 3MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const imgData = reader.result;
+      setFormData(prev => ({ ...prev, upiQrImage: imgData }));
+      savePaymentConfigToStorage({ upiQrImage: imgData });
+      toast.success('Scanner QR image loaded successfully!');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveQr = () => {
+    setFormData(prev => ({ ...prev, upiQrImage: '' }));
+    savePaymentConfigToStorage({ upiQrImage: '' });
+    toast.success('Custom QR image removed');
   };
 
   const handlePrint = () => {
@@ -162,7 +270,8 @@ const AdminQuotationMaker = () => {
 
   const handleResetOffline = () => {
     setSelectedLeadId('');
-    setFormData({
+    setFormData(prev => ({
+      ...prev,
       refNo: `QSP${Math.floor(1000 + Math.random() * 9000)}`,
       date: new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
       toName: 'OFFLINE CUSTOMER',
@@ -181,8 +290,7 @@ const AdminQuotationMaker = () => {
       advPercent: 80,
       secPercent: 20,
       thirdPercent: 0,
-      gpayNumber: '8489644044',
-    });
+    }));
     toast.success('Ready for Offline Client Quotation');
   };
 
@@ -378,7 +486,238 @@ const AdminQuotationMaker = () => {
         <Input label="Advance Payment %" name="advPercent" type="number" value={formData.advPercent} onChange={handleChange} />
         <Input label="Second Payment %" name="secPercent" type="number" value={formData.secPercent} onChange={handleChange} />
         <Input label="Final Payment %" name="thirdPercent" type="number" value={formData.thirdPercent} onChange={handleChange} />
-        <Input label="GPay Number" name="gpayNumber" value={formData.gpayNumber} onChange={handleChange} />
+      </div>
+
+      {/* --- PAYMENT & BANKING SECTION CONTROLS (OUR BANKER & SCAN TO PAY) --- */}
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 print:hidden space-y-5">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-100 pb-4">
+          <div>
+            <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+              <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600"><FiCreditCard size={18} /></span>
+              Quotation Payment & Banking Controls (Page 2)
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Turn ON/OFF the Banker details or QR Scanner sections, edit account information, or upload custom payment QR codes.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400">Settings auto-saved for future quotes</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Card 1: Our Banker Section */}
+          <div className={`p-5 rounded-2xl border transition-all ${formData.showBankDetails ? 'bg-blue-50/30 border-blue-200' : 'bg-gray-50/60 border-gray-200 opacity-90'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2.5">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm ${formData.showBankDetails ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                  <FiCreditCard size={18} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900">OUR BANKER SECTION</h4>
+                  <p className="text-[11px] text-gray-500">Bank name, Account number, Branch & IFSC</p>
+                </div>
+              </div>
+
+              {/* On / Off Toggle Button */}
+              <button
+                type="button"
+                onClick={toggleBankDetails}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs cursor-pointer ${
+                  formData.showBankDetails
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                }`}
+              >
+                <span className={`w-2 h-2 rounded-full ${formData.showBankDetails ? 'bg-emerald-300' : 'bg-gray-400'}`}></span>
+                {formData.showBankDetails ? 'ON (Shown)' : 'OFF (Removed)'}
+              </button>
+            </div>
+
+            {formData.showBankDetails ? (
+              <div className="space-y-3 pt-1">
+                <Input 
+                  label="Company Name (Account Holder)" 
+                  name="bankCompanyName" 
+                  value={formData.bankCompanyName} 
+                  onChange={handleChange} 
+                  placeholder="e.g. SPC SOLAR TECHNOLOGY" 
+                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Input 
+                    label="Bank Name" 
+                    name="bankName" 
+                    value={formData.bankName} 
+                    onChange={handleChange} 
+                    placeholder="e.g. HDFC BANK" 
+                  />
+                  <Input 
+                    label="Account Number" 
+                    name="bankAccountNo" 
+                    value={formData.bankAccountNo} 
+                    onChange={handleChange} 
+                    placeholder="e.g. 50200020555742" 
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Input 
+                    label="Branch Location" 
+                    name="bankBranch" 
+                    value={formData.bankBranch} 
+                    onChange={handleChange} 
+                    placeholder="e.g. RS PURAM BRANCH, COIMBATORE" 
+                  />
+                  <Input 
+                    label="IFSC Code" 
+                    name="bankIfsc" 
+                    value={formData.bankIfsc} 
+                    onChange={handleChange} 
+                    placeholder="e.g. HDFC0000000" 
+                  />
+                </div>
+                <p className="text-[11px] text-blue-700 flex items-center gap-1 mt-1 font-medium">
+                  <FiCheck size={14} /> Visible on Page 2 under Terms & Conditions
+                </p>
+              </div>
+            ) : (
+              <div className="py-6 text-center border-2 border-dashed border-gray-200 rounded-xl bg-white/60">
+                <p className="text-xs text-gray-500 font-medium mb-1">
+                  🚫 Our Banker section is turned <span className="font-bold text-red-600">OFF</span>
+                </p>
+                <p className="text-[11px] text-gray-400 mb-3">
+                  It will be completely removed from the Page 2 quotation preview and printed PDF.
+                </p>
+                <button
+                  type="button"
+                  onClick={toggleBankDetails}
+                  className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Turn ON Banker Section
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Card 2: Scan To Pay (Scanner) Section */}
+          <div className={`p-5 rounded-2xl border transition-all ${formData.showScannerDetails ? 'bg-emerald-50/30 border-emerald-200' : 'bg-gray-50/60 border-gray-200 opacity-90'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2.5">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm ${formData.showScannerDetails ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                  <FiSmartphone size={18} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900">SCAN TO PAY (UPI) SECTION</h4>
+                  <p className="text-[11px] text-gray-500">Scanner QR Code, UPI Number & Apps</p>
+                </div>
+              </div>
+
+              {/* On / Off Toggle Button */}
+              <button
+                type="button"
+                onClick={toggleScannerDetails}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs cursor-pointer ${
+                  formData.showScannerDetails
+                    ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                }`}
+              >
+                <span className={`w-2 h-2 rounded-full ${formData.showScannerDetails ? 'bg-emerald-300' : 'bg-gray-400'}`}></span>
+                {formData.showScannerDetails ? 'ON (Shown)' : 'OFF (Removed)'}
+              </button>
+            </div>
+
+            {formData.showScannerDetails ? (
+              <div className="space-y-3 pt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Input 
+                    label="GPay / PhonePe / UPI Number" 
+                    name="gpayNumber" 
+                    value={formData.gpayNumber} 
+                    onChange={handleChange} 
+                    placeholder="e.g. 8489644044" 
+                  />
+                  <Input 
+                    label="Payment Title" 
+                    name="upiTitle" 
+                    value={formData.upiTitle} 
+                    onChange={handleChange} 
+                    placeholder="e.g. G.PAY / PHONEPE / ALL UPI" 
+                  />
+                </div>
+
+                <Input 
+                  label="Accepted Apps Subtitle" 
+                  name="upiSubtitle" 
+                  value={formData.upiSubtitle} 
+                  onChange={handleChange} 
+                  placeholder="e.g. Accepts GPay, PhonePe, Paytm, BHIM & All UPI Apps" 
+                />
+
+                {/* Scanner QR Code Upload Field */}
+                <div className="flex flex-col w-full">
+                  <label className="mb-1.5 font-sans font-semibold text-xs uppercase tracking-wider text-gray-700">
+                    Payment Scanner QR Code (Image Upload)
+                  </label>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl">
+                    <div className="w-16 h-16 rounded-lg border border-gray-300 bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      {formData.upiQrImage ? (
+                        <img src={formData.upiQrImage} alt="QR Preview" className="w-full h-full object-contain" />
+                      ) : (
+                        <div className="text-center text-[9px] text-gray-400 font-bold leading-tight">
+                          <span>UPI</span><br /><span>QR</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex-1 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg text-xs font-semibold transition-colors">
+                          <FiUploadCloud size={14} className="text-emerald-600" />
+                          <span>{formData.upiQrImage ? 'Change QR Image' : 'Upload Scanner QR'}</span>
+                          <input type="file" accept="image/*" onChange={handleQrUpload} className="hidden" />
+                        </label>
+                        {formData.upiQrImage && (
+                          <button
+                            type="button"
+                            onClick={handleRemoveQr}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                          >
+                            <FiTrash2 size={13} /> Remove
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-[10.5px] text-gray-500">
+                        {formData.upiQrImage 
+                          ? '✓ Custom QR code is loaded and will appear on the proposal' 
+                          : 'Optional: Upload your UPI QR code image (PNG/JPG) to show real scanner, or leave empty for default badge.'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-emerald-700 flex items-center gap-1 mt-1 font-medium">
+                  <FiCheck size={14} /> Visible on Page 2 next to payment instructions
+                </p>
+              </div>
+            ) : (
+              <div className="py-6 text-center border-2 border-dashed border-gray-200 rounded-xl bg-white/60">
+                <p className="text-xs text-gray-500 font-medium mb-1">
+                  🚫 Scan to Pay section is turned <span className="font-bold text-red-600">OFF</span>
+                </p>
+                <p className="text-[11px] text-gray-400 mb-3">
+                  It will be completely removed from the Page 2 quotation preview and printed PDF.
+                </p>
+                <button
+                  type="button"
+                  onClick={toggleScannerDetails}
+                  className="px-3 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Turn ON Scanner Section
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* --- 2-SIDED QUOTATION PREVIEW: FRONT SIDE & BACK SIDE SIDE-BY-SIDE --- */}
@@ -650,50 +989,67 @@ const AdminQuotationMaker = () => {
                   </ul>
                 </div>
 
-                {/* Our Banker */}
-                <div className="mb-4 bg-gray-50/80 p-3.5 sm:p-4 rounded-xl border border-gray-300 shadow-xs">
-                  <div className="bg-blue-50 border-l-4 border-blue-600 px-3 py-1 inline-block mb-2.5 shadow-xs rounded-r-md">
-                    <span className="font-bold text-blue-900 tracking-widest uppercase text-xs">OUR BANKER</span>
+                {/* Our Banker (Conditional On / Off) */}
+                {formData.showBankDetails && (
+                  <div className="mb-4 bg-gray-50/80 p-3.5 sm:p-4 rounded-xl border border-gray-300 shadow-xs">
+                    <div className="bg-blue-50 border-l-4 border-blue-600 px-3 py-1 inline-block mb-2.5 shadow-xs rounded-r-md">
+                      <span className="font-bold text-blue-900 tracking-widest uppercase text-xs">OUR BANKER</span>
+                    </div>
+                    <div className="pl-2 font-medium space-y-1 text-gray-800 text-[10.5px]">
+                      <div className="grid grid-cols-[140px_auto]">
+                        <p className="text-gray-600 font-semibold">COMPANY NAME</p>
+                        <p className="text-black font-bold">: {formData.bankCompanyName || 'SPC SOLAR TECHNOLOGY'}</p>
+                      </div>
+                      <div className="grid grid-cols-[140px_auto]">
+                        <p className="text-gray-600 font-semibold">BANK NAME</p>
+                        <p className="text-black font-bold">: {formData.bankName || 'HDFC BANK'}</p>
+                      </div>
+                      <div className="grid grid-cols-[140px_auto]">
+                        <p className="text-gray-600 font-semibold">ACCOUNT NO</p>
+                        <p className="text-black font-mono font-bold">: {formData.bankAccountNo || '50200020555742'}</p>
+                      </div>
+                      <div className="grid grid-cols-[140px_auto]">
+                        <p className="text-gray-600 font-semibold">BRANCH</p>
+                        <p className="text-black font-medium">: {formData.bankBranch || 'RS PURAM BRANCH, COIMBATORE'}</p>
+                      </div>
+                      <div className="grid grid-cols-[140px_auto]">
+                        <p className="text-gray-600 font-semibold">IFSC CODE</p>
+                        <p className="text-black font-mono font-bold">: {formData.bankIfsc || 'HDFC0000000'}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="pl-2 font-medium space-y-1 text-gray-800 text-[10.5px]">
-                    <div className="grid grid-cols-[140px_auto]">
-                      <p className="text-gray-600 font-semibold">COMPANY NAME</p><p className="text-black font-bold">: SPC SOLAR TECHNOLOGY</p>
-                    </div>
-                    <div className="grid grid-cols-[140px_auto]">
-                      <p className="text-gray-600 font-semibold">BANK NAME</p><p className="text-black font-bold">: HDFC BANK</p>
-                    </div>
-                    <div className="grid grid-cols-[140px_auto]">
-                      <p className="text-gray-600 font-semibold">ACCOUNT NO</p><p className="text-black font-mono font-bold">: 50200020555742</p>
-                    </div>
-                    <div className="grid grid-cols-[140px_auto]">
-                      <p className="text-gray-600 font-semibold">BRANCH</p><p className="text-black font-medium">: RS PURAM BRANCH, COIMBATORE</p>
-                    </div>
-                    <div className="grid grid-cols-[140px_auto]">
-                      <p className="text-gray-600 font-semibold">IFSC CODE</p><p className="text-black font-mono font-bold">: HDFC0000000</p>
-                    </div>
-                  </div>
-                </div>
+                )}
 
-                {/* Scan to Pay */}
-                <div className="mb-4 bg-emerald-50/40 p-3.5 rounded-xl border border-emerald-300 shadow-xs flex items-center justify-between">
-                  <div className="flex items-center gap-4 pl-1">
-                    <div className="w-18 h-18 bg-white rounded-xl p-2 flex items-center justify-center font-bold text-gray-900 border border-gray-300 shadow-sm">
-                      <div className="text-center leading-tight">
-                        <div className="text-xs font-black text-black tracking-wider">UPI</div>
-                        <div className="text-[8px] font-bold text-red-600">PAY</div>
-                        <div className="text-[7px] text-gray-600 font-mono">SCAN QR</div>
+                {/* Scan to Pay (Conditional On / Off & Custom Scanner QR Code) */}
+                {formData.showScannerDetails && (
+                  <div className="mb-4 bg-emerald-50/40 p-3.5 rounded-xl border border-emerald-300 shadow-xs flex items-center justify-between">
+                    <div className="flex items-center gap-4 pl-1">
+                      <div className="w-18 h-18 bg-white rounded-xl p-1.5 flex items-center justify-center font-bold text-gray-900 border border-gray-300 shadow-sm overflow-hidden flex-shrink-0">
+                        {formData.upiQrImage ? (
+                          <img 
+                            src={formData.upiQrImage} 
+                            alt="Payment Scanner QR" 
+                            className="w-full h-full object-contain" 
+                          />
+                        ) : (
+                          <div className="text-center leading-tight">
+                            <div className="text-xs font-black text-black tracking-wider">UPI</div>
+                            <div className="text-[8px] font-bold text-red-600">PAY</div>
+                            <div className="text-[7px] text-gray-600 font-mono">SCAN QR</div>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    <div>
-                      <div className="bg-emerald-100/70 border-l-3 border-emerald-600 px-2 py-0.5 inline-block mb-1 rounded-r-md">
-                        <span className="font-bold text-emerald-900 tracking-widest uppercase text-[10px]">SCAN TO PAY (UPI)</span>
+                      <div>
+                        <div className="bg-emerald-100/70 border-l-3 border-emerald-600 px-2 py-0.5 inline-block mb-1 rounded-r-md">
+                          <span className="font-bold text-emerald-900 tracking-widest uppercase text-[10px]">SCAN TO PAY (UPI)</span>
+                        </div>
+                        <p className="text-xs text-gray-600 font-semibold">{formData.upiTitle || 'G.PAY / PHONEPE / ALL UPI'}</p>
+                        <p className="text-lg text-black font-mono font-black tracking-widest">{formData.gpayNumber}</p>
+                        <p className="text-[9.5px] text-emerald-700 font-semibold">{formData.upiSubtitle || 'Accepts GPay, PhonePe, Paytm, BHIM & All UPI Apps'}</p>
                       </div>
-                      <p className="text-xs text-gray-600 font-semibold">G.PAY / PHONEPE / ALL UPI</p>
-                      <p className="text-lg text-black font-mono font-black tracking-widest">{formData.gpayNumber}</p>
-                      <p className="text-[9.5px] text-emerald-700 font-semibold">Accepts GPay, PhonePe, Paytm, BHIM & All UPI Apps</p>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Signatures */}
