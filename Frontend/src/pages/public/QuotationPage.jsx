@@ -33,7 +33,6 @@ import {
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import PageHero from '../../components/ui/PageHero';
-import { motion } from 'framer-motion';
 import { useUserAuth } from '../../context/UserAuthContext';
 import LeadCaptureModal from '../../components/layout/LeadCaptureModal';
 

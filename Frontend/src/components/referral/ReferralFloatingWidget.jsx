@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiGift, FiArrowRight, FiX, FiMinimize2, FiMaximize2 } from 'react-icons/fi';
+import { FiGift, FiArrowRight, FiX } from 'react-icons/fi';
 
 const ReferralFloatingWidget = ({ onOpenModal }) => {
   const [isMinimized, setIsMinimized] = useState(false);

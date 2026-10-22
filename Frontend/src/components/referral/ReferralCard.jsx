@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiGift, FiArrowRight, FiCheckCircle, FiDollarSign } from 'react-icons/fi';
+import { FiGift, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import Button from '../ui/Button';
 
