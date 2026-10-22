@@ -51,7 +51,9 @@ const Footer = () => {
           <Reveal className="col-span-2 lg:col-span-1">
             <div>
               <Link to="/" className="flex items-center mb-3 sm:mb-4 group w-fit">
-                <img src={Logo} alt="SPC Solar Logo" className="h-9 sm:h-10 w-auto object-contain" />
+                <div className="bg-white rounded-lg p-1 flex items-center justify-center shadow-sm">
+                  <img src={Logo} alt="SPC Solar Logo" className="h-8 sm:h-9 w-auto object-contain" />
+                </div>
               </Link>
               <p className="text-gray-400 font-body text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 max-w-xs">
                 Powering India's future with sustainable, certified solar energy solutions for residential, commercial, and industrial needs.

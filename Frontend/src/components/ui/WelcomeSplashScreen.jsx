@@ -236,7 +236,7 @@ const WelcomeSplashScreen = () => {
               <div className="absolute -inset-2.5 bg-gradient-to-tr from-red/40 via-orange-500/30 to-amber-400/20 rounded-2xl blur-md animate-pulse" />
 
               {/* Silicon Wafer Pod with Metallic Chamfer */}
-              <div className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-b from-white/12 via-white/5 to-black/50 border border-white/20 backdrop-blur-xl p-3 sm:p-3.5 flex items-center justify-center shadow-[0_15px_40px_rgba(204,34,34,0.3)] overflow-hidden">
+              <div className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-2xl bg-white border border-white/30 p-2.5 sm:p-3 flex items-center justify-center shadow-[0_15px_40px_rgba(204,34,34,0.3)] overflow-hidden">
                 {/* Sunlight Reflection Sweep across Pod */}
                 <motion.div
                   animate={{

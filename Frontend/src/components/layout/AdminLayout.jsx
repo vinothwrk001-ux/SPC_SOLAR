@@ -46,7 +46,9 @@ const AdminLayout = () => {
       <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-black text-white flex flex-col h-full overflow-y-auto overscroll-contain pb-[max(1rem,env(safe-area-inset-bottom))] transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden`}>
         <div className="p-6 border-b border-gray-800 flex items-center gap-3">
           <Link to="/" className="flex items-center">
-            <img src={Logo} alt="SPC Solar Logo" className="h-8 w-auto object-contain" />
+            <div className="bg-white rounded-md p-1 flex items-center justify-center shadow-xs">
+              <img src={Logo} alt="SPC Solar Logo" className="h-7 w-auto object-contain" />
+            </div>
           </Link>
           <span className="text-xs uppercase text-gray-light">Admin</span>
         </div>

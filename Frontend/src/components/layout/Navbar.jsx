@@ -91,7 +91,9 @@ const Navbar = () => {
           <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 h-full flex items-center justify-between">
             {/* ---- LOGO ---- */}
             <Link to="/" className="flex items-center flex-shrink-0 group">
-              <img src={Logo} alt="SPC Solar Logo" className="h-10 md:h-12 w-auto object-contain" />
+              <div className="bg-white rounded-lg p-1 flex items-center justify-center shadow-sm">
+                <img src={Logo} alt="SPC Solar Logo" className="h-8 md:h-10 w-auto object-contain" />
+              </div>
             </Link>
 
             {/* ---- DESKTOP LINKS ---- */}
