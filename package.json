@@ -5,8 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node Backend/server.js",
+    "postinstall": "npm --prefix Backend install --omit=dev 2>/dev/null || true && npm --prefix Frontend install --omit=dev 2>/dev/null || true",
     "prebuild": "node -e \"try{require('fs').rmSync('Frontend/node_modules/rolldown',{recursive:true,force:true});require('fs').rmSync('Frontend/node_modules/@rolldown',{recursive:true,force:true});}catch(e){}\"",
-    "build": "npm --prefix Backend install && cd Frontend && npm install --no-save && npm run build && node -e \"try{require('fs').cpSync('dist','../dist',{recursive:true})}catch(e){}\"",
+    "build": "npm --prefix Backend install && cd Frontend && npm install && npm run build && node -e \"try{require('fs').cpSync('dist','../dist',{recursive:true})}catch(e){}\"",
     "install:all": "npm --prefix Backend install && npm --prefix Frontend install",
     "seed": "npm --prefix Backend run seed"
   },

@@ -1,8 +1,26 @@
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config();
-require('dotenv').config({ path: path.join(__dirname, '.env') });
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+
+// ── Environment Variable Loading ────────────────────────────────────────────
+// Try multiple .env locations for portability across local dev and Hostinger
+// dotenv.config() does NOT override existing env vars, so order matters:
+// 1. Backend/.env (most specific)
+// 2. Root .env
+// 3. CWD .env
+[
+  path.join(__dirname, '.env'),
+  path.join(__dirname, '../.env'),
+  path.join(process.cwd(), '.env'),
+].forEach((envPath) => {
+  try {
+    if (fs.existsSync(envPath)) {
+      require('dotenv').config({ path: envPath });
+    }
+  } catch (e) {
+    // Silently skip if dotenv fails for a particular path
+  }
+});
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -55,7 +73,8 @@ connectDB().then(async () => {
 });
 
 // Middlewares
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 const allowedOrigins = [
   process.env.CLIENT_URL,
@@ -91,9 +110,16 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" })); // Allow serving images
-app.use(morgan('dev'));
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+} else {
+  app.use(morgan('combined'));
+}
 
 // Static folder for uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -136,7 +162,19 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Dedicated Favicon Handler
+// ── Resolve Frontend dist path BEFORE using it ──────────────────────────────
+const possibleDistPaths = [
+  path.join(__dirname, '../Frontend/dist'),
+  path.join(__dirname, 'dist'),
+  path.join(__dirname, '../dist'),
+  path.join(process.cwd(), 'Frontend/dist'),
+  path.join(process.cwd(), 'dist')
+];
+const distPath = possibleDistPaths.find((p) => {
+  try { return fs.existsSync(p) && fs.existsSync(path.join(p, 'index.html')); } catch { return false; }
+}) || null;
+
+// Dedicated Favicon Handler (uses distPath — must be declared after distPath)
 app.get(['/favicon.ico', '/favicon.svg'], (req, res) => {
   const possibleFavicons = [
     distPath ? path.join(distPath, 'favicon.ico') : null,
@@ -147,7 +185,9 @@ app.get(['/favicon.ico', '/favicon.svg'], (req, res) => {
     path.join(__dirname, 'public/favicon.svg')
   ].filter(Boolean);
 
-  const found = possibleFavicons.find((f) => fs.existsSync(f));
+  const found = possibleFavicons.find((f) => {
+    try { return fs.existsSync(f); } catch { return false; }
+  });
   if (found) {
     if (found.endsWith('.svg')) {
       res.type('image/svg+xml');
@@ -160,15 +200,6 @@ app.get(['/favicon.ico', '/favicon.svg'], (req, res) => {
 });
 
 // Serve Frontend build in Production
-const possibleDistPaths = [
-  path.join(__dirname, '../Frontend/dist'),
-  path.join(__dirname, 'dist'),
-  path.join(__dirname, '../dist'),
-  path.join(process.cwd(), 'Frontend/dist'),
-  path.join(process.cwd(), 'dist')
-];
-const distPath = possibleDistPaths.find((p) => fs.existsSync(p)) || null;
-
 if (distPath) {
   console.log(`📦 [Frontend] Serving static production build from: ${distPath}`);
   app.use(express.static(distPath));
@@ -207,6 +238,7 @@ app.use(errorHandler);
 // Process Safety Handlers
 process.on('uncaughtException', (err) => {
   console.error('⚠️ [Uncaught Exception]:', err.message);
+  console.error(err.stack);
 });
 
 process.on('unhandledRejection', (reason) => {
