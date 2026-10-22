@@ -1,5 +1,4 @@
 require('dotenv').config();
-const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const SolarCalculatorConfig = require('./models/SolarCalculatorConfig');
 const SolarPanel = require('./models/SolarPanel');

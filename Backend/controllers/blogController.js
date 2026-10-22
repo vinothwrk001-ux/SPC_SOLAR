@@ -1,5 +1,4 @@
 const Blog = require('../models/Blog');
-const Category = require('../models/Category');
 const { slugify, calculateReadingTime, extractTOC, sanitizeHTML } = require('../utils/blogUtils');
 
 // ==========================================

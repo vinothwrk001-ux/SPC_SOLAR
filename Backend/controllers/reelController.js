@@ -1,6 +1,5 @@
 const Reel = require('../models/Reel');
 const mediaService = require('../services/mediaService');
-const path = require('path');
 
 // @desc Get public reels feed
 // @route GET /api/reels
