@@ -3,8 +3,8 @@ module.exports = {
     {
       name: 'spcsolar-backend',
       script: 'Backend/server.js',
-      instances: 'max',
-      exec_mode: 'cluster',
+      instances: 1,
+      exec_mode: 'fork',
       autorestart: true,
       exp_backoff_restart_delay: 200,
       max_restarts: 15,
@@ -12,11 +12,9 @@ module.exports = {
       max_memory_restart: '800M',
       env: {
         NODE_ENV: 'development',
-        PORT: 5000,
       },
       env_production: {
         NODE_ENV: 'production',
-        PORT: 5000,
       },
     },
   ],

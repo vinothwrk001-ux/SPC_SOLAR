@@ -245,10 +245,18 @@ process.on('unhandledRejection', (reason) => {
   console.error('⚠️ [Unhandled Rejection]:', reason);
 });
 
+// Safe fallback for JWT_SECRET if missing in host environment variables
+if (!process.env.JWT_SECRET) {
+  process.env.JWT_SECRET = 'spc_solar_default_secure_fallback_jwt_secret_key_2026';
+}
+
 // Server binding configuration
-const DEFAULT_PORT = 5000;
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : DEFAULT_PORT;
+const rawPort = process.env.PORT || process.env.APP_PORT || 5000;
+const isNumericPort = !isNaN(Number(rawPort));
+const PORT = isNumericPort ? Number(rawPort) : rawPort;
 const HOST = process.env.HOST || '0.0.0.0';
+
+console.log(`[Diagnostic] Node: ${process.version}, ENV: ${process.env.NODE_ENV || 'production'}, Configured Port: ${rawPort}`);
 
 let server = null;
 
@@ -261,6 +269,11 @@ function startServer(targetPort, retriesLeft = 3) {
     srv = app.listen('passenger', () => {
       console.log('🚀 Server started via Phusion Passenger socket');
     });
+  } else if (!isNumericPort) {
+    // Unix socket or named pipe
+    srv = app.listen(targetPort, () => {
+      console.log(`🚀 Server successfully listening on socket ${targetPort}`);
+    });
   } else {
     srv = app.listen(targetPort, HOST, () => {
       console.log(`🚀 Server successfully listening on http://${HOST}:${targetPort}`);
@@ -270,7 +283,7 @@ function startServer(targetPort, retriesLeft = 3) {
   srv.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
       console.error(`❌ [PORT CONFLICT] Port ${targetPort} is already in use.`);
-      if (retriesLeft > 0 && !process.env.PORT) {
+      if (retriesLeft > 0 && typeof targetPort === 'number') {
         const nextPort = targetPort + 1;
         console.log(`🔄 Retrying on fallback port ${nextPort} (${retriesLeft} retries left)...`);
         startServer(nextPort, retriesLeft - 1);
