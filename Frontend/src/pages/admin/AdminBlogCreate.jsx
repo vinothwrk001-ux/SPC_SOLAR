@@ -7,6 +7,7 @@ import Input from '../../components/ui/Input';
 import toast from 'react-hot-toast';
 import { FiSave, FiUpload, FiPlus, FiTrash2, FiArrowLeft } from 'react-icons/fi';
 import { slugify } from '../../utils/blogHelpers';
+import GoogleSERPPreview from '../../components/seo/GoogleSERPPreview';
 
 const AdminBlogCreate = () => {
   const navigate = useNavigate();
@@ -582,49 +583,65 @@ const AdminBlogCreate = () => {
 
       {/* Tab 2: SEO */}
       {activeTab === 'seo' && (
-        <Card className="p-6 space-y-4">
-          <h3 className="font-heading text-lg border-b border-gray-light pb-2">SEO & Search Engine Optimization</h3>
-          <Input
-            label="Meta Title (Max 60 chars)"
-            value={metaTitle}
-            onChange={(e) => setMetaTitle(e.target.value)}
-            placeholder={title || 'Search title...'}
+        <Card className="p-6 space-y-5">
+          <div className="flex items-center justify-between border-b border-gray-light pb-2">
+            <div>
+              <h3 className="font-heading text-lg text-gray-900">SEO & Search Engine Optimization</h3>
+              <p className="text-xs text-gray-500">Fine-tune metadata for Google rank #1 positioning</p>
+            </div>
+          </div>
+
+          {/* Live Google Search Result Preview Component */}
+          <GoogleSERPPreview
+            title={metaTitle || title}
+            description={metaDescription || excerpt}
+            slug={slug}
+            focusKeyword={focusKeyword}
           />
-          <div>
-            <label className="block text-sm font-semibold mb-1">Meta Description (Max 160 chars)</label>
-            <textarea
-              className="w-full border border-gray-light p-2.5 rounded focus:outline-none focus:border-red text-sm"
-              rows="3"
-              value={metaDescription}
-              onChange={(e) => setMetaDescription(e.target.value)}
-              placeholder={excerpt || 'Search description...'}
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="space-y-4 pt-2">
             <Input
-              label="Focus Keyword"
-              value={focusKeyword}
-              onChange={(e) => setFocusKeyword(e.target.value)}
-              placeholder="e.g. solar subsidy India"
+              label="Meta Title (Max 60 chars)"
+              value={metaTitle}
+              onChange={(e) => setMetaTitle(e.target.value)}
+              placeholder={title || 'Search title...'}
             />
-            <Input
-              label="Canonical URL"
-              value={canonicalUrl}
-              onChange={(e) => setCanonicalUrl(e.target.value)}
-              placeholder="Leave empty for default"
-            />
-          </div>
-          <div className="flex items-center space-x-2 pt-2">
-            <input
-              type="checkbox"
-              id="noIndex"
-              checked={noIndex}
-              onChange={(e) => setNoIndex(e.target.checked)}
-              className="w-4 h-4 text-red border-gray-light rounded"
-            />
-            <label htmlFor="noIndex" className="text-sm font-semibold">
-              Disallow Search Engine Indexing (noindex)
-            </label>
+            <div>
+              <label className="block text-sm font-semibold mb-1">Meta Description (Max 160 chars)</label>
+              <textarea
+                className="w-full border border-gray-light p-2.5 rounded focus:outline-none focus:border-red text-sm"
+                rows="3"
+                value={metaDescription}
+                onChange={(e) => setMetaDescription(e.target.value)}
+                placeholder={excerpt || 'Search description...'}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Focus Keyword"
+                value={focusKeyword}
+                onChange={(e) => setFocusKeyword(e.target.value)}
+                placeholder="e.g. solar subsidy India"
+              />
+              <Input
+                label="Canonical URL"
+                value={canonicalUrl}
+                onChange={(e) => setCanonicalUrl(e.target.value)}
+                placeholder="Leave empty for default"
+              />
+            </div>
+            <div className="flex items-center space-x-2 pt-2">
+              <input
+                type="checkbox"
+                id="noIndex"
+                checked={noIndex}
+                onChange={(e) => setNoIndex(e.target.checked)}
+                className="w-4 h-4 text-red border-gray-light rounded"
+              />
+              <label htmlFor="noIndex" className="text-sm font-semibold">
+                Disallow Search Engine Indexing (noindex)
+              </label>
+            </div>
           </div>
         </Card>
       )}

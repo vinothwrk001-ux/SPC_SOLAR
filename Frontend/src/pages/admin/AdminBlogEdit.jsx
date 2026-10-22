@@ -7,6 +7,7 @@ import Input from '../../components/ui/Input';
 import toast from 'react-hot-toast';
 import { FiSave, FiUpload, FiPlus, FiTrash2, FiArrowLeft } from 'react-icons/fi';
 import { slugify } from '../../utils/blogHelpers';
+import GoogleSERPPreview from '../../components/seo/GoogleSERPPreview';
 
 const AdminBlogEdit = () => {
   const navigate = useNavigate();
@@ -506,21 +507,37 @@ const AdminBlogEdit = () => {
 
       {/* Tab 2: SEO */}
       {activeTab === 'seo' && (
-        <Card className="p-6 space-y-4">
-          <h3 className="font-heading text-lg border-b border-gray-light pb-2">SEO Settings</h3>
-          <Input label="Meta Title" value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} />
-          <div>
-            <label className="block text-sm font-semibold mb-1">Meta Description</label>
-            <textarea
-              className="w-full border border-gray-light p-2.5 rounded focus:outline-none focus:border-red text-sm"
-              rows="3"
-              value={metaDescription}
-              onChange={(e) => setMetaDescription(e.target.value)}
-            />
+        <Card className="p-6 space-y-5">
+          <div className="flex items-center justify-between border-b border-gray-light pb-2">
+            <div>
+              <h3 className="font-heading text-lg text-gray-900">SEO & Search Engine Optimization</h3>
+              <p className="text-xs text-gray-500">Fine-tune metadata for Google rank #1 positioning</p>
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input label="Focus Keyword" value={focusKeyword} onChange={(e) => setFocusKeyword(e.target.value)} />
-            <Input label="Canonical URL" value={canonicalUrl} onChange={(e) => setCanonicalUrl(e.target.value)} />
+
+          {/* Live Google Search Result Preview Component */}
+          <GoogleSERPPreview
+            title={metaTitle || title}
+            description={metaDescription || excerpt}
+            slug={slug}
+            focusKeyword={focusKeyword}
+          />
+
+          <div className="space-y-4 pt-2">
+            <Input label="Meta Title (Max 60 chars)" value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} />
+            <div>
+              <label className="block text-sm font-semibold mb-1">Meta Description (Max 160 chars)</label>
+              <textarea
+                className="w-full border border-gray-light p-2.5 rounded focus:outline-none focus:border-red text-sm"
+                rows="3"
+                value={metaDescription}
+                onChange={(e) => setMetaDescription(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input label="Focus Keyword" value={focusKeyword} onChange={(e) => setFocusKeyword(e.target.value)} />
+              <Input label="Canonical URL" value={canonicalUrl} onChange={(e) => setCanonicalUrl(e.target.value)} />
+            </div>
           </div>
         </Card>
       )}

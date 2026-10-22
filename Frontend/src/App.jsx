@@ -24,6 +24,7 @@ const ContactPage = lazy(() => import('./pages/public/ContactPage'));
 const ComponentsGalleryPage = lazy(() => import('./pages/public/ComponentsGalleryPage'));
 const QuotationPage = lazy(() => import('./pages/public/QuotationPage'));
 const ReelsPage = lazy(() => import('./pages/public/ReelsPage'));
+const NotFoundPage = lazy(() => import('./pages/public/NotFoundPage'));
 
 // Code-Split Admin Routes (isolates ExcelJS and admin modules from public bundle)
 const AdminLayout = lazy(() => import('./components/layout/AdminLayout'));
@@ -75,6 +76,7 @@ function App() {
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="/components" element={<ComponentsGalleryPage />} />
                     <Route path="/quotation" element={<QuotationPage />} />
+                    <Route path="*" element={<NotFoundPage />} />
                   </Route>
 
                   {/* Admin Routes */}
