@@ -250,26 +250,32 @@ const ReelCarousel = () => {
       </div>
 
       {/* Top Badges */}
-      <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10">
-        <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-accent font-semibold px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
-          <FiZap size={11} className="text-amber-400" /> {reel.systemCapacity}
-        </span>
-        <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-accent font-semibold px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
+      <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10 pointer-events-none">
+        {reel.showSystemCapacity && reel.systemCapacity ? (
+          <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-accent font-semibold px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1 shadow-sm">
+            <FiZap size={11} className="text-amber-400" /> {reel.systemCapacity}
+          </span>
+        ) : <span />}
+        <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-accent font-semibold px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1 shadow-sm">
           <FiEye size={11} className="text-red" /> {reel.viewsCount || 0}
         </span>
       </div>
 
       {/* Bottom Details Overlay */}
-      <div className="absolute bottom-4 left-4 right-4 text-left space-y-1 z-10">
-        <div className="flex items-center gap-1 text-[11px] text-red font-accent font-semibold">
-          <FiMapPin size={12} className="flex-shrink-0" /> <span className="truncate">{reel.location}</span>
-        </div>
+      <div className="absolute bottom-4 left-4 right-4 text-left space-y-1 z-10 pointer-events-none">
+        {reel.showLocation && reel.location && (
+          <div className="flex items-center gap-1 text-[11px] text-red font-accent font-semibold">
+            <FiMapPin size={12} className="flex-shrink-0" /> <span className="truncate">{reel.location}</span>
+          </div>
+        )}
         <h3 className="font-heading font-bold text-white text-sm sm:text-base leading-tight line-clamp-2 drop-shadow">
           {reel.title}
         </h3>
-        <div className="flex items-center justify-between text-[11px] text-white/60 font-accent pt-1">
-          <span className="truncate">{reel.category}</span>
-        </div>
+        {reel.showCategory && reel.category && (
+          <div className="flex items-center justify-between text-[11px] text-white/60 font-accent pt-1">
+            <span className="truncate">{reel.category}</span>
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -440,19 +446,20 @@ const ReelCarousel = () => {
             <div className="absolute top-0 left-0 right-0 z-30 p-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent flex items-center justify-between">
               <button
                 onClick={handleCloseReel}
-                className="flex items-center gap-2 text-white/80 hover:text-white bg-black/50 hover:bg-black/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15 transition-colors text-xs font-accent uppercase tracking-wider"
+                className="flex items-center gap-2 text-white/80 hover:text-white bg-black/50 hover:bg-black/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15 transition-colors text-xs font-accent uppercase tracking-wider cursor-pointer"
               >
                 <FiX size={18} />
                 <span>Close</span>
               </button>
 
-              <div className="text-xs font-accent font-semibold text-white/80 bg-black/40 px-3 py-1 rounded-full border border-white/10">
+              {/* Centrally Aligned Reel Index Counter (1/2, 2/2) */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-4 pointer-events-none text-xs font-accent font-semibold text-white/90 bg-black/60 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/15 shadow-md">
                 {activeReelIndex + 1} / {reels.length}
               </div>
 
               <button
                 onClick={handleToggleMute}
-                className="p-2.5 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md text-white border border-white/15 transition-colors"
+                className="p-2.5 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md text-white border border-white/15 transition-colors cursor-pointer"
                 title={isMuted ? 'Unmute' : 'Mute'}
               >
                 {isMuted ? <FiVolumeX size={18} className="text-red" /> : <FiVolume2 size={18} className="text-emerald-400" />}
