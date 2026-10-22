@@ -1,5 +1,7 @@
 const Blog = require('../models/Blog');
 const { slugify, calculateReadingTime, extractTOC, sanitizeHTML } = require('../utils/blogUtils');
+const { invalidateSitemapCache } = require('../utils/sitemapGenerator');
+const { pingSearchEngines, submitIndexNow } = require('../services/seoIndexingService');
 
 // ==========================================
 // PUBLIC BLOG ENDPOINTS
@@ -287,6 +289,15 @@ const createBlog = async (req, res) => {
     });
 
     const saved = await newBlog.save();
+    
+    // Invalidate sitemap cache & ping search engines if published
+    invalidateSitemapCache();
+    if (saved.status === 'PUBLISHED') {
+      const baseUrl = (process.env.CLIENT_URL || 'https://spcsolarcbe.com').replace(/\/$/, '');
+      pingSearchEngines().catch(() => {});
+      submitIndexNow([`${baseUrl}/blog/${saved.slug}`]).catch(() => {});
+    }
+
     res.status(201).json(saved);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -369,6 +380,15 @@ const updateBlog = async (req, res) => {
     blog.updatedBy = req.admin?._id;
 
     const updated = await blog.save();
+
+    // Invalidate sitemap cache & notify search engines
+    invalidateSitemapCache();
+    if (updated.status === 'PUBLISHED') {
+      const baseUrl = (process.env.CLIENT_URL || 'https://spcsolarcbe.com').replace(/\/$/, '');
+      pingSearchEngines().catch(() => {});
+      submitIndexNow([`${baseUrl}/blog/${updated.slug}`]).catch(() => {});
+    }
+
     res.json(updated);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -383,6 +403,12 @@ const publishBlog = async (req, res) => {
     blog.status = 'PUBLISHED';
     blog.publishedAt = new Date();
     await blog.save();
+
+    invalidateSitemapCache();
+    const baseUrl = (process.env.CLIENT_URL || 'https://spcsolarcbe.com').replace(/\/$/, '');
+    pingSearchEngines().catch(() => {});
+    submitIndexNow([`${baseUrl}/blog/${blog.slug}`]).catch(() => {});
+
     res.json({ message: 'Blog published successfully', blog });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -396,6 +422,7 @@ const unpublishBlog = async (req, res) => {
 
     blog.status = 'DRAFT';
     await blog.save();
+    invalidateSitemapCache();
     res.json({ message: 'Blog set to draft', blog });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -475,6 +502,7 @@ const deleteBlog = async (req, res) => {
     if (!blog) return res.status(404).json({ message: 'Blog not found' });
 
     await Blog.findByIdAndDelete(req.params.id);
+    invalidateSitemapCache();
     res.json({ message: 'Blog permanently deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });

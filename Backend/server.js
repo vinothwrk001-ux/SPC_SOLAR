@@ -59,6 +59,7 @@ const leadRoutes = require('./routes/leadRoutes');
 const galleryComponentRoutes = require('./routes/galleryComponentRoutes');
 const bannerRoutes = require('./routes/bannerRoutes');
 const mediaRoutes = require('./routes/mediaRoutes');
+const seoRoutes = require('./routes/seoRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const { generateSitemap } = require('./utils/sitemapGenerator');
 const { startSchedulerEngine } = require('./utils/schedulerEngine');
@@ -142,7 +143,33 @@ app.get('/sitemap.xml', generateSitemap);
 app.get('/robots.txt', (req, res) => {
   const clientUrl = (process.env.CLIENT_URL || 'https://spcsolarcbe.com').replace(/\/$/, '');
   res.type('text/plain');
-  res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\nSitemap: ${clientUrl}/sitemap.xml`);
+  res.send(
+`# https://spcsolarcbe.com robots.txt
+# Master SEO configuration for SPC Solar Coimbatore
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Googlebot-Image
+Allow: /uploads/
+Allow: /assets/
+Allow: /logo.png
+Allow: /og-image.png
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: ${clientUrl}/sitemap.xml`
+  );
 });
 
 // Routes
@@ -163,6 +190,7 @@ app.use('/api/leads', leadRoutes);
 app.use('/api/gallery-components', galleryComponentRoutes);
 app.use('/api/banner', bannerRoutes);
 app.use('/api/media', mediaRoutes);
+app.use('/api/seo', seoRoutes);
 
 // Health Check endpoint (both /health and /api/health)
 app.get(['/health', '/api/health'], (req, res) => {
