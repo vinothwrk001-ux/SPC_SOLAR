@@ -27,7 +27,7 @@ const BlogTagPage = () => {
   }, [slug]);
 
   return (
-    <div className="bg-bg min-h-screen pt-28 pb-12">
+    <div className="bg-bg min-h-screen pt-36 sm:pt-40 pb-16">
       <SEOHead title={`Articles tagged with #${slug} | SPC Solar`} description={`Browse all articles tagged with #${slug}`} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,7 +37,7 @@ const BlogTagPage = () => {
 
         <div className="mb-10 border-b border-gray-light pb-6">
           <span className="text-red font-accent font-bold text-xs uppercase tracking-widest">TAGGED ARCHIVE</span>
-          <h1 className="text-4xl font-heading text-black mt-1">#{slug}</h1>
+          <h1 className="text-3xl sm:text-4xl font-heading text-black mt-2">#{slug}</h1>
         </div>
 
         {loading ? (

@@ -64,7 +64,7 @@ const BlogDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="bg-bg min-h-screen pb-20 pt-28 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-bg min-h-screen pb-20 pt-36 sm:pt-40 lg:pt-44 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="animate-pulse space-y-6">
           <div className="h-6 bg-gray-200 rounded w-32" />
           <div className="h-10 bg-gray-200 rounded w-3/4" />
@@ -82,7 +82,7 @@ const BlogDetailPage = () => {
 
   if (error || !blog) {
     return (
-      <div className="bg-bg min-h-screen py-20 text-center">
+      <div className="bg-bg min-h-screen pt-36 sm:pt-40 pb-20 text-center">
         <div className="max-w-md mx-auto bg-white p-8 rounded-card border border-gray-light">
           <h2 className="text-2xl font-heading mb-4">Article Not Found</h2>
           <p className="text-gray text-sm mb-6">{error || 'The requested article could not be loaded.'}</p>
@@ -120,11 +120,11 @@ const BlogDetailPage = () => {
       )}
 
       {/* Main Container */}
-      <div className="max-w-[1200px] mx-auto px-3.5 sm:px-6 lg:px-8 pt-20 sm:pt-24 lg:pt-28">
+      <div className="max-w-[1200px] mx-auto px-3.5 sm:px-6 lg:px-8 pt-36 sm:pt-40 lg:pt-44">
         {/* Category & Title Header */}
-        <div className="mb-5 sm:mb-8 relative">
+        <div className="mb-6 sm:mb-10 relative">
           {/* Back Button (On mobile: compact button above title; On desktop: absolute on the left) */}
-          <div className="mb-2.5 sm:mb-3 lg:mb-0">
+          <div className="mb-3 sm:mb-4 lg:mb-0">
             <button
               type="button"
               onClick={() => {
@@ -134,7 +134,7 @@ const BlogDetailPage = () => {
                   navigate('/blog');
                 }
               }}
-              className="lg:absolute lg:-left-16 xl:-left-20 2xl:-left-24 lg:top-1.5 w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-200 bg-white text-gray-700 hover:text-red hover:border-red hover:bg-red-50 transition-all shadow-sm flex items-center justify-center cursor-pointer group z-10"
+              className="lg:absolute lg:-left-16 xl:-left-20 2xl:-left-24 lg:top-2 w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gray-200 bg-white text-gray-700 hover:text-red hover:border-red hover:bg-red-50 transition-all shadow-sm flex items-center justify-center cursor-pointer group z-10"
               title="Go Back"
               aria-label="Back"
             >
