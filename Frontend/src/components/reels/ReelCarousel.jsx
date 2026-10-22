@@ -460,28 +460,30 @@ const ReelCarousel = () => {
             </div>
 
             {/* Main Video Area */}
-            <div className="relative flex-1 w-full h-full flex items-center justify-center">
+            <div className="relative flex-1 w-full h-full flex items-center justify-center p-2 sm:p-4 md:p-6">
               {/* Left/Right Navigation Buttons (Outside Video) */}
               {activeReelIndex > 0 && (
                 <button
                   onClick={handlePrevModal}
-                  className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white transition-all shadow-xl"
+                  className="absolute left-3 md:left-10 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/20 text-white transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
+                  aria-label="Previous reel"
                 >
-                  <FiChevronLeft size={28} />
+                  <FiChevronLeft size={26} />
                 </button>
               )}
               {activeReelIndex < reels.length - 1 && (
                 <button
                   onClick={handleNextModal}
-                  className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white transition-all shadow-xl"
+                  className="absolute right-3 md:right-10 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/20 text-white transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
+                  aria-label="Next reel"
                 >
-                  <FiChevronRight size={28} />
+                  <FiChevronRight size={26} />
                 </button>
               )}
 
               <div
                 onClick={handleTogglePlay}
-                className="relative w-full h-full max-w-md mx-auto overflow-hidden bg-black flex items-center justify-center cursor-pointer"
+                className="relative w-full max-w-[410px] aspect-[9/16] max-h-[calc(100dvh-4.5rem)] md:max-h-[calc(100dvh-5rem)] mx-auto rounded-3xl md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/15 ring-1 ring-white/10"
               >
                 <video
                   ref={(el) => (videoRefs.current[activeReel._id] = el)}
@@ -491,7 +493,7 @@ const ReelCarousel = () => {
                   loop
                   playsInline
                   muted={isMuted}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-3xl md:rounded-[36px]"
                 />
 
                 {/* Play/Pause Center Indicator */}
@@ -509,74 +511,83 @@ const ReelCarousel = () => {
                 </AnimatePresence>
 
                 {/* Gradient Shadow Bottom */}
-                <div className="absolute inset-x-0 bottom-0 h-96 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
+                <div className="absolute inset-x-0 bottom-0 h-80 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
 
-                {/* Right Side Floating Button - SHARE ONLY */}
-                <div className="absolute right-4 bottom-24 z-20 flex flex-col items-center">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShareSheetOpen(true);
-                    }}
-                    className="flex flex-col items-center gap-1 group"
-                  >
-                    <div className="p-3.5 rounded-full bg-black/50 hover:bg-red backdrop-blur-md border border-white/20 text-white group-hover:scale-110 transition-all shadow-xl">
-                      <FiShare2 size={24} />
+                {/* UNIFIED COMPACT BOTTOM OVERLAY WITH NEATLY ALIGNED SHARE BUTTON */}
+                <div className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-5 pt-12 bg-gradient-to-t from-black/95 via-black/70 to-transparent pointer-events-none">
+                  <div className="flex items-end justify-between gap-3">
+                    {/* Left: Badges, Title, Description */}
+                    <div className="flex-1 min-w-0 space-y-1.5 pointer-events-auto text-left">
+                      {((activeReel.showSystemCapacity && activeReel.systemCapacity) ||
+                        (activeReel.showLocation && activeReel.location) ||
+                        (activeReel.showCategory && activeReel.category)) && (
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {activeReel.showCategory && activeReel.category && (
+                            <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-accent font-semibold px-2.5 py-0.5 rounded-full capitalize border border-white/15">
+                              {activeReel.category}
+                            </span>
+                          )}
+                          {activeReel.showSystemCapacity && activeReel.systemCapacity && (
+                            <span className="inline-flex items-center gap-1 bg-red text-white text-[10px] font-accent font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                              <FiZap size={11} /> {activeReel.systemCapacity}
+                            </span>
+                          )}
+                          {activeReel.showLocation && activeReel.location && (
+                            <span className="inline-flex items-center gap-1 bg-black/40 backdrop-blur-md text-white text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full border border-white/10">
+                              <FiMapPin size={11} className="text-red" /> {activeReel.location}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      <div>
+                        {activeReel.title && (
+                          <h3 className="font-heading text-base sm:text-lg font-bold text-white line-clamp-2 leading-snug drop-shadow-md">
+                            {activeReel.title}
+                          </h3>
+                        )}
+                        {activeReel.showDescription && activeReel.description && (
+                          <p className="text-xs text-white/80 font-body line-clamp-2 mt-1 leading-relaxed drop-shadow">
+                            {activeReel.description}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <span className="text-[11px] font-accent font-semibold text-white drop-shadow">
-                      Share
-                    </span>
-                  </button>
-                </div>
 
-                {/* Bottom Overlay Info */}
-                <div className="absolute left-4 right-20 bottom-6 z-20 space-y-3 text-left">
-                  {((activeReel.showSystemCapacity && activeReel.systemCapacity) ||
-                    (activeReel.showLocation && activeReel.location) ||
-                    (activeReel.showCategory && activeReel.category)) && (
-                    <div className="flex flex-wrap items-center gap-2">
-                      {activeReel.showSystemCapacity && activeReel.systemCapacity && (
-                        <span className="inline-flex items-center gap-1 bg-red/90 text-white text-[10px] font-accent font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">
-                          <FiZap size={11} /> {activeReel.systemCapacity}
+                    {/* Right: Compact, Neatly Aligned Share Button */}
+                    <div className="shrink-0 pointer-events-auto pb-0.5">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShareSheetOpen(true);
+                        }}
+                        className="flex flex-col items-center gap-1 group cursor-pointer"
+                        aria-label="Share reel"
+                      >
+                        <div className="w-11 h-11 rounded-full bg-white/15 hover:bg-red backdrop-blur-md border border-white/25 text-white flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-active:scale-95 shadow-lg">
+                          <FiShare2 size={20} />
+                        </div>
+                        <span className="text-[10px] font-accent font-semibold text-white/90 drop-shadow">
+                          Share
                         </span>
-                      )}
-                      {activeReel.showLocation && activeReel.location && (
-                        <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full">
-                          <FiMapPin size={11} className="text-red" /> {activeReel.location}
-                        </span>
-                      )}
-                      {activeReel.showCategory && activeReel.category && (
-                        <span className="inline-flex items-center gap-1 bg-black/40 backdrop-blur-md text-white/90 text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full border border-white/10">
-                          {activeReel.category}
-                        </span>
-                      )}
+                      </button>
                     </div>
-                  )}
-
-                  <div>
-                    {activeReel.title && (
-                      <h3 className="font-heading text-lg font-bold text-white line-clamp-1 leading-snug drop-shadow-md">
-                        {activeReel.title}
-                      </h3>
-                    )}
-                    {activeReel.showDescription && activeReel.description && (
-                      <p className="text-xs text-white/80 font-body line-clamp-2 mt-1 leading-relaxed drop-shadow">
-                        {activeReel.description}
-                      </p>
-                    )}
                   </div>
 
+                  {/* Solar Savings CTA (if enabled by admin) */}
                   {activeReel.showSolarSavingsBtn && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleQuoteClick();
-                      }}
-                      className="w-full bg-gradient-to-r from-red to-red-hover text-white text-xs font-accent font-bold uppercase tracking-wider py-3 px-4 rounded-xl shadow-lg shadow-red/30 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                    >
-                      <FiZap size={16} className="text-amber-300 animate-pulse" />
-                      <span>Calculate Solar Savings</span>
-                    </button>
+                    <div className="mt-3 pointer-events-auto">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleQuoteClick();
+                        }}
+                        className="w-full bg-gradient-to-r from-red to-red-hover text-white text-xs font-accent font-bold uppercase tracking-wider py-2.5 px-4 rounded-2xl shadow-lg shadow-red/30 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
+                      >
+                        <FiZap size={15} className="text-amber-300 animate-pulse" />
+                        <span>Calculate Solar Savings</span>
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>

@@ -221,7 +221,7 @@ const ReelsPage = () => {
       </div>
 
       {/* MAIN VIDEO PLAYER VIEWPORT */}
-      <div className="relative flex-1 w-full h-full flex items-center justify-center bg-black">
+      <div className="relative flex-1 w-full h-full flex items-center justify-center bg-black p-2 sm:p-4 md:p-6">
         {loading ? (
           <div className="flex flex-col items-center gap-3 text-white/60">
             <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin" />
@@ -243,7 +243,7 @@ const ReelsPage = () => {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="relative w-full h-full max-w-md mx-auto overflow-hidden bg-black flex items-center justify-center cursor-pointer"
+            className="relative w-full max-w-[410px] aspect-[9/16] max-h-[calc(100dvh-5.5rem)] mx-auto rounded-3xl md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/15 ring-1 ring-white/10"
           >
             <video
               ref={(el) => (videoRefs.current[currentReel._id] = el)}
@@ -253,7 +253,7 @@ const ReelsPage = () => {
               playsInline
               webkit-playsinline="true"
               muted={isMuted}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-3xl md:rounded-[36px]"
             />
 
             {/* Play/Pause Center Indicator */}
@@ -270,75 +270,84 @@ const ReelsPage = () => {
               )}
             </AnimatePresence>
 
-            <div className="absolute inset-x-0 bottom-0 h-96 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
+            <div className="absolute inset-x-0 bottom-0 h-80 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
 
-            {/* RIGHT SIDE FLOATING ACTION BUTTON - SHARE ONLY */}
-            <div className="absolute right-4 bottom-[max(6rem,calc(5rem+env(safe-area-inset-bottom)))] z-20 flex flex-col items-center">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShareSheetOpen(true);
-                }}
-                className="flex flex-col items-center gap-1 group"
-              >
-                <div className="p-3.5 rounded-full bg-black/50 hover:bg-red backdrop-blur-md border border-white/20 text-white group-hover:scale-110 transition-all shadow-xl">
-                  <FiShare2 size={24} />
+            {/* UNIFIED COMPACT BOTTOM OVERLAY WITH NEATLY ALIGNED SHARE BUTTON */}
+            <div className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-5 pt-12 bg-gradient-to-t from-black/95 via-black/70 to-transparent pointer-events-none">
+              <div className="flex items-end justify-between gap-3">
+                {/* Left: Badges, Title, Description */}
+                <div className="flex-1 min-w-0 space-y-1.5 pointer-events-auto text-left">
+                  {/* Badges: Only display if admin selected and provided */}
+                  {((currentReel.showSystemCapacity && currentReel.systemCapacity) ||
+                    (currentReel.showLocation && currentReel.location) ||
+                    (currentReel.showCategory && currentReel.category)) && (
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {currentReel.showCategory && currentReel.category && (
+                        <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-accent font-semibold px-2.5 py-0.5 rounded-full capitalize border border-white/15">
+                          {currentReel.category}
+                        </span>
+                      )}
+                      {currentReel.showSystemCapacity && currentReel.systemCapacity && (
+                        <span className="inline-flex items-center gap-1 bg-red text-white text-[10px] font-accent font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                          <FiZap size={11} /> {currentReel.systemCapacity}
+                        </span>
+                      )}
+                      {currentReel.showLocation && currentReel.location && (
+                        <span className="inline-flex items-center gap-1 bg-black/40 backdrop-blur-md text-white text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full border border-white/10">
+                          <FiMapPin size={11} className="text-red" /> {currentReel.location}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  <div>
+                    {currentReel.title && (
+                      <h3 className="font-heading text-base sm:text-lg font-bold text-white line-clamp-2 leading-snug drop-shadow-md">
+                        {currentReel.title}
+                      </h3>
+                    )}
+                    {currentReel.showDescription && currentReel.description && (
+                      <p className="text-xs text-white/80 font-body line-clamp-2 mt-1 leading-relaxed drop-shadow">
+                        {currentReel.description}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <span className="text-[11px] font-accent font-semibold text-white drop-shadow">
-                  Share
-                </span>
-              </button>
-            </div>
 
-            {/* BOTTOM DETAILS OVERLAY */}
-            <div className="absolute left-4 right-20 bottom-[max(1.5rem,env(safe-area-inset-bottom))] z-20 space-y-3 text-left pointer-events-none">
-              {/* Badges: Only display if admin selected and provided */}
-              {((currentReel.showSystemCapacity && currentReel.systemCapacity) ||
-                (currentReel.showLocation && currentReel.location) ||
-                (currentReel.showCategory && currentReel.category)) && (
-                <div className="flex flex-wrap items-center gap-2">
-                  {currentReel.showSystemCapacity && currentReel.systemCapacity && (
-                    <span className="inline-flex items-center gap-1 bg-red/90 text-white text-[10px] font-accent font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">
-                      <FiZap size={11} /> {currentReel.systemCapacity}
+                {/* Right: Compact, Neatly Aligned Share Button */}
+                <div className="shrink-0 pointer-events-auto pb-0.5">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShareSheetOpen(true);
+                    }}
+                    className="flex flex-col items-center gap-1 group cursor-pointer"
+                    aria-label="Share reel"
+                  >
+                    <div className="w-11 h-11 rounded-full bg-white/15 hover:bg-red backdrop-blur-md border border-white/25 text-white flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-active:scale-95 shadow-lg">
+                      <FiShare2 size={20} />
+                    </div>
+                    <span className="text-[10px] font-accent font-semibold text-white/90 drop-shadow">
+                      Share
                     </span>
-                  )}
-                  {currentReel.showLocation && currentReel.location && (
-                    <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full">
-                      <FiMapPin size={11} className="text-red" /> {currentReel.location}
-                    </span>
-                  )}
-                  {currentReel.showCategory && currentReel.category && (
-                    <span className="inline-flex items-center gap-1 bg-black/40 backdrop-blur-md text-white/90 text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full border border-white/10">
-                      {currentReel.category}
-                    </span>
-                  )}
+                  </button>
                 </div>
-              )}
-
-              <div>
-                {currentReel.title && (
-                  <h3 className="font-heading text-lg font-bold text-white line-clamp-1 leading-snug drop-shadow-md">
-                    {currentReel.title}
-                  </h3>
-                )}
-                {currentReel.showDescription && currentReel.description && (
-                  <p className="text-xs text-white/80 font-body line-clamp-2 mt-1 leading-relaxed drop-shadow">
-                    {currentReel.description}
-                  </p>
-                )}
               </div>
 
+              {/* Solar Savings CTA (if enabled by admin) */}
               {currentReel.showSolarSavingsBtn && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleQuoteClick();
-                  }}
-                  className="pointer-events-auto w-full bg-gradient-to-r from-red to-red-hover text-white text-xs font-accent font-bold uppercase tracking-wider py-3 px-4 rounded-xl shadow-lg shadow-red/30 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
-                >
-                  <FiZap size={16} className="text-amber-300 animate-pulse" />
-                  <span>Calculate Solar Savings</span>
-                </button>
+                <div className="mt-3 pointer-events-auto">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleQuoteClick();
+                    }}
+                    className="w-full bg-gradient-to-r from-red to-red-hover text-white text-xs font-accent font-bold uppercase tracking-wider py-2.5 px-4 rounded-2xl shadow-lg shadow-red/30 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
+                  >
+                    <FiZap size={15} className="text-amber-300 animate-pulse" />
+                    <span>Calculate Solar Savings</span>
+                  </button>
+                </div>
               )}
             </div>
           </div>
