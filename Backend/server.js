@@ -151,8 +151,8 @@ app.use('/api/gallery-components', galleryComponentRoutes);
 app.use('/api/banner', bannerRoutes);
 app.use('/api/media', mediaRoutes);
 
-// Health Check endpoint
-app.get('/health', (req, res) => {
+// Health Check endpoint (both /health and /api/health)
+app.get(['/health', '/api/health'], (req, res) => {
   res.status(200).json({
     status: 'ok',
     uptime: Math.floor(process.uptime()),
