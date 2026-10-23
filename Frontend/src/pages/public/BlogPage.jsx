@@ -433,7 +433,7 @@ const BlogPage = () => {
                   >
                     <div className="relative aspect-[16/9] md:aspect-auto md:h-[200px] w-full overflow-hidden bg-gray-100">
                       <img
-                        src={getImageUrl(b.thumbnailImage?.url || b.featuredImage?.url) || DEFAULT_IMAGE}
+                        src={getImageUrl(b.thumbnailImage || b.featuredImage) || DEFAULT_IMAGE}
                         alt={b.thumbnailImage?.alt || b.featuredImage?.alt || b.title}
                         loading="lazy"
                         decoding="async"

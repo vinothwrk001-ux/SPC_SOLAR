@@ -124,7 +124,8 @@ const BlogDetailPage = () => {
         title={blog.seo?.metaTitle || `${blog.title} | SPC Solar`}
         description={blog.seo?.metaDescription || blog.excerpt || blog.title}
         canonical={`/blog/${blog.slug || slug}`}
-        image={getImageUrl(blog.featuredImage)}
+        image={getImageUrl(blog.featuredImage || blog.mainImage)}
+        ogImage={getImageUrl(blog.featuredImage || blog.mainImage)}
         ogType="article"
         keywords={blog.tags && blog.tags.length > 0 ? blog.tags : ['solar energy', 'spc solar', 'solar guide']}
         article={{
@@ -311,8 +312,8 @@ const BlogDetailPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-6">
                   {blog.relatedBlogs.map((rel) => (
                     <Link to={`/blog/${rel.slug}`} key={rel._id} className="group flex flex-col bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
-                      {rel.featuredImage?.url && (
-                        <img src={getImageUrl(rel.featuredImage.url)} alt={rel.title} className="w-full h-36 sm:h-40 object-cover" />
+                      {(rel.featuredImage || rel.thumbnailImage) && (
+                        <img src={getImageUrl(rel.featuredImage || rel.thumbnailImage)} alt={rel.title} className="w-full h-36 sm:h-40 object-cover" />
                       )}
                       <div className="p-3.5 sm:p-4 flex flex-col flex-grow">
                         <span className="text-[10px] text-red font-bold uppercase mb-1">{rel.category}</span>

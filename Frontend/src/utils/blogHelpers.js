@@ -34,30 +34,60 @@ export const sanitizeHTML = (content) => {
   });
 };
 
-export const getImageUrl = (url) => {
-  if (!url) return null;
-  if (url.startsWith('http') || url.startsWith('data:')) return url;
+export const getImageUrl = (input) => {
+  if (!input) return null;
+  
+  let url = input;
+  // If an object is passed (e.g. { url: '...' }, { secure_url: '...' }, { src: '...' })
+  if (typeof input === 'object' && input !== null) {
+    url = input.url || input.secure_url || input.src || input.path || '';
+  }
+  
+  if (typeof url !== 'string') return null;
+  const cleanUrl = url.trim();
+  if (!cleanUrl) return null;
+
+  if (cleanUrl.startsWith('http') || cleanUrl.startsWith('data:') || cleanUrl.startsWith('blob:')) {
+    return cleanUrl;
+  }
   
   const backendUrl = import.meta.env.VITE_BACKEND_URL 
     || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') : '')
     || (typeof window !== 'undefined' && !['localhost', '127.0.0.1'].includes(window.location.hostname) ? window.location.origin : 'http://localhost:5000');
     
-  if (url.startsWith('/uploads/')) {
-     return `${backendUrl}${url}`;
+  if (cleanUrl.startsWith('/uploads/')) {
+     return `${backendUrl}${cleanUrl}`;
   }
   
   // If it's just a filename like 'hybrid.png' or '/assets/...'
-  if (url.startsWith('/assets/')) return url;
+  if (cleanUrl.startsWith('/assets/')) return cleanUrl;
   
-  return `${backendUrl}/uploads/${url.startsWith('/') ? url.slice(1) : url}`;
+  return `${backendUrl}/uploads/${cleanUrl.startsWith('/') ? cleanUrl.slice(1) : cleanUrl}`;
 };
 
 export const generateArticleSchema = (blog, siteUrl = (typeof window !== 'undefined' ? window.location.origin : 'https://spcsolarcbe.com')) => {
   if (!blog) return null;
   const canonical = blog.seo?.canonicalUrl || `${siteUrl}/blog/${blog.slug}`;
-  const imageUrl = blog.featuredImage?.url
-    ? (blog.featuredImage.url.startsWith('http') ? blog.featuredImage.url : `${siteUrl}${blog.featuredImage.url}`)
-    : `${siteUrl}/assets/solar-hero.jpg`;
+  
+  let rawImg = '';
+  if (typeof blog.featuredImage === 'string') {
+    rawImg = blog.featuredImage;
+  } else if (blog.featuredImage && typeof blog.featuredImage === 'object') {
+    rawImg = blog.featuredImage.url || blog.featuredImage.secure_url || '';
+  }
+  if (!rawImg && blog.mainImage) {
+    rawImg = typeof blog.mainImage === 'string' ? blog.mainImage : (blog.mainImage.url || '');
+  }
+
+  let imageUrl = `${siteUrl}/assets/solar-hero.jpg`;
+  if (rawImg && typeof rawImg === 'string') {
+    const trimmed = rawImg.trim();
+    if (trimmed.startsWith('http')) {
+      imageUrl = trimmed;
+    } else {
+      imageUrl = `${siteUrl}${trimmed.startsWith('/') ? '' : '/'}${trimmed}`;
+    }
+  }
 
   return {
     '@context': 'https://schema.org',

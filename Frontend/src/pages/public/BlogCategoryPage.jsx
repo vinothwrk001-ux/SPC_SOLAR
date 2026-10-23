@@ -94,7 +94,7 @@ const BlogCategoryPage = () => {
               <Card key={b._id} className="flex flex-col p-0 overflow-hidden h-full border border-gray-light hover:shadow-md transition-shadow">
                 <Link to={`/blog/${b.slug}`}>
                   <img
-                    src={getImageUrl(b.thumbnailImage?.url || b.featuredImage?.url) || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=800'}
+                    src={getImageUrl(b.thumbnailImage || b.featuredImage) || 'https://images.unsplash.com/photo-1509391366360-5157625bf958?w=800'}
                     alt={b.title}
                     loading="lazy"
                     decoding="async"

@@ -67,6 +67,7 @@ export const SEOHead = ({
   keywords,
   canonical,
   ogImage,
+  image,
   ogImageAlt,
   ogType = 'website',
   robots = 'index, follow',
@@ -96,7 +97,10 @@ export const SEOHead = ({
           : `${DEFAULT_SEO.siteUrl}${canonicalStr.startsWith('/') ? canonicalStr : `/${canonicalStr}`}`)
       : `${DEFAULT_SEO.siteUrl}${location.pathname === '/' ? '' : location.pathname}`;
 
-    const ogImageStr = typeof ogImage === 'string' ? ogImage.trim() : '';
+    const rawImage = ogImage || image;
+    const ogImageStr = typeof rawImage === 'string'
+      ? rawImage.trim()
+      : (rawImage && typeof rawImage === 'object' && typeof rawImage.url === 'string' ? rawImage.url.trim() : '');
     const finalImage = ogImageStr
       ? (ogImageStr.startsWith('http://') || ogImageStr.startsWith('https://')
           ? ogImageStr
@@ -215,7 +219,10 @@ export const useSEO = (seoProps = {}) => {
           : `${DEFAULT_SEO.siteUrl}${canonicalStr.startsWith('/') ? canonicalStr : `/${canonicalStr}`}`)
       : `${DEFAULT_SEO.siteUrl}${location.pathname === '/' ? '' : location.pathname}`;
 
-    const ogImageStr = typeof seoProps.ogImage === 'string' ? seoProps.ogImage.trim() : '';
+    const rawImage = seoProps.ogImage || seoProps.image;
+    const ogImageStr = typeof rawImage === 'string'
+      ? rawImage.trim()
+      : (rawImage && typeof rawImage === 'object' && typeof rawImage.url === 'string' ? rawImage.url.trim() : '');
     const finalImage = ogImageStr
       ? (ogImageStr.startsWith('http://') || ogImageStr.startsWith('https://')
           ? ogImageStr
