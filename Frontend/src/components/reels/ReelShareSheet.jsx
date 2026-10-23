@@ -91,7 +91,7 @@ const ReelShareSheet = ({ isOpen, onClose, reel }) => {
               <div className="min-w-0 flex-1">
                 <h4 className="font-accent font-semibold text-xs text-white truncate">{reel.title}</h4>
                 <p className="text-[11px] text-red font-accent font-medium mt-0.5">{reel.systemCapacity}</p>
-                <p className="text-[10px] text-white/50 truncate mt-0.5">{reel.location}</p>
+                <p className="text-[10px] text-white/50 truncate mt-0.5">{reel.location || 'Coimbatore, Tamil Nadu'}</p>
               </div>
             </div>
 

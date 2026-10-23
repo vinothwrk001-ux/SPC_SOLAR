@@ -294,6 +294,7 @@ const ReelsPage = () => {
                 <div className="flex-1 min-w-0 space-y-1.5 pointer-events-auto text-left">
                   {/* Badges: Only display if admin selected and provided */}
                   {((currentReel.showSystemCapacity && currentReel.systemCapacity) ||
+                    currentReel.location ||
                     (currentReel.showLocation && currentReel.location) ||
                     (currentReel.showCategory && currentReel.category)) && (
                     <div className="flex flex-wrap items-center gap-1.5">
@@ -307,9 +308,9 @@ const ReelsPage = () => {
                           <FiZap size={11} /> {currentReel.systemCapacity}
                         </span>
                       )}
-                      {currentReel.showLocation && currentReel.location && (
+                      {(currentReel.location || currentReel.showLocation) && (
                         <span className="inline-flex items-center gap-1 bg-black/40 backdrop-blur-md text-white text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full border border-white/10">
-                          <FiMapPin size={11} className="text-red" /> {currentReel.location}
+                          <FiMapPin size={11} className="text-red" /> {currentReel.location || 'Coimbatore, Tamil Nadu'}
                         </span>
                       )}
                     </div>

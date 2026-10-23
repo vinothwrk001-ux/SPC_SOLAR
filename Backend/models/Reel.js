@@ -18,13 +18,13 @@ const reelSchema = new mongoose.Schema({
   },
   tags: [{ type: String }],
   systemCapacity: { type: String, default: '' },
-  location: { type: String, default: '' },
+  location: { type: String, default: 'Coimbatore, Tamil Nadu' },
   linkedService: { type: String, default: 'Rooftop Solar Installation' },
   
   // Selective Overlay Details & Action Controls (Admin Chooses What Displays)
   showCategory: { type: Boolean, default: false },
   showSystemCapacity: { type: Boolean, default: false },
-  showLocation: { type: Boolean, default: false },
+  showLocation: { type: Boolean, default: true },
   showDescription: { type: Boolean, default: false },
   showSolarSavingsBtn: { type: Boolean, default: false },
 

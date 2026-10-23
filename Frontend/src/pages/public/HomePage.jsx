@@ -22,7 +22,7 @@ const HomePage = () => {
   return (
     <div className="bg-bg">
       <SEOHead 
-        title="Best Solar in Coimbatore | SPC Solar — Rooftop, Commercial & PM Surya Ghar Subsidy" 
+        title="SPC Solar | Best Solar in Coimbatore — Rooftop, Commercial & PM Surya Ghar Subsidy" 
         description="SPC Solar is Coimbatore’s #1 rated solar company. Expert rooftop solar installations, PM Surya Ghar subsidy up to ₹78,000, on-grid & hybrid solar solutions with 25-year panel warranty across Tamil Nadu."
         canonical="/"
         keywords={[

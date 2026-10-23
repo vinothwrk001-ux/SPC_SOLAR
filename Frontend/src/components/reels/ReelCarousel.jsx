@@ -263,9 +263,9 @@ const ReelCarousel = () => {
 
       {/* Bottom Details Overlay */}
       <div className="absolute bottom-4 left-4 right-4 text-left space-y-1 z-10 pointer-events-none">
-        {reel.showLocation && reel.location && (
+        {(reel.location || reel.showLocation) && (
           <div className="flex items-center gap-1 text-[11px] text-red font-accent font-semibold">
-            <FiMapPin size={12} className="flex-shrink-0" /> <span className="truncate">{reel.location}</span>
+            <FiMapPin size={12} className="flex-shrink-0" /> <span className="truncate">{reel.location || 'Coimbatore, Tamil Nadu'}</span>
           </div>
         )}
         <h3 className="font-heading font-bold text-white text-sm sm:text-base leading-tight line-clamp-2 drop-shadow">
@@ -301,7 +301,7 @@ const ReelCarousel = () => {
           <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
             <span className="section-label">Behind The Scenes</span>
             <h2 className="section-title">
-              FROM OUR HANDS <span className="text-red">TO YOURS</span>
+              Connecting Our Passion <span className="text-red">to Your Life</span>
             </h2>
             <span className="red-line-center" />
             <p className="section-subtitle mx-auto">
@@ -440,10 +440,10 @@ const ReelCarousel = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg flex flex-col justify-between overflow-hidden"
+            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg flex flex-col overflow-hidden"
           >
-            {/* Top Bar */}
-            <div className="absolute top-0 left-0 right-0 z-30 p-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent flex items-center justify-between">
+            {/* Top Bar Header */}
+            <div className="relative flex-shrink-0 w-full z-30 px-4 py-3 sm:px-6 flex items-center justify-between bg-gradient-to-b from-black/90 via-black/50 to-transparent">
               <button
                 onClick={handleCloseReel}
                 className="flex items-center gap-2 text-white/80 hover:text-white bg-black/50 hover:bg-black/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15 transition-colors text-xs font-accent uppercase tracking-wider cursor-pointer"
@@ -452,8 +452,8 @@ const ReelCarousel = () => {
                 <span>Close</span>
               </button>
 
-              {/* Centrally Aligned Reel Index Counter (1/2, 2/2) */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-4 pointer-events-none text-xs font-accent font-semibold text-white/90 bg-black/60 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/15 shadow-md">
+              {/* Centrally Aligned Reel Index Counter (1/2, 2/2) - perfectly aligned in Top Bar */}
+              <div className="pointer-events-none text-xs font-accent font-semibold text-white/90 bg-white/10 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/15 shadow-md">
                 {activeReelIndex + 1} / {reels.length}
               </div>
 
@@ -466,8 +466,8 @@ const ReelCarousel = () => {
               </button>
             </div>
 
-            {/* Main Video Area */}
-            <div className="relative flex-1 w-full h-full flex items-center justify-center p-2 sm:p-4 md:p-6">
+            {/* Main Video Area with proper vertical clearance so reel NEVER overlaps header */}
+            <div className="relative flex-1 min-h-0 w-full flex items-center justify-center p-3 sm:p-5">
               {/* Left/Right Navigation Buttons (Outside Video) */}
               {activeReelIndex > 0 && (
                 <button
@@ -490,7 +490,7 @@ const ReelCarousel = () => {
 
               <div
                 onClick={handleTogglePlay}
-                className="relative w-full max-w-[410px] aspect-[9/16] max-h-[calc(100dvh-4.5rem)] md:max-h-[calc(100dvh-5rem)] mx-auto rounded-3xl md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/15 ring-1 ring-white/10"
+                className="relative h-full max-h-full aspect-[9/16] max-w-[410px] w-auto mx-auto rounded-3xl md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/15 ring-1 ring-white/10"
               >
                 <video
                   ref={(el) => (videoRefs.current[activeReel._id] = el)}
@@ -526,6 +526,7 @@ const ReelCarousel = () => {
                     {/* Left: Badges, Title, Description */}
                     <div className="flex-1 min-w-0 space-y-1.5 pointer-events-auto text-left">
                       {((activeReel.showSystemCapacity && activeReel.systemCapacity) ||
+                        activeReel.location ||
                         (activeReel.showLocation && activeReel.location) ||
                         (activeReel.showCategory && activeReel.category)) && (
                         <div className="flex flex-wrap items-center gap-1.5">
@@ -539,9 +540,9 @@ const ReelCarousel = () => {
                               <FiZap size={11} /> {activeReel.systemCapacity}
                             </span>
                           )}
-                          {activeReel.showLocation && activeReel.location && (
+                          {(activeReel.location || activeReel.showLocation) && (
                             <span className="inline-flex items-center gap-1 bg-black/40 backdrop-blur-md text-white text-[10px] font-accent font-medium px-2.5 py-0.5 rounded-full border border-white/10">
-                              <FiMapPin size={11} className="text-red" /> {activeReel.location}
+                              <FiMapPin size={11} className="text-red" /> {activeReel.location || 'Coimbatore, Tamil Nadu'}
                             </span>
                           )}
                         </div>

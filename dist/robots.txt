@@ -1,0 +1,28 @@
+# https://spcsolarcbe.com robots.txt
+# Master SEO configuration for SPC Solar Coimbatore
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# Explicit permissions for Googlebot & Image Crawlers
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Googlebot-Image
+Allow: /uploads/
+Allow: /assets/
+Allow: /logo.png
+Allow: /og-image.png
+
+# Explicit permissions for Bingbot
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# Master XML Sitemap Location
+Sitemap: https://spcsolarcbe.com/sitemap.xml

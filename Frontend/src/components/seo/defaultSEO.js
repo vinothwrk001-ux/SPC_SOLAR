@@ -7,7 +7,7 @@ export const DEFAULT_SEO = {
   siteName: 'SPC Solar',
   brandName: 'SPC Solar — Smart Power Controls',
   siteUrl: 'https://spcsolarcbe.com',
-  defaultTitle: 'Best Solar in Coimbatore | SPC Solar — Rooftop, Commercial & PM Surya Ghar Subsidy',
+  defaultTitle: 'SPC Solar | Best Solar in Coimbatore — Rooftop, Commercial & PM Surya Ghar Subsidy',
   titleTemplate: '%s | SPC Solar Coimbatore',
   defaultDescription: 'SPC Solar is Coimbatore’s #1 rated solar company. Expert rooftop solar installations, PM Surya Ghar subsidy up to ₹78,000, on-grid, off-grid & hybrid solar solutions with 25-year panel warranty across Tamil Nadu.',
   defaultKeywords: [
