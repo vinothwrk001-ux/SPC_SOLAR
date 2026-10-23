@@ -236,7 +236,7 @@ const ReelsPage = () => {
       </div>
 
       {/* MAIN VIDEO PLAYER VIEWPORT */}
-      <div className="relative flex-1 w-full h-full flex items-center justify-center bg-black p-2 sm:p-4 md:p-6">
+      <div className="relative flex-1 w-full h-full flex items-center justify-center bg-black p-0 md:p-6">
         {loading ? (
           <div className="flex flex-col items-center gap-3 text-white/60">
             <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin" />
@@ -258,7 +258,7 @@ const ReelsPage = () => {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="relative w-full max-w-[390px] sm:max-w-[415px] md:max-w-[430px] aspect-[9/16] max-h-[calc(100dvh-4.5rem)] mx-auto rounded-3xl md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/15 ring-1 ring-white/10"
+            className="relative w-full h-full md:aspect-[9/16] md:max-w-[430px] md:max-h-[calc(100dvh-4.5rem)] mx-auto rounded-none md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-none md:shadow-[0_25px_60px_rgba(0,0,0,0.85)] border-0 md:border md:border-white/15 ring-0 md:ring-1 md:ring-white/10"
           >
             <video
               ref={(el) => (videoRefs.current[currentReel._id] = el)}
@@ -268,7 +268,7 @@ const ReelsPage = () => {
               playsInline
               webkit-playsinline="true"
               muted={isMuted}
-              className="w-full h-full object-cover rounded-3xl md:rounded-[36px]"
+              className="w-full h-full object-cover rounded-none md:rounded-[36px]"
             />
 
             {/* Play/Pause Center Indicator */}
@@ -288,7 +288,7 @@ const ReelsPage = () => {
             <div className="absolute inset-x-0 bottom-0 h-80 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
 
             {/* UNIFIED COMPACT BOTTOM OVERLAY WITH NEATLY ALIGNED SHARE BUTTON */}
-            <div className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-5 pt-12 bg-gradient-to-t from-black/95 via-black/70 to-transparent pointer-events-none">
+            <div className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-5 pt-12 pb-[max(1.25rem,env(safe-area-inset-bottom))] md:pb-5 bg-gradient-to-t from-black/95 via-black/70 to-transparent pointer-events-none">
               <div className="flex items-end justify-between gap-3">
                 {/* Left: Badges, Title, Description */}
                 <div className="flex-1 min-w-0 space-y-1.5 pointer-events-auto text-left">

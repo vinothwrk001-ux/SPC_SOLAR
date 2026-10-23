@@ -116,7 +116,52 @@ const ReelCarousel = () => {
   };
 
   // Play/Pause toggle
+  const isSwiping = useRef(false);
+
+  const handleModalTouchStart = (e) => {
+    isSwiping.current = false;
+    touchEndX.current = null;
+    touchEndY.current = null;
+    touchStartX.current = e.targetTouches[0].clientX;
+    touchStartY.current = e.targetTouches[0].clientY;
+  };
+
+  const handleModalTouchMove = (e) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+    touchEndY.current = e.targetTouches[0].clientY;
+    if (touchStartY.current !== null && touchEndY.current !== null) {
+      const dy = Math.abs(touchStartY.current - touchEndY.current);
+      const dx = Math.abs((touchStartX.current || 0) - (touchEndX.current || 0));
+      if (dy > 12 || dx > 12) {
+        isSwiping.current = true;
+      }
+    }
+  };
+
+  const handleModalTouchEnd = () => {
+    if (touchStartY.current === null || touchEndY.current === null) return;
+    const deltaY = touchStartY.current - touchEndY.current;
+    const deltaX = (touchStartX.current !== null && touchEndX.current !== null)
+      ? touchStartX.current - touchEndX.current
+      : 0;
+
+    // Support both vertical swipe (TikTok/Reels style) and horizontal swipe
+    if (deltaY > 50 || deltaX > 50) {
+      handleNextModal();
+    } else if (deltaY < -50 || deltaX < -50) {
+      handlePrevModal();
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+    touchStartY.current = null;
+    touchEndY.current = null;
+    setTimeout(() => {
+      isSwiping.current = false;
+    }, 120);
+  };
+
   const handleTogglePlay = () => {
+    if (isSwiping.current) return;
     if (activeReelIndex !== null && reels[activeReelIndex]) {
       const vid = videoRefs.current[reels[activeReelIndex]._id];
       if (vid) {
@@ -442,8 +487,8 @@ const ReelCarousel = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg flex flex-col overflow-hidden"
           >
-            {/* Top Bar Header */}
-            <div className="relative flex-shrink-0 w-full z-30 px-4 py-2 sm:px-6 flex items-center justify-between bg-gradient-to-b from-black/90 via-black/50 to-transparent">
+            {/* Top Bar Header: floating overlay on mobile with safe-area top, relative header on desktop */}
+            <div className="absolute md:relative top-0 inset-x-0 z-30 px-4 py-2.5 pt-[max(0.75rem,env(safe-area-inset-top))] md:pt-2 sm:px-6 flex items-center justify-between bg-gradient-to-b from-black/90 via-black/50 to-transparent flex-shrink-0 w-full pointer-events-auto">
               <div className="flex-1 flex items-center justify-start z-10">
                 <button
                   onClick={handleCloseReel}
@@ -455,7 +500,7 @@ const ReelCarousel = () => {
               </div>
 
               {/* Exact Dead-Center Aligned Reel Index Counter (1/2, 2/2) */}
-              <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+              <div className="absolute inset-0 pointer-events-none flex items-center justify-center pt-[max(0.75rem,env(safe-area-inset-top))] md:pt-0">
                 <div className="text-xs font-accent font-semibold text-white/90 bg-white/10 backdrop-blur-md px-4 py-1 rounded-full border border-white/15 shadow-md flex items-center justify-center text-center tracking-wider">
                   {activeReelIndex + 1} / {reels.length}
                 </div>
@@ -472,13 +517,13 @@ const ReelCarousel = () => {
               </div>
             </div>
 
-            {/* Main Video Area with balanced height and width */}
-            <div className="relative flex-1 min-h-0 w-full flex items-center justify-center px-2 sm:px-4 pt-1 pb-2 sm:pb-3">
-              {/* Left/Right Navigation Buttons (Outside Video) */}
+            {/* Main Video Area: edge-to-edge full screen on mobile, elegant card on desktop */}
+            <div className="relative flex-1 min-h-0 w-full h-full flex items-center justify-center p-0 md:px-4 md:pt-1 md:pb-3">
+              {/* Left/Right Navigation Buttons (Desktop only, hidden on mobile) */}
               {activeReelIndex > 0 && (
                 <button
                   onClick={handlePrevModal}
-                  className="absolute left-3 md:left-10 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/20 text-white transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
+                  className="hidden md:flex absolute left-3 md:left-10 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/20 text-white transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
                   aria-label="Previous reel"
                 >
                   <FiChevronLeft size={26} />
@@ -487,7 +532,7 @@ const ReelCarousel = () => {
               {activeReelIndex < reels.length - 1 && (
                 <button
                   onClick={handleNextModal}
-                  className="absolute right-3 md:right-10 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/20 text-white transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
+                  className="hidden md:flex absolute right-3 md:right-10 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/20 text-white transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
                   aria-label="Next reel"
                 >
                   <FiChevronRight size={26} />
@@ -496,7 +541,10 @@ const ReelCarousel = () => {
 
               <div
                 onClick={handleTogglePlay}
-                className="relative h-full max-h-full aspect-[9/16] w-full max-w-[390px] sm:max-w-[415px] md:max-w-[430px] mx-auto rounded-3xl md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/15 ring-1 ring-white/10"
+                onTouchStart={handleModalTouchStart}
+                onTouchMove={handleModalTouchMove}
+                onTouchEnd={handleModalTouchEnd}
+                className="relative w-full h-full md:aspect-[9/16] md:max-w-[430px] md:h-full md:max-h-full mx-auto rounded-none md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-none md:shadow-[0_25px_60px_rgba(0,0,0,0.85)] border-0 md:border md:border-white/15 ring-0 md:ring-1 md:ring-white/10"
               >
                 <video
                   ref={(el) => (videoRefs.current[activeReel._id] = el)}
@@ -505,8 +553,9 @@ const ReelCarousel = () => {
                   autoPlay
                   loop
                   playsInline
+                  webkit-playsinline="true"
                   muted={isMuted}
-                  className="w-full h-full object-cover rounded-3xl md:rounded-[36px]"
+                  className="w-full h-full object-cover rounded-none md:rounded-[36px]"
                 />
 
                 {/* Play/Pause Center Indicator */}
@@ -527,7 +576,7 @@ const ReelCarousel = () => {
                 <div className="absolute inset-x-0 bottom-0 h-80 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
 
                 {/* UNIFIED COMPACT BOTTOM OVERLAY WITH NEATLY ALIGNED SHARE BUTTON */}
-                <div className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-5 pt-12 bg-gradient-to-t from-black/95 via-black/70 to-transparent pointer-events-none">
+                <div className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-5 pt-12 pb-[max(1.25rem,env(safe-area-inset-bottom))] md:pb-5 bg-gradient-to-t from-black/95 via-black/70 to-transparent pointer-events-none">
                   <div className="flex items-end justify-between gap-3">
                     {/* Left: Badges, Title, Description */}
                     <div className="flex-1 min-w-0 space-y-1.5 pointer-events-auto text-left">
