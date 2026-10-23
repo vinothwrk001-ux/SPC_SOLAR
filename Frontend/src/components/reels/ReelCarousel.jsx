@@ -443,31 +443,31 @@ const ReelCarousel = () => {
             className="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg flex flex-col overflow-hidden"
           >
             {/* Top Bar Header */}
-            <div className="relative flex-shrink-0 w-full z-30 px-4 py-3 sm:px-6 flex items-center justify-between bg-gradient-to-b from-black/90 via-black/50 to-transparent">
+            <div className="relative flex-shrink-0 w-full z-30 px-4 py-2.5 sm:px-6 flex items-center justify-between bg-gradient-to-b from-black/90 via-black/50 to-transparent">
               <button
                 onClick={handleCloseReel}
-                className="flex items-center gap-2 text-white/80 hover:text-white bg-black/50 hover:bg-black/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15 transition-colors text-xs font-accent uppercase tracking-wider cursor-pointer"
+                className="flex items-center gap-2 text-white/80 hover:text-white bg-black/50 hover:bg-black/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15 transition-colors text-xs font-accent uppercase tracking-wider cursor-pointer z-10"
               >
                 <FiX size={18} />
                 <span>Close</span>
               </button>
 
-              {/* Centrally Aligned Reel Index Counter (1/2, 2/2) - perfectly aligned in Top Bar */}
-              <div className="pointer-events-none text-xs font-accent font-semibold text-white/90 bg-white/10 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/15 shadow-md">
+              {/* Exact Dead-Center Aligned Reel Index Counter (1/2, 2/2) */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pointer-events-none text-xs font-accent font-semibold text-white/90 bg-white/10 backdrop-blur-md px-4 py-1 rounded-full border border-white/15 shadow-md">
                 {activeReelIndex + 1} / {reels.length}
               </div>
 
               <button
                 onClick={handleToggleMute}
-                className="p-2.5 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md text-white border border-white/15 transition-colors cursor-pointer"
+                className="p-2.5 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md text-white border border-white/15 transition-colors cursor-pointer z-10"
                 title={isMuted ? 'Unmute' : 'Mute'}
               >
                 {isMuted ? <FiVolumeX size={18} className="text-red" /> : <FiVolume2 size={18} className="text-emerald-400" />}
               </button>
             </div>
 
-            {/* Main Video Area with proper vertical clearance so reel NEVER overlaps header */}
-            <div className="relative flex-1 min-h-0 w-full flex items-center justify-center p-3 sm:p-5">
+            {/* Main Video Area with increased height and width */}
+            <div className="relative flex-1 min-h-0 w-full flex items-center justify-center px-2 sm:px-4 pt-1 pb-2 sm:pb-3">
               {/* Left/Right Navigation Buttons (Outside Video) */}
               {activeReelIndex > 0 && (
                 <button
@@ -490,7 +490,7 @@ const ReelCarousel = () => {
 
               <div
                 onClick={handleTogglePlay}
-                className="relative h-full max-h-full aspect-[9/16] max-w-[410px] w-auto mx-auto rounded-3xl md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/15 ring-1 ring-white/10"
+                className="relative h-full max-h-full aspect-[9/16] w-full max-w-[450px] sm:max-w-[480px] md:max-w-[500px] mx-auto rounded-3xl md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/15 ring-1 ring-white/10"
               >
                 <video
                   ref={(el) => (videoRefs.current[activeReel._id] = el)}

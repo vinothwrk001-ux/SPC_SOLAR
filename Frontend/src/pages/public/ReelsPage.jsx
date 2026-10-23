@@ -258,7 +258,7 @@ const ReelsPage = () => {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="relative w-full max-w-[410px] aspect-[9/16] max-h-[calc(100dvh-5.5rem)] mx-auto rounded-3xl md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/15 ring-1 ring-white/10"
+            className="relative w-full max-w-[450px] sm:max-w-[480px] md:max-w-[500px] aspect-[9/16] max-h-[calc(100dvh-4.5rem)] mx-auto rounded-3xl md:rounded-[36px] overflow-hidden bg-black flex items-center justify-center cursor-pointer shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/15 ring-1 ring-white/10"
           >
             <video
               ref={(el) => (videoRefs.current[currentReel._id] = el)}
