@@ -17,7 +17,9 @@ import {
   FiSmartphone,
   FiUploadCloud,
   FiTrash2,
-  FiCheck
+  FiCheck,
+  FiGlobe,
+  FiPhone
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 
@@ -67,6 +69,11 @@ const AdminQuotationMaker = () => {
     upiTitle: 'G.PAY / PHONEPE / ALL UPI',
     upiSubtitle: 'Accepts GPay, PhonePe, Paytm, BHIM & All UPI Apps',
     upiQrImage: '',
+
+    // Company Header Profile (Page 1)
+    companyPhone: '80987 44044 (Office), 84896 44044',
+    companyGstNo: '33AAHCS8496F1ZT',
+    companyWebsite: 'https://spcsolarcbe.com',
   });
 
   // Load saved Banker and Scanner payment settings from localStorage on mount
@@ -88,6 +95,9 @@ const AdminQuotationMaker = () => {
           upiTitle: parsed.upiTitle || prev.upiTitle,
           upiSubtitle: parsed.upiSubtitle || prev.upiSubtitle,
           upiQrImage: parsed.upiQrImage || prev.upiQrImage,
+          companyPhone: parsed.companyPhone !== undefined ? parsed.companyPhone : prev.companyPhone,
+          companyGstNo: parsed.companyGstNo !== undefined ? parsed.companyGstNo : prev.companyGstNo,
+          companyWebsite: parsed.companyWebsite !== undefined ? parsed.companyWebsite : prev.companyWebsite,
         }));
       }
     } catch (e) {
@@ -211,6 +221,9 @@ const AdminQuotationMaker = () => {
         upiTitle: formData.upiTitle,
         upiSubtitle: formData.upiSubtitle,
         upiQrImage: formData.upiQrImage,
+        companyPhone: formData.companyPhone,
+        companyGstNo: formData.companyGstNo,
+        companyWebsite: formData.companyWebsite,
         ...updatedFields
       };
       localStorage.setItem('spc_quotation_payment_config', JSON.stringify(current));
@@ -222,7 +235,11 @@ const AdminQuotationMaker = () => {
     const val = type === 'checkbox' ? checked : value;
     setFormData(prev => ({ ...prev, [name]: val }));
 
-    if (['showBankDetails', 'bankCompanyName', 'bankName', 'bankAccountNo', 'bankBranch', 'bankIfsc', 'showScannerDetails', 'gpayNumber', 'upiTitle', 'upiSubtitle'].includes(name)) {
+    if ([
+      'showBankDetails', 'bankCompanyName', 'bankName', 'bankAccountNo', 'bankBranch', 'bankIfsc', 
+      'showScannerDetails', 'gpayNumber', 'upiTitle', 'upiSubtitle',
+      'companyPhone', 'companyGstNo', 'companyWebsite'
+    ].includes(name)) {
       savePaymentConfigToStorage({ [name]: val });
     }
   };
@@ -344,7 +361,11 @@ const AdminQuotationMaker = () => {
     const cleanPhone = rawPhone.replace(/\D/g, '');
     const phoneWithCode = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
 
-    const message = `Hello *${formData.toName}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):\n\n⚡ *System Size:* ${formData.kwSize} KW (${formData.systemType})\n📦 *PV Modules:* ${formData.panelQty} Nos (${formData.panelMake.replace(/\n/g, ' ')})\n🔌 *Inverter:* ${formData.inverterCapacity} KVA (${formData.inverterMake.replace(/\n/g, ' ')})\n\n💵 *Total System Cost:* ₹${total.toLocaleString()}\n🏛️ *Govt Subsidy:* -₹${subsidy.toLocaleString()}\n🧾 *Net Investment:* *₹${grandTotal.toLocaleString()}*\n\n💳 *Payment Milestones:*\n1. Material Dispatch / Advance (${formData.advPercent}%): ₹${term1.toLocaleString()}\n2. Second Stage (${formData.secPercent}%): ₹${term2.toLocaleString()}\n3. Work Completion (${formData.thirdPercent}%): ₹${term3.toLocaleString()}\n\n📞 Contact: 80987 44044 (Office) / 84896 44044\n🌐 Website: SPC Solar Technology`;
+    const contactStr = formData.companyPhone || '80987 44044 (Office) / 84896 44044';
+    const webStr = formData.companyWebsite || 'https://spcsolarcbe.com';
+    const gstStr = formData.companyGstNo ? `\n🏛️ *GST No:* ${formData.companyGstNo}` : '';
+
+    const message = `Hello *${formData.toName}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):\n\n⚡ *System Size:* ${formData.kwSize} KW (${formData.systemType})\n📦 *PV Modules:* ${formData.panelQty} Nos (${formData.panelMake.replace(/\n/g, ' ')})\n🔌 *Inverter:* ${formData.inverterCapacity} KVA (${formData.inverterMake.replace(/\n/g, ' ')})\n\n💵 *Total System Cost:* ₹${total.toLocaleString()}\n🏛️ *Govt Subsidy:* -₹${subsidy.toLocaleString()}\n🧾 *Net Investment:* *₹${grandTotal.toLocaleString()}*${gstStr}\n\n💳 *Payment Milestones:*\n1. Material Dispatch / Advance (${formData.advPercent}%): ₹${term1.toLocaleString()}\n2. Second Stage (${formData.secPercent}%): ₹${term2.toLocaleString()}\n3. Work Completion (${formData.thirdPercent}%): ₹${term3.toLocaleString()}\n\n📞 Contact: ${contactStr}\n🌐 Website: ${webStr}`;
 
     if (cleanPhone) {
       window.open(`https://wa.me/${phoneWithCode}?text=${encodeURIComponent(message)}`, '_blank');
@@ -486,6 +507,46 @@ const AdminQuotationMaker = () => {
         <Input label="Advance Payment %" name="advPercent" type="number" value={formData.advPercent} onChange={handleChange} />
         <Input label="Second Payment %" name="secPercent" type="number" value={formData.secPercent} onChange={handleChange} />
         <Input label="Final Payment %" name="thirdPercent" type="number" value={formData.thirdPercent} onChange={handleChange} />
+      </div>
+
+      {/* --- COMPANY HEADER PROFILE CONTROLS (PAGE 1) --- */}
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 print:hidden space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-100 pb-3">
+          <div>
+            <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+              <span className="p-1.5 rounded-lg bg-red-50 text-red-600"><FiGlobe size={18} /></span>
+              Company Header Profile (Page 1)
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Edit the Company Phone Number, GST Number, and Website Link displayed at the top-left of Page 1.
+            </p>
+          </div>
+          <span className="text-xs text-gray-400">Auto-saved for future quotes</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Input 
+            label="Company Phone Number" 
+            name="companyPhone" 
+            value={formData.companyPhone} 
+            onChange={handleChange} 
+            placeholder="e.g. 80987 44044 (Office), 84896 44044" 
+          />
+          <Input 
+            label="GST No" 
+            name="companyGstNo" 
+            value={formData.companyGstNo} 
+            onChange={handleChange} 
+            placeholder="e.g. 33AAHCS8496F1ZT" 
+          />
+          <Input 
+            label="Website Link (Clickable)" 
+            name="companyWebsite" 
+            value={formData.companyWebsite} 
+            onChange={handleChange} 
+            placeholder="e.g. https://spcsolarcbe.com" 
+          />
+        </div>
       </div>
 
       {/* --- PAYMENT & BANKING SECTION CONTROLS (OUR BANKER & SCAN TO PAY) --- */}
@@ -746,8 +807,27 @@ const AdminQuotationMaker = () => {
                     <p className="text-gray-700 leading-snug">No-115-117, Easwari Towers,</p>
                     <p className="text-gray-700 leading-snug">Devanga High School Road, RS Puram,</p>
                     <p className="text-gray-700 leading-snug">Coimbatore - 641002.</p>
-                    <p className="mt-0.5 text-red-600 font-bold tracking-wide">MOBILE: 80987 44044 (Office), 84896 44044</p>
+                    <p className="mt-0.5 text-red-600 font-bold tracking-wide">
+                      MOBILE: {formData.companyPhone || '80987 44044 (Office), 84896 44044'}
+                    </p>
                     <p className="text-red-600 font-medium">spctechnologycoimbatore@gmail.com</p>
+                    {formData.companyGstNo && (
+                      <p className="text-gray-900 font-bold tracking-wide">
+                        GST NO: {formData.companyGstNo}
+                      </p>
+                    )}
+                    {formData.companyWebsite && (
+                      <p className="text-blue-600 font-semibold tracking-normal lowercase">
+                        <a 
+                          href={formData.companyWebsite.startsWith('http') ? formData.companyWebsite : `https://${formData.companyWebsite}`}
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="hover:underline text-blue-600 inline-flex items-center gap-1 font-medium"
+                        >
+                          🌐 {formData.companyWebsite.replace(/^https?:\/\//, '')}
+                        </a>
+                      </p>
+                    )}
                   </div>
                   <div className="text-right flex flex-col items-end">
                     <div className="bg-white p-1.5 rounded-xl shadow-xs border border-gray-200">

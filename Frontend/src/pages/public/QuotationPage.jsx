@@ -786,22 +786,12 @@ Please arrange a *Free Site Survey* for my premises!`;
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-1.5 sm:flex sm:items-center sm:space-x-2.5 w-full sm:w-auto">
-            {/* Download PDF Button */}
-            <button
-              type="button"
-              onClick={generatePDF}
-              className="px-2 py-2 sm:px-4 sm:py-2.5 border border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 text-gray-800 font-bold rounded-lg sm:rounded-xl text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1 sm:gap-2 shadow-xs"
-            >
-              <FiDownload className="text-red w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-              <span className="truncate">Download PDF</span>
-            </button>
-
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:space-x-2.5 w-full sm:w-auto">
             {/* WhatsApp Chat Estimate */}
             <button
               type="button"
               onClick={openWhatsApp}
-              className="px-2 py-2 sm:px-4 sm:py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg sm:rounded-xl text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1 sm:gap-2 shadow-xs"
+              className="px-3 py-2 sm:px-4 sm:py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg sm:rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-xs"
             >
               <FaWhatsapp className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
               <span className="truncate">WhatsApp</span>
@@ -811,7 +801,7 @@ Please arrange a *Free Site Survey* for my premises!`;
             <button
               type="button"
               onClick={() => setIsConsultModalOpen(true)}
-              className="bg-red hover:bg-red-700 text-white font-bold px-2 py-2 sm:px-5 sm:py-2.5 rounded-lg sm:rounded-xl text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1 sm:gap-2 shadow-md hover:shadow-lg"
+              className="bg-red hover:bg-red-700 text-white font-bold px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg"
             >
               <span className="truncate">Free Survey</span>
               <FiArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 hidden xs:inline-block" />
