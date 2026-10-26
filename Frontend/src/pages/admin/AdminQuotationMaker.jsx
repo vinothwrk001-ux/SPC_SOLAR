@@ -473,8 +473,8 @@ const AdminQuotationMaker = () => {
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 print:hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
         <Input label="Reference No" name="refNo" value={formData.refNo} onChange={handleChange} />
         <Input label="Date" name="date" value={formData.date} onChange={handleChange} />
-        <Input label="Customer Full Name" name="toName" value={formData.toName} onChange={handleChange} />
-        <Input label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} placeholder="e.g. 9876543210" />
+        <Input label="Customer Name" name="toName" value={formData.toName} onChange={handleChange} />
+        <Input label="Customer Phone No" name="phone" value={formData.phone} onChange={handleChange} placeholder="e.g. 9876543210" />
         <Input label="Address Line 1" name="toAddressLine1" value={formData.toAddressLine1} onChange={handleChange} />
         <Input label="Address Line 2 (City, State)" name="toAddressLine2" value={formData.toAddressLine2} onChange={handleChange} />
         
@@ -847,6 +847,11 @@ const AdminQuotationMaker = () => {
                   <div className="uppercase">
                     <p className="text-red-600 text-[9px] font-bold tracking-widest mb-0.5">BILL TO</p>
                     <p className="font-bold text-black text-xs sm:text-sm tracking-wide">{formData.toName}</p>
+                    {formData.phone && (
+                      <p className="text-red-600 font-bold text-[10.5px] mt-0.5 tracking-wide">
+                        PH: {formData.phone}
+                      </p>
+                    )}
                     <p className="text-gray-700 text-[10px] mt-0.5 leading-snug">{formData.toAddressLine1}</p>
                     <p className="text-gray-700 text-[10px] leading-snug">{formData.toAddressLine2}</p>
                   </div>

@@ -507,33 +507,17 @@ const ProjectsPage = () => {
             </h2>
             <span className="red-line mx-auto" />
             <p className="section-subtitle mx-auto">
-              Headquartered in Coimbatore with dedicated field installation and service hubs across Tamil Nadu.
+              Headquartered in Trichy with our central operations and Coimbatore branch serving installations across Tamil Nadu.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Coimbatore HQ */}
-            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex flex-col justify-between">
+          <div className="grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto gap-6">
+            {/* Trichy HQ */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <FiMapPin className="text-red shrink-0" size={18} />
-                  <h4 className="font-heading font-bold text-gray-900 text-sm sm:text-base">Coimbatore (HQ)</h4>
-                </div>
-                <p className="text-xs text-gray-600 font-body leading-relaxed mb-3">
-                  NO: 115-117, Easwari Towers, Devanga High School Road, RS Puram, Coimbatore - 641002.
-                </p>
-              </div>
-              <div className="pt-2 border-t border-gray-100 text-[11px] font-semibold text-gray-800">
-                📞 <a href="tel:+918098744044" className="hover:text-red">+91 80987 44044 (Office)</a>
-              </div>
-            </div>
-
-            {/* Trichy Branch */}
-            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <FiMapPin className="text-red shrink-0" size={18} />
-                  <h4 className="font-heading font-bold text-gray-900 text-sm sm:text-base">Trichy Branch</h4>
+                  <h4 className="font-heading font-bold text-gray-900 text-sm sm:text-base">Trichy (HQ)</h4>
                 </div>
                 <p className="text-xs text-gray-600 font-body leading-relaxed mb-3">
                   No: 175, Sri Ramadevi Building, 10th Cross West Extension, Thillai Nagar, Trichy - 620018.
@@ -544,35 +528,19 @@ const ProjectsPage = () => {
               </div>
             </div>
 
-            {/* Thanjavur Hub */}
-            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex flex-col justify-between">
+            {/* Coimbatore Branch */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <FiMapPin className="text-red shrink-0" size={18} />
-                  <h4 className="font-heading font-bold text-gray-900 text-sm sm:text-base">Thanjavur Service Hub</h4>
+                  <h4 className="font-heading font-bold text-gray-900 text-sm sm:text-base">Coimbatore Branch</h4>
                 </div>
                 <p className="text-xs text-gray-600 font-body leading-relaxed mb-3">
-                  Dedicated regional field engineering team handling Delta & Cauvery basin installations.
+                  NO: 115-117, Easwari Towers, Devanga High School Road, RS Puram, Coimbatore - 641002.
                 </p>
               </div>
               <div className="pt-2 border-t border-gray-100 text-[11px] font-semibold text-gray-800">
-                📞 <a href="tel:+918489744044" className="hover:text-red">+91 84897 44044</a>
-              </div>
-            </div>
-
-            {/* Chennai Hub */}
-            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <FiMapPin className="text-red shrink-0" size={18} />
-                  <h4 className="font-heading font-bold text-gray-900 text-sm sm:text-base">Chennai Service Hub</h4>
-                </div>
-                <p className="text-xs text-gray-600 font-body leading-relaxed mb-3">
-                  Commercial & industrial project engineering desk covering Greater Chennai & coastal corridors.
-                </p>
-              </div>
-              <div className="pt-2 border-t border-gray-100 text-[11px] font-semibold text-gray-800">
-                📞 <a href="tel:+918098744044" className="hover:text-red">+91 80987 44044</a>
+                📞 <a href="tel:+918098744044" className="hover:text-red">+91 80987 44044 (Office)</a>
               </div>
             </div>
           </div>

@@ -10,7 +10,7 @@ import ReferralCard from '../../components/referral/ReferralCard';
 import { getBreadcrumbSchema, getFAQSchema } from '../../components/seo/schemas';
 import { 
   FiHome, FiBriefcase, FiSettings, FiActivity, FiCheckCircle, 
-  FiArrowRight, FiChevronDown, FiZap, FiSun
+  FiChevronDown, FiZap, FiSun
 } from 'react-icons/fi';
 
 const STATIC_SERVICES = [
@@ -391,22 +391,6 @@ const ServicesPage = () => {
                         </div>
                       </div>
 
-                      {/* Action Button */}
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 pt-1 sm:pt-2">
-                        <Link to="/quotation" className="block sm:inline-block">
-                          <Button
-                            variant="primary"
-                            size="md"
-                            className="w-full sm:w-auto justify-center !py-2 sm:!py-3 !px-4 sm:!px-6 !text-[11px] sm:!text-sm shadow-md shadow-red/20"
-                            icon={<FiArrowRight size={13} />}
-                          >
-                            Get Free Quote for {service.title}
-                          </Button>
-                        </Link>
-                        <span className="text-[10px] sm:text-xs text-gray-500 font-body text-center sm:text-right">
-                          Free Site Survey & ROI Calculation Included
-                        </span>
-                      </div>
                     </motion.div>
                   )}
                 </div>
