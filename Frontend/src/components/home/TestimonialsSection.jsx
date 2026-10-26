@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight, FiStar, FiMessageSquare, FiSend, FiUpload, FiX, FiImage } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiStar, FiMessageSquare, FiSend, FiUpload, FiX, FiImage, FiMaximize2, FiZoomIn } from 'react-icons/fi';
 import { Reveal } from '../motion';
 import Modal from '../ui/Modal';
 import Input from '../ui/Input';
@@ -12,9 +12,9 @@ import { usePreload } from '../../context/PreloadContext';
 const formatImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) return url;
-  const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || '';
-  if (url.startsWith('/uploads')) return `${baseUrl}${url}`;
-  return `${baseUrl}/uploads/${url}`;
+  const clean = url.startsWith('/') ? url : `/${url}`;
+  const baseUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, '') || '';
+  return `${baseUrl}${clean}`;
 };
 
 const TestimonialsSection = () => {
@@ -22,6 +22,7 @@ const TestimonialsSection = () => {
   const [testimonials, setTestimonials] = useState(() => preloadedData?.testimonials || []);
   const [loading, setLoading] = useState(() => !preloadedData?.testimonials);
   const [active, setActive] = useState(0);
+  const [enlargedImage, setEnlargedImage] = useState(null);
 
   // Write Review Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,6 +58,18 @@ const TestimonialsSection = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setEnlargedImage(null);
+      }
+    };
+    if (enlargedImage) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [enlargedImage]);
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
@@ -173,20 +186,29 @@ const TestimonialsSection = () => {
                 </blockquote>
 
                 {/* Author Info */}
-                <div className="flex items-center justify-center gap-3 pt-3 border-t border-gray-200/70 w-full">
+                <div className="flex items-center justify-center gap-3.5 pt-3.5 border-t border-gray-200/80 w-full">
                   {currentItem.photo ? (
-                    <img
-                      src={formatImageUrl(currentItem.photo)}
-                      alt={currentItem.name}
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                      style={{ width: '48px', height: '48px', minWidth: '48px', minHeight: '48px', maxWidth: '48px', maxHeight: '48px' }}
-                      className="w-12 h-12 rounded-xl object-cover border border-red/40 shadow-2xs flex-shrink-0"
-                    />
+                    <div
+                      onClick={() => setEnlargedImage(currentItem)}
+                      className="relative group cursor-pointer flex-shrink-0"
+                      title="Click to enlarge photo"
+                    >
+                      <img
+                        src={formatImageUrl(currentItem.photo)}
+                        alt={currentItem.name}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                        }}
+                        style={{ width: '56px', height: '56px', minWidth: '56px', minHeight: '56px', maxWidth: '56px', maxHeight: '56px' }}
+                        className="w-14 h-14 rounded-xl object-cover border-2 border-red/40 group-hover:border-red shadow-xs transition-all duration-200 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/45 rounded-xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200 text-white shadow-inner">
+                        <FiMaximize2 size={16} />
+                      </div>
+                    </div>
                   ) : (
                     <div 
-                      style={{ width: '48px', height: '48px', minWidth: '48px', minHeight: '48px' }}
+                      style={{ width: '50px', height: '50px', minWidth: '50px', minHeight: '50px' }}
                       className="w-12 h-12 rounded-xl bg-red flex items-center justify-center text-white font-heading text-xs font-bold flex-shrink-0 uppercase shadow-2xs"
                     >
                       {currentItem.name ? currentItem.name.slice(0, 2) : 'CL'}
@@ -197,6 +219,16 @@ const TestimonialsSection = () => {
                     <p className="font-accent text-red text-[10.5px] font-bold uppercase tracking-wider truncate">
                       {currentItem.location} {currentItem.systemSize ? `• ${currentItem.systemSize}` : ''}
                     </p>
+                    {currentItem.photo && (
+                      <button
+                        type="button"
+                        onClick={() => setEnlargedImage(currentItem)}
+                        className="inline-flex items-center gap-1 text-[11px] font-accent font-semibold text-red hover:text-black transition-colors mt-0.5 cursor-pointer"
+                        title="Click to enlarge photo"
+                      >
+                        <FiZoomIn size={12} /> <span>Click to enlarge photo</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -352,6 +384,71 @@ const TestimonialsSection = () => {
           </Button>
         </form>
       </Modal>
+
+      {/* Lightbox / Enlarged Photo Modal */}
+      <AnimatePresence>
+        {enlargedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 sm:p-6"
+            onClick={() => setEnlargedImage(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="relative max-w-2xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header bar */}
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 bg-gray-50/90">
+                <div className="min-w-0 pr-4">
+                  <h3 className="font-heading text-base font-bold text-black truncate">
+                    {enlargedImage.name}
+                  </h3>
+                  <p className="font-accent text-red text-xs font-semibold uppercase tracking-wider truncate">
+                    {enlargedImage.location} {enlargedImage.systemSize ? `• ${enlargedImage.systemSize}` : ''}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEnlargedImage(null)}
+                  className="w-8 h-8 rounded-full bg-gray-200/80 hover:bg-red hover:text-white flex items-center justify-center text-gray-700 transition-colors cursor-pointer flex-shrink-0"
+                  title="Close (ESC)"
+                >
+                  <FiX size={18} />
+                </button>
+              </div>
+
+              {/* High-res Image Display */}
+              <div className="bg-black/95 flex items-center justify-center p-3 sm:p-5 max-h-[62vh] overflow-hidden">
+                <img
+                  src={formatImageUrl(enlargedImage.photo)}
+                  alt={enlargedImage.name}
+                  className="max-h-[58vh] max-w-full object-contain rounded-lg shadow-lg"
+                />
+              </div>
+
+              {/* Review Details Footer */}
+              <div className="p-4 sm:p-5 bg-white border-t border-gray-100">
+                <div className="flex items-center gap-1 mb-2">
+                  {Array.from({ length: enlargedImage.rating || 5 }).map((_, i) => (
+                    <FiStar key={i} size={14} className="text-red fill-red" style={{ fill: '#CC2222' }} />
+                  ))}
+                  <span className="text-[11px] text-gray-500 font-accent ml-2 uppercase font-semibold">Verified Client Review</span>
+                </div>
+                <p className="text-xs sm:text-sm text-gray-700 italic font-body leading-relaxed">
+                  "{enlargedImage.review}"
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
