@@ -122,25 +122,25 @@ const TestimonialsSection = () => {
   const currentItem = testimonials[active];
 
   return (
-    <section className="py-16 md:py-24 bg-white relative overflow-hidden">
+    <section className="py-10 md:py-14 bg-white relative overflow-hidden">
       {/* Diagonal red accent */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red/30 via-red to-red/30" />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="text-center mb-10 md:mb-12">
+          <div className="text-center mb-6 md:mb-8">
             <span className="section-label">Client Stories</span>
-            <h2 className="section-title">
+            <h2 className="section-title text-2xl sm:text-3xl">
               WHAT OUR <span className="text-red">CLIENTS SAY</span>
             </h2>
             <span className="red-line-center" />
 
-            <div className="mt-4">
+            <div className="mt-3">
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center gap-2 text-sm font-accent font-bold text-red hover:text-black transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-accent font-bold text-red hover:text-black transition-colors"
               >
-                <FiMessageSquare /> <span>Write a Review / Share Your Experience</span>
+                <FiMessageSquare size={13} /> <span>Write a Review / Share Your Experience</span>
               </button>
             </div>
           </div>
@@ -148,32 +148,32 @@ const TestimonialsSection = () => {
 
         {/* Testimonial Content */}
         {loading ? (
-          <div className="text-center py-12 text-gray font-accent">Loading Client Stories...</div>
+          <div className="text-center py-8 text-gray font-accent text-xs">Loading Client Stories...</div>
         ) : testimonials.length > 0 && currentItem ? (
           <div className="relative">
             <AnimatePresence mode="wait">
               <motion.div
                 key={active}
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="bg-gray-50 border border-gray-200 rounded-card p-6 sm:p-10 md:p-14 text-center max-w-3xl mx-auto shadow-sm"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="bg-gray-50/90 border border-gray-200/90 rounded-2xl p-5 sm:p-6 text-center max-w-md sm:max-w-lg mx-auto shadow-sm flex flex-col justify-between items-center"
               >
                 {/* Stars */}
-                <div className="flex justify-center gap-1 mb-6">
+                <div className="flex justify-center gap-1 mb-3">
                   {Array.from({ length: currentItem.rating || 5 }).map((_, i) => (
-                    <FiStar key={i} size={18} className="text-red fill-red" style={{ fill: '#CC2222' }} />
+                    <FiStar key={i} size={15} className="text-red fill-red" style={{ fill: '#CC2222' }} />
                   ))}
                 </div>
 
                 {/* Quote */}
-                <blockquote className="font-body text-gray-700 text-xs sm:text-sm md:text-lg leading-relaxed italic mb-4 md:mb-8">
+                <blockquote className="font-body text-gray-700 text-xs sm:text-sm leading-relaxed italic mb-4 px-2 max-w-sm line-clamp-4">
                   "{currentItem.review}"
                 </blockquote>
 
-                {/* Author */}
-                <div className="flex items-center justify-center gap-4">
+                {/* Author Info */}
+                <div className="flex items-center justify-center gap-3 pt-3 border-t border-gray-200/70 w-full">
                   {currentItem.photo ? (
                     <img
                       src={formatImageUrl(currentItem.photo)}
@@ -181,16 +181,20 @@ const TestimonialsSection = () => {
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                       }}
-                      className="w-13 h-13 rounded-full object-cover border-2 border-red shadow-sm flex-shrink-0"
+                      style={{ width: '48px', height: '48px', minWidth: '48px', minHeight: '48px', maxWidth: '48px', maxHeight: '48px' }}
+                      className="w-12 h-12 rounded-xl object-cover border border-red/40 shadow-2xs flex-shrink-0"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-red flex items-center justify-center text-white font-heading text-sm font-bold flex-shrink-0 uppercase shadow-sm">
+                    <div 
+                      style={{ width: '48px', height: '48px', minWidth: '48px', minHeight: '48px' }}
+                      className="w-12 h-12 rounded-xl bg-red flex items-center justify-center text-white font-heading text-xs font-bold flex-shrink-0 uppercase shadow-2xs"
+                    >
                       {currentItem.name ? currentItem.name.slice(0, 2) : 'CL'}
                     </div>
                   )}
-                  <div className="text-left">
-                    <p className="font-heading text-lg text-black font-bold">{currentItem.name}</p>
-                    <p className="font-accent text-red text-xs font-bold uppercase tracking-wider">
+                  <div className="text-left min-w-0 max-w-[240px]">
+                    <p className="font-heading text-sm text-black font-bold truncate">{currentItem.name}</p>
+                    <p className="font-accent text-red text-[10.5px] font-bold uppercase tracking-wider truncate">
                       {currentItem.location} {currentItem.systemSize ? `• ${currentItem.systemSize}` : ''}
                     </p>
                   </div>
@@ -200,24 +204,24 @@ const TestimonialsSection = () => {
 
             {/* Navigation */}
             {testimonials.length > 1 && (
-              <div className="flex justify-center gap-4 mt-10">
+              <div className="flex justify-center items-center gap-3 mt-5">
                 <button
                   onClick={prev}
                   aria-label="Previous testimonial"
-                  className="w-11 h-11 rounded-sm border-2 border-gray-200 flex items-center justify-center text-gray-400 hover:border-red hover:text-red transition-all duration-250"
+                  className="w-8 h-8 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-gray-400 hover:border-red hover:text-red transition-all duration-200 shadow-2xs cursor-pointer"
                 >
-                  <FiChevronLeft size={20} />
+                  <FiChevronLeft size={16} />
                 </button>
 
                 {/* Dots */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   {testimonials.map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setActive(i)}
                       aria-label={`Testimonial ${i + 1}`}
-                      className={`transition-all duration-300 rounded-full ${
-                        i === active ? 'w-6 h-2 bg-red' : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
+                      className={`transition-all duration-200 rounded-full cursor-pointer ${
+                        i === active ? 'w-5 h-1.5 bg-red' : 'w-1.5 h-1.5 bg-gray-300 hover:bg-gray-400'
                       }`}
                     />
                   ))}
@@ -226,22 +230,22 @@ const TestimonialsSection = () => {
                 <button
                   onClick={next}
                   aria-label="Next testimonial"
-                  className="w-11 h-11 rounded-sm border-2 border-gray-200 flex items-center justify-center text-gray-400 hover:border-red hover:text-red transition-all duration-250"
+                  className="w-8 h-8 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-gray-400 hover:border-red hover:text-red transition-all duration-200 shadow-2xs cursor-pointer"
                 >
-                  <FiChevronRight size={20} />
+                  <FiChevronRight size={16} />
                 </button>
               </div>
             )}
           </div>
         ) : (
           /* Empty State when 0 reviews are approved */
-          <div className="bg-gray-50 border border-gray-200 rounded-card p-10 text-center max-w-xl mx-auto space-y-4">
-            <p className="text-gray-600 font-body text-base">No client reviews published yet.</p>
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 text-center max-w-md mx-auto space-y-3">
+            <p className="text-gray-600 font-body text-xs">No client reviews published yet.</p>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 bg-red hover:bg-black text-white px-6 py-2.5 rounded-btn font-accent font-bold text-sm transition-colors"
+              className="inline-flex items-center gap-1.5 bg-red hover:bg-black text-white px-4 py-2 rounded-lg font-accent font-bold text-xs transition-colors"
             >
-              <FiMessageSquare /> Be the first to write a review
+              <FiMessageSquare size={13} /> Be the first to write a review
             </button>
           </div>
         )}
