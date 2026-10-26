@@ -15,18 +15,21 @@ import {
   FiGlobe 
 } from 'react-icons/fi';
 
+import bennyWilsonPhoto from '../../assets/benny-wilson.jpg';
+import pavanKarthikPhoto from '../../assets/pavan-karthik.jpg';
+
 const LEADERSHIP = [
   {
     name: 'Benny Wilson',
     role: 'Managing Director',
-    image: '/uploads/benny-wilson.png',
-    fallbackImage: 'http://localhost:5000/uploads/17221315-5e57-4946-bcf8-32b2bbd4328d.png',
+    image: bennyWilsonPhoto,
+    fallbackImage: '/uploads/benny-wilson.jpg',
   },
   {
     name: 'Pavan Karthik',
     role: 'Managing Director',
-    image: '/uploads/pavan-karthik.png',
-    fallbackImage: 'http://localhost:5000/uploads/Professional%20Studio%20Portrait%20in%20Suit.png',
+    image: pavanKarthikPhoto,
+    fallbackImage: '/uploads/pavan-karthik.jpg',
   },
 ];
 
@@ -142,7 +145,7 @@ const AboutPage = () => {
                     className="group bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl hover:shadow-red-500/10 transition-all duration-300 flex flex-col hover:-translate-y-1"
                   >
                     {/* Portrait Container */}
-                    <div className="relative aspect-[1103/1350] w-full bg-white overflow-hidden flex items-center justify-center p-2 border-b border-gray-100">
+                    <div className="relative aspect-[3/4] w-full bg-white overflow-hidden flex items-center justify-center border-b border-gray-100">
                       <img
                         src={leader.image}
                         alt={leader.name}
@@ -151,7 +154,7 @@ const AboutPage = () => {
                             e.currentTarget.src = leader.fallbackImage;
                           }
                         }}
-                        className="w-full h-full object-contain object-top group-hover:scale-105 transition-transform duration-500 ease-out"
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 ease-out"
                         loading="lazy"
                       />
                     </div>
