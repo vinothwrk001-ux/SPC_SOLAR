@@ -220,20 +220,8 @@ const Footer = () => {
 
         {/* ---- Service Areas Local SEO Bar ---- */}
         <div className="border-t border-white/6 pt-4 pb-2 text-[11px] sm:text-xs text-gray-400 flex flex-wrap items-center justify-between gap-2">
-          <span className="text-gray-300 font-semibold">Service Areas in Tamil Nadu:</span>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 text-gray-400">
-            <span>Coimbatore (RS Puram, Gandhipuram, Peelamedu, Saravanampatti)</span>
-            <span>•</span>
-            <span>Tirupur</span>
-            <span>•</span>
-            <span>Erode</span>
-            <span>•</span>
-            <span>Salem</span>
-            <span>•</span>
-            <span>Pollachi</span>
-            <span>•</span>
-            <span>Across Tamil Nadu</span>
-          </div>
+          <span className="text-gray-300 font-semibold">Service Areas:</span>
+          <span className="text-gray-300 font-medium">All Over Tamil Nadu</span>
         </div>
 
         {/* ---- Bottom Bar ---- */}

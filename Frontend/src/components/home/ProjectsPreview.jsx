@@ -51,6 +51,7 @@ const TRUSTED_CLIENTS_SUMMARY = [
   { name: 'IndianOil', spec: '10/25 kW' },
   { name: 'Bharat Petroleum', spec: '10 kW' },
   { name: 'HPCL', spec: '10 kW' },
+  { name: 'St. Joan of Arc', spec: '40 kW' },
 ];
 
 const formatProjectsData = (data) => {
@@ -171,14 +172,14 @@ const ProjectsPreview = () => {
               View Full Portfolio <FiArrowRight size={13} />
             </Link>
           </div>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {TRUSTED_CLIENTS_SUMMARY.map((client) => (
               <div 
                 key={client.name}
-                className="bg-white border border-gray-200/90 rounded-lg px-3 py-1.5 flex items-center gap-2 shadow-2xs hover:border-red transition-colors"
+                className="bg-white border border-gray-200/90 rounded-lg px-2.5 sm:px-3.5 py-2 flex items-center justify-between gap-1.5 sm:gap-2 shadow-2xs hover:border-red transition-all"
               >
-                <span className="font-heading font-bold text-xs text-gray-900">{client.name}</span>
-                <span className="text-[10px] font-accent font-bold text-red bg-red/5 px-1.5 py-0.5 rounded border border-red/15">
+                <span className="font-heading font-bold text-xs sm:text-sm text-gray-900 truncate">{client.name}</span>
+                <span className="text-[10px] sm:text-[11px] font-accent font-bold text-red bg-red/5 px-1.5 py-0.5 rounded border border-red/15 shrink-0 whitespace-nowrap">
                   {client.spec}
                 </span>
               </div>
