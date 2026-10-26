@@ -16,6 +16,20 @@ const getApprovedTestimonials = async (req, res) => {
 const submitCustomerReview = async (req, res) => {
   try {
     const { name, location, systemSize, rating, review } = req.body;
+    let photo = req.body.photo || req.body.image || '';
+
+    if (req.file) {
+      photo = `/uploads/${req.file.filename}`;
+    } else if (req.files) {
+      if (req.files.photo && req.files.photo[0]) {
+        photo = `/uploads/${req.files.photo[0].filename}`;
+      } else if (req.files.image && req.files.image[0]) {
+        photo = `/uploads/${req.files.image[0].filename}`;
+      } else if (Array.isArray(req.files) && req.files.length > 0) {
+        photo = `/uploads/${req.files[0].filename}`;
+      }
+    }
+
     if (!name || !review) {
       return res.status(400).json({ message: 'Name and review content are required' });
     }
@@ -26,6 +40,7 @@ const submitCustomerReview = async (req, res) => {
       systemSize: systemSize || '',
       rating: Number(rating) || 5,
       review,
+      photo,
       status: 'Pending',
       source: 'Customer'
     });
@@ -57,13 +72,47 @@ const getAllTestimonialsAdmin = async (req, res) => {
 // @route POST /api/testimonials/admin
 const createAdminTestimonial = async (req, res) => {
   try {
+    let photo = req.body.photo || req.body.image || '';
+    if (req.file) {
+      photo = `/uploads/${req.file.filename}`;
+    } else if (req.files) {
+      if (req.files.photo && req.files.photo[0]) {
+        photo = `/uploads/${req.files.photo[0].filename}`;
+      } else if (req.files.image && req.files.image[0]) {
+        photo = `/uploads/${req.files.image[0].filename}`;
+      }
+    }
+
     const testimonial = new Testimonial({
       ...req.body,
+      photo,
       status: req.body.status || 'Approved',
       source: 'Admin'
     });
     const saved = await testimonial.save();
     res.status(201).json(saved);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// @desc Admin updates entire testimonial
+// @route PUT /api/testimonials/admin/:id
+const updateAdminTestimonial = async (req, res) => {
+  try {
+    const data = { ...req.body };
+    if (req.file) {
+      data.photo = `/uploads/${req.file.filename}`;
+    } else if (req.files) {
+      if (req.files.photo && req.files.photo[0]) {
+        data.photo = `/uploads/${req.files.photo[0].filename}`;
+      } else if (req.files.image && req.files.image[0]) {
+        data.photo = `/uploads/${req.files.image[0].filename}`;
+      }
+    }
+
+    const updated = await Testimonial.findByIdAndUpdate(req.params.id, data, { new: true });
+    res.json(updated);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -105,6 +154,7 @@ module.exports = {
   submitCustomerReview,
   getAllTestimonialsAdmin,
   createAdminTestimonial,
+  updateAdminTestimonial,
   updateTestimonialStatus,
   deleteTestimonial
 };

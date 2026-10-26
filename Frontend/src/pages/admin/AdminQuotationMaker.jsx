@@ -47,7 +47,7 @@ const AdminQuotationMaker = () => {
     panelQty: 182,
     panelMake: 'EASTMAN/ADDO WAAREE/EMMVEE/LUMINOUS/KIRLOSHKAR',
     inverterCapacity: 100,
-    inverterMake: 'POLYCAB EASTMAN/ADDO',
+    inverterMake: 'TATA/EASTMAN/ADDO',
     pricePerKw: 48000,
     gstPercent: 5,
     subsidyAmount: 0,
@@ -106,28 +106,28 @@ const AdminQuotationMaker = () => {
   }, []);
 
   const ON_GRID_DATA = {
-    1: { panelQty: 2, panelMake: 'EASTMAN/EMMVEE\nADDO/VIKRAM SOLAR\nKIRLOSKAR/LUMINOUS', inverterCapacity: 1, inverterMake: 'ADDO\nPOLYCAB/EASTMAN', pricePerKw: 102000, subsidy: 30000, gst: 0, adv: 100, sec: 0, third: 0 },
-    2: { panelQty: 4, panelMake: 'EMMVEE/EASTMAN\nADDO/VIKRAM SOLAR\nKIRLOSKAR/LUMINOUS', inverterCapacity: 3, inverterMake: 'ADDO\nPOLYCAB/EASTMAN', pricePerKw: 90000, subsidy: 60000, gst: 0, adv: 80, sec: 20, third: 0 },
-    3: { panelQty: 6, panelMake: 'ADDO/EMMVEE\nEASTMAN/VIKRAM SOLAR\nUTL/KIRLOSKAR\nLUMINOUS', inverterCapacity: 3, inverterMake: 'ADDO\nEASTMAN/POLYCAB', pricePerKw: 76000, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
+    1: { panelQty: 2, panelMake: 'EASTMAN/EMMVEE\nADDO/VIKRAM SOLAR\nKIRLOSKAR/LUMINOUS', inverterCapacity: 1, inverterMake: 'ADDO\nTATA/EASTMAN', pricePerKw: 102000, subsidy: 30000, gst: 0, adv: 100, sec: 0, third: 0 },
+    2: { panelQty: 4, panelMake: 'EMMVEE/EASTMAN\nADDO/VIKRAM SOLAR\nKIRLOSKAR/LUMINOUS', inverterCapacity: 3, inverterMake: 'ADDO\nTATA/EASTMAN', pricePerKw: 90000, subsidy: 60000, gst: 0, adv: 80, sec: 20, third: 0 },
+    3: { panelQty: 6, panelMake: 'ADDO/EMMVEE\nEASTMAN/VIKRAM SOLAR\nUTL/KIRLOSKAR\nLUMINOUS', inverterCapacity: 3, inverterMake: 'ADDO\nEASTMAN/TATA', pricePerKw: 76000, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
     4: { panelQty: 7, panelMake: 'EMMVEE/ADDO/EASTMAN/\nVIKRAM SOLAR\nKIRLOSKAR/LUMINOUS/UTL', inverterCapacity: 5, inverterMake: 'EASTMAN/ADDO', pricePerKw: 68750, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
-    5: { panelQty: 9, panelMake: 'ADDO/EASTMAN/\nKIRLOSKAR/PANASONIC/\nLUMINOUS/UTL', inverterCapacity: 5, inverterMake: 'EASTMAN/POLYCAB', pricePerKw: 66900, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
-    6: { panelQty: 11, panelMake: 'ADDO/EASTMAN/KIRLOSKAR/\nEMMVEE\nVIKRAM SOLAR/LUMINOUS/UTL', inverterCapacity: 7, inverterMake: 'EASTMAN/ADDO\nPOLYCAB', pricePerKw: 65916.67, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
+    5: { panelQty: 9, panelMake: 'ADDO/EASTMAN/\nKIRLOSKAR/PANASONIC/\nLUMINOUS/UTL', inverterCapacity: 5, inverterMake: 'EASTMAN/TATA', pricePerKw: 66900, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
+    6: { panelQty: 11, panelMake: 'ADDO/EASTMAN/KIRLOSKAR/\nEMMVEE\nVIKRAM SOLAR/LUMINOUS/UTL', inverterCapacity: 7, inverterMake: 'EASTMAN/ADDO\nTATA', pricePerKw: 65916.67, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
     7: { panelQty: 13, panelMake: 'EASTMAN/ADDO\nEMMVEE/WAAREE/\nLUMINOUS/KIRLOSKAR', inverterCapacity: 7, inverterMake: 'EASTMAN/ADDO', pricePerKw: 64857.14, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
     8: { panelQty: 15, panelMake: 'EASTMAN/ADDO\nEMMVEE/LUMINOUS/\nKIRLOSHKAR/UTL', inverterCapacity: 8, inverterMake: 'EASTMAN/ADDO', pricePerKw: 64275, subsidy: 78000, gst: 0, adv: 20, sec: 70, third: 10 },
     9: { panelQty: 16, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 10, inverterMake: 'EASTMAN/ADDO', pricePerKw: 62544.44, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
     10: { panelQty: 18, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 10, inverterMake: 'EASTMAN/ADDO', pricePerKw: 62000, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
-    15: { panelQty: 27, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE\nLUMINOUS/\nKIRLOSHKAR', inverterCapacity: 15, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    20: { panelQty: 36, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 20, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    25: { panelQty: 46, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 25, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    30: { panelQty: 55, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 30, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 54000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    35: { panelQty: 64, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 40, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 53000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    40: { panelQty: 73, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 40, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 53000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    50: { panelQty: 91, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 50, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 53000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    60: { panelQty: 109, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 60, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 48000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    70: { panelQty: 127, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 70, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 48000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    80: { panelQty: 146, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 80, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 48000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    90: { panelQty: 164, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 90, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 48000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    100: { panelQty: 182, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 100, inverterMake: 'POLYCAB\nEASTMAN/ADDO', pricePerKw: 48000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 }
+    15: { panelQty: 27, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE\nLUMINOUS/\nKIRLOSHKAR', inverterCapacity: 15, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    20: { panelQty: 36, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 20, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    25: { panelQty: 46, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 25, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    30: { panelQty: 55, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 30, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 54000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    35: { panelQty: 64, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 40, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 53000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    40: { panelQty: 73, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 40, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 53000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    50: { panelQty: 91, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 50, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 53000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    60: { panelQty: 109, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 60, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 48000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    70: { panelQty: 127, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 70, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 48000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    80: { panelQty: 146, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 80, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 48000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    90: { panelQty: 164, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 90, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 48000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    100: { panelQty: 182, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 100, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 48000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 }
   };
 
   const OFF_GRID_DATA = {
@@ -300,7 +300,7 @@ const AdminQuotationMaker = () => {
       panelQty: 9,
       panelMake: 'EASTMAN/ADDO WAAREE/EMMVEE/LUMINOUS/KIRLOSHKAR',
       inverterCapacity: 5,
-      inverterMake: 'EASTMAN/POLYCAB',
+      inverterMake: 'EASTMAN/TATA',
       pricePerKw: 66900,
       gstPercent: 0,
       subsidyAmount: 78000,
@@ -1008,10 +1008,10 @@ const AdminQuotationMaker = () => {
                   <div className="flex flex-wrap justify-center gap-2 font-bold text-gray-900 italic text-[10px]">
                     <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">KIRLOSKAR</span>
                     <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">LUMINOUS</span>
-                    <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">AUTOBAT</span>
+                    <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">ADANI</span>
                     <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">WAAREE</span>
                     <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">EASTMAN</span>
-                    <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">POLYCAB</span>
+                    <span className="px-3 py-0.5 bg-gray-100 border border-gray-300 rounded-md">TATA</span>
                   </div>
                 </div>
 

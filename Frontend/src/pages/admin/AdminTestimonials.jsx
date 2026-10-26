@@ -20,8 +20,18 @@ import {
   FiClock, 
   FiMessageSquare,
   FiX,
-  FiCheck
+  FiCheck,
+  FiUpload,
+  FiImage
 } from 'react-icons/fi';
+
+const formatImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || '';
+  if (url.startsWith('/uploads')) return `${baseUrl}${url}`;
+  return `${baseUrl}/uploads/${url}`;
+};
 
 const AdminTestimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -45,7 +55,10 @@ const AdminTestimonials = () => {
     rating: 5,
     review: '',
     status: 'Approved',
+    photo: '',
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
 
   // Delete Modal State
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -115,8 +128,33 @@ const AdminTestimonials = () => {
       rating: 5,
       review: '',
       status: 'Approved',
+      photo: '',
     });
+    setImageFile(null);
+    setImagePreview('');
     setIsModalOpen(true);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select an image file (PNG, JPG, WEBP)');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('File size must be under 5MB');
+        return;
+      }
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+    setForm(prev => ({ ...prev, photo: '' }));
   };
 
   // Submit Modal Form
@@ -129,11 +167,28 @@ const AdminTestimonials = () => {
 
     try {
       setSaving(true);
+      const data = new FormData();
+      data.append('name', form.name);
+      data.append('location', form.location);
+      data.append('systemSize', form.systemSize);
+      data.append('rating', form.rating);
+      data.append('review', form.review);
+      data.append('status', form.status);
+      if (imageFile) {
+        data.append('photo', imageFile);
+      } else if (form.photo) {
+        data.append('photo', form.photo);
+      }
+
       if (editingTestimonial) {
-        await api.put(`/testimonials/admin/${editingTestimonial._id}`, form);
+        await api.put(`/testimonials/admin/${editingTestimonial._id}`, data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         toast.success('Testimonial updated!');
       } else {
-        await api.post('/testimonials/admin', form);
+        await api.post('/testimonials/admin', data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         toast.success('Testimonial created!');
       }
       setIsModalOpen(false);
@@ -391,11 +446,20 @@ const AdminTestimonials = () => {
               <tbody className="text-sm text-black divide-y divide-gray-100">
                 {filteredTestimonials.map((t) => (
                   <tr key={t._id} className="hover:bg-gray-50/70 transition-colors group">
-                    {/* User Initials Avatar */}
+                    {/* User Avatar / Photo */}
                     <td className="py-3.5 px-4 text-center">
-                      <div className="w-9 h-9 rounded-full bg-red text-white flex items-center justify-center font-heading font-bold text-xs uppercase shadow-sm mx-auto">
-                        {(t.name || 'U').slice(0, 2)}
-                      </div>
+                      {t.photo ? (
+                        <img
+                          src={formatImageUrl(t.photo)}
+                          alt={t.name}
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          className="w-9 h-9 rounded-full object-cover border border-red/40 shadow-sm mx-auto"
+                        />
+                      ) : (
+                        <div className="w-9 h-9 rounded-full bg-red text-white flex items-center justify-center font-heading font-bold text-xs uppercase shadow-sm mx-auto">
+                          {(t.name || 'U').slice(0, 2)}
+                        </div>
+                      )}
                     </td>
 
                     {/* Name & Details */}
@@ -485,9 +549,18 @@ const AdminTestimonials = () => {
               <div>
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-red text-white flex items-center justify-center font-heading font-bold text-sm uppercase">
-                      {(t.name || 'U').slice(0, 2)}
-                    </div>
+                    {t.photo ? (
+                      <img
+                        src={formatImageUrl(t.photo)}
+                        alt={t.name}
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        className="w-10 h-10 rounded-full object-cover border border-red/40 shadow-sm shrink-0"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-red text-white flex items-center justify-center font-heading font-bold text-sm uppercase shrink-0">
+                        {(t.name || 'U').slice(0, 2)}
+                      </div>
+                    )}
                     <div>
                       <h4 className="font-heading font-bold text-black text-base">{t.name}</h4>
                       <p className="text-xs text-gray-500 font-body flex items-center gap-1">
@@ -642,6 +715,45 @@ const AdminTestimonials = () => {
               onChange={(e) => setForm({ ...form, review: e.target.value })}
               className="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-btn focus:outline-none focus:border-black resize-y font-body"
             />
+          </div>
+
+          <div>
+            <label className="block mb-1 font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
+              Customer Photo / Solar System Image (Optional)
+            </label>
+            {imagePreview ? (
+              <div className="relative border border-gray-200 rounded-xl p-2.5 bg-gray-50 flex items-center gap-3">
+                <img
+                  src={imagePreview}
+                  alt="Testimonial Preview"
+                  className="w-12 h-12 rounded-lg object-cover border border-gray-300"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-gray-800 truncate">
+                    {imageFile ? imageFile.name : 'Current Image'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="p-1.5 text-gray-400 hover:text-red rounded-lg transition-colors cursor-pointer"
+                  title="Remove image"
+                >
+                  <FiX size={16} />
+                </button>
+              </div>
+            ) : (
+              <label className="border-2 border-dashed border-gray-200 hover:border-red rounded-xl p-3 flex items-center justify-center gap-2 cursor-pointer bg-gray-50 hover:bg-red/5 transition-all text-xs font-medium text-gray-600">
+                <FiUpload className="text-gray-400" size={15} />
+                <span>Choose photo or setup image</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            )}
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-100">

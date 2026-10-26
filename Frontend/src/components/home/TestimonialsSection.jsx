@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight, FiStar, FiMessageSquare, FiSend } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiStar, FiMessageSquare, FiSend, FiUpload, FiX, FiImage } from 'react-icons/fi';
 import { Reveal } from '../motion';
 import Modal from '../ui/Modal';
 import Input from '../ui/Input';
@@ -8,6 +8,14 @@ import Button from '../ui/Button';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { usePreload } from '../../context/PreloadContext';
+
+const formatImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || '';
+  if (url.startsWith('/uploads')) return `${baseUrl}${url}`;
+  return `${baseUrl}/uploads/${url}`;
+};
 
 const TestimonialsSection = () => {
   const { preloadedData } = usePreload();
@@ -24,6 +32,8 @@ const TestimonialsSection = () => {
     rating: 5,
     review: ''
   });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -48,6 +58,30 @@ const TestimonialsSection = () => {
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select an image file (PNG, JPG, WEBP)');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size should be less than 5MB');
+        return;
+      }
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedFile(null);
+    if (previewUrl && previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl('');
+  };
+
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (!reviewForm.name || !reviewForm.review) {
@@ -57,12 +91,26 @@ const TestimonialsSection = () => {
 
     setSubmitting(true);
     try {
-      await api.post('/testimonials/submit', reviewForm);
+      const data = new FormData();
+      data.append('name', reviewForm.name);
+      data.append('location', reviewForm.location);
+      data.append('systemSize', reviewForm.systemSize);
+      data.append('rating', reviewForm.rating);
+      data.append('review', reviewForm.review);
+      if (selectedFile) {
+        data.append('photo', selectedFile);
+      }
+
+      await api.post('/testimonials/submit', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       toast.success('Thank you for your review! It will be displayed once approved by our team.');
       setIsModalOpen(false);
       setReviewForm({ name: '', location: '', systemSize: '', rating: 5, review: '' });
+      setSelectedFile(null);
+      setPreviewUrl('');
     } catch (error) {
-      toast.error('Failed to submit review');
+      toast.error(error.response?.data?.message || 'Failed to submit review');
     } finally {
       setSubmitting(false);
     }
@@ -126,11 +174,22 @@ const TestimonialsSection = () => {
 
                 {/* Author */}
                 <div className="flex items-center justify-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-red flex items-center justify-center text-white font-heading text-sm font-bold flex-shrink-0 uppercase">
-                    {currentItem.name ? currentItem.name.slice(0, 2) : 'CL'}
-                  </div>
+                  {currentItem.photo ? (
+                    <img
+                      src={formatImageUrl(currentItem.photo)}
+                      alt={currentItem.name}
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                      className="w-13 h-13 rounded-full object-cover border-2 border-red shadow-sm flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-red flex items-center justify-center text-white font-heading text-sm font-bold flex-shrink-0 uppercase shadow-sm">
+                      {currentItem.name ? currentItem.name.slice(0, 2) : 'CL'}
+                    </div>
+                  )}
                   <div className="text-left">
-                    <p className="font-heading text-lg text-black">{currentItem.name}</p>
+                    <p className="font-heading text-lg text-black font-bold">{currentItem.name}</p>
                     <p className="font-accent text-red text-xs font-bold uppercase tracking-wider">
                       {currentItem.location} {currentItem.systemSize ? `• ${currentItem.systemSize}` : ''}
                     </p>
@@ -238,6 +297,50 @@ const TestimonialsSection = () => {
               onChange={(e) => setReviewForm({ ...reviewForm, review: e.target.value })}
               required
             />
+          </div>
+
+          {/* Photo / Solar Installation Image Upload */}
+          <div>
+            <label className="block text-sm font-accent font-semibold mb-1 text-gray-800">
+              Photo / Installation Image <span className="text-gray-400 font-normal text-xs">(Optional)</span>
+            </label>
+            
+            {previewUrl ? (
+              <div className="relative border border-gray-200 rounded-xl p-2.5 bg-gray-50 flex items-center gap-3">
+                <img
+                  src={previewUrl}
+                  alt="Review Preview"
+                  className="w-14 h-14 rounded-lg object-cover border border-gray-300 shadow-xs"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-gray-800 truncate">
+                    {selectedFile ? selectedFile.name : 'Image selected'}
+                  </p>
+                  <p className="text-[11px] text-gray-500">
+                    {selectedFile ? `${(selectedFile.size / 1024).toFixed(0)} KB` : ''}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="p-1.5 text-gray-400 hover:text-red hover:bg-red/10 rounded-lg transition-colors cursor-pointer"
+                  title="Remove image"
+                >
+                  <FiX size={16} />
+                </button>
+              </div>
+            ) : (
+              <label className="border-2 border-dashed border-gray-300 hover:border-red rounded-xl p-3 flex items-center justify-center gap-2 cursor-pointer bg-gray-50 hover:bg-red/5 transition-all text-xs font-medium text-gray-600 group">
+                <FiUpload className="text-gray-400 group-hover:text-red transition-colors" size={16} />
+                <span>Upload your photo or solar setup (JPG, PNG, WEBP)</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </label>
+            )}
           </div>
 
           <Button type="submit" variant="primary" disabled={submitting} className="w-full bg-red hover:bg-black text-white flex items-center justify-center gap-2">
