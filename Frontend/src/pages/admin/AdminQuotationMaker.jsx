@@ -830,9 +830,7 @@ const AdminQuotationMaker = () => {
                     )}
                   </div>
                   <div className="text-right flex flex-col items-end">
-                    <div className="bg-white p-1.5 rounded-xl shadow-xs border border-gray-200">
-                      <img src={Logo} alt="SPC Solar Logo" className="w-24 sm:w-28 object-contain" />
-                    </div>
+                    <img src={Logo} alt="SPC Solar Logo" className="w-24 sm:w-28 object-contain" />
                   </div>
                 </div>
 
