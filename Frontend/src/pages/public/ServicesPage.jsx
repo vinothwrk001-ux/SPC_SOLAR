@@ -151,7 +151,7 @@ const buildBenefits = (item) => {
 const ServicesPage = () => {
   const location = useLocation();
   const [services, setServices] = useState(STATIC_SERVICES);
-  const [activeServiceIndex, setActiveServiceIndex] = useState(0);
+  const [activeServiceIndex, setActiveServiceIndex] = useState(null);
 
   useEffect(() => {
     if (location.hash) {
@@ -242,7 +242,7 @@ const ServicesPage = () => {
         label="Comprehensive Solar Solutions"
         title="OUR "
         highlight="SERVICES"
-        subtitle="Hover over or tap each service to view technical specifications, subsidies, and benefits."
+        subtitle="Click each service to view technical specifications, subsidies, and benefits."
         breadcrumbs={[{ label: 'Services' }]}
       />
 
@@ -264,12 +264,10 @@ const ServicesPage = () => {
               return (
                 <div
                   key={service.id || service.number || index}
-                  onMouseEnter={() => setActiveServiceIndex(index)}
-                  onClick={() => setActiveServiceIndex(index)}
-                  className={`relative rounded-xl sm:rounded-2xl transition-all duration-300 overflow-hidden cursor-pointer border ${
+                  className={`relative rounded-xl sm:rounded-2xl transition-all duration-300 overflow-hidden border ${
                     isActive
                       ? 'bg-white border-red shadow-[0_12px_40px_rgba(204,34,34,0.12)] ring-1 ring-red/30'
-                      : 'bg-gray-50/80 border-gray-200 hover:border-gray-300 hover:bg-white hover:shadow-md'
+                      : 'bg-gray-50/80 border-gray-200'
                   }`}
                 >
                   {/* Subtle red accent line at the left */}
@@ -277,8 +275,20 @@ const ServicesPage = () => {
                     isActive ? 'bg-red shadow-[0_0_12px_#CC2222]' : 'bg-transparent'
                   }`} />
 
-                  {/* Header Bar (Always visible) */}
-                  <div className="p-3 sm:p-5 md:p-6 flex items-center justify-between gap-2.5 sm:gap-4">
+                  {/* Header Bar (Always visible - Click to toggle) */}
+                  <div 
+                    onClick={() => setActiveServiceIndex(prev => prev === index ? null : index)}
+                    className="p-3 sm:p-5 md:p-6 flex items-center justify-between gap-2.5 sm:gap-4 cursor-pointer select-none"
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={isActive}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setActiveServiceIndex(prev => prev === index ? null : index);
+                      }
+                    }}
+                  >
                     <div className="flex items-center gap-2.5 sm:gap-5 min-w-0">
                       {/* Number */}
                       <span className={`font-heading text-lg sm:text-2xl md:text-3xl font-bold transition-colors ${
