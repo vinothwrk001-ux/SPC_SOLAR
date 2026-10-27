@@ -50,14 +50,14 @@ const CTABanner = () => {
             >
               Get Free Quotation
             </Button>
-            <a href="tel:+919876543210" className="w-full max-w-[280px] sm:max-w-none sm:w-auto">
+            <a href="tel:+918098744044" className="w-full max-w-[280px] sm:max-w-none sm:w-auto">
               <Button 
                 variant="outline-white" 
                 size="lg" 
                 className="w-full justify-center !py-2.5 !px-5 sm:!py-4 sm:!px-8 !text-xs sm:!text-base !tracking-wider sm:!tracking-widest" 
                 icon={<FiPhone className="text-sm sm:text-base" size={14} />}
               >
-                Call Us Now
+                Call Us: +91 80987 44044
               </Button>
             </a>
           </div>
