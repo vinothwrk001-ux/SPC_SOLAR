@@ -1,7 +1,5 @@
 import React from 'react';
-import { FiGift, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
-import { FaWhatsapp } from 'react-icons/fa';
-import Button from '../ui/Button';
+import { FiGift, FiCheckCircle } from 'react-icons/fi';
 
 const REWARD_CHIPS = [
   { kw: '3 kW Home', payout: '₹6,000' },
@@ -11,21 +9,6 @@ const REWARD_CHIPS = [
 ];
 
 const ReferralCard = ({ className = '' }) => {
-  const handleOpenModal = () => {
-    window.dispatchEvent(new CustomEvent('open-lead-modal'));
-  };
-
-  const handleShareWhatsApp = (e) => {
-    e.stopPropagation();
-    const message = encodeURIComponent(
-      `☀️ Recommend SPC Solar & Save on Electricity!
-SPC Solar provides high-efficiency rooftop & commercial solar panel installations with up to ₹78,000 Central Govt Subsidy.
-Contact: +91 84896 44044
-Website: https://spcsolar.in`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${message}`, '_blank');
-  };
-
   return (
     <div 
       id="referral-program"
@@ -70,28 +53,6 @@ Website: https://spcsolar.in`
               <div className="text-[9px] text-gray-400">Cash Payout</div>
             </div>
           ))}
-        </div>
-
-        {/* Call to Actions */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-          <Button
-            size="lg"
-            variant="primary"
-            onClick={handleOpenModal}
-            icon={<FiArrowRight size={18} />}
-            className="w-full sm:w-auto justify-center !bg-gradient-to-r !from-amber-400 !via-amber-500 !to-red !text-black font-extrabold tracking-wide text-sm sm:text-base px-8 py-3.5 shadow-xl shadow-amber-500/20 hover:scale-[1.02] transition-transform"
-          >
-            Calculate & Refer Now
-          </Button>
-
-          <button
-            type="button"
-            onClick={handleShareWhatsApp}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/40 font-accent font-bold px-6 py-3.5 rounded-xl text-sm transition-all duration-200"
-          >
-            <FaWhatsapp size={18} />
-            <span>Share via WhatsApp</span>
-          </button>
         </div>
 
         {/* Condition Footer */}
