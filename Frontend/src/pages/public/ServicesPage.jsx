@@ -103,13 +103,6 @@ const getServiceIcon = (category) => {
   return FiZap;
 };
 
-const formatImageUrl = (url) => {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
-  if (url.startsWith('/uploads')) return `${baseUrl}${url}`;
-  return `${baseUrl}/uploads/${url}`;
-};
 
 const buildSpecs = (item) => {
   if (Array.isArray(item.specs) && item.specs.length > 0) return item.specs;
@@ -343,19 +336,6 @@ const ServicesPage = () => {
                       transition={{ duration: 0.3, ease: 'easeOut' }}
                       className="px-3 pb-4 sm:px-6 sm:pb-6 md:px-7 md:pb-7 pt-1 border-t border-gray-100"
                     >
-                      {/* Optional Service Image */}
-                      {service.image && (
-                        <div className="mb-4 rounded-xl overflow-hidden border border-gray-200/80 bg-gray-50 shadow-inner">
-                          <img
-                            src={formatImageUrl(service.image)}
-                            alt={service.title}
-                            className="w-full h-44 sm:h-56 object-cover"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        </div>
-                      )}
 
                       {/* Description */}
                       <p className="text-gray-600 font-body text-[11px] sm:text-sm leading-relaxed mb-3.5 sm:mb-5 max-w-3xl">

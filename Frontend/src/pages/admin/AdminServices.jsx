@@ -13,8 +13,6 @@ import {
   FiCheckCircle, 
   FiGrid, 
   FiList, 
-  FiUploadCloud, 
-  FiImage, 
   FiX, 
   FiCheck,
   FiRefreshCw,
@@ -26,15 +24,7 @@ import {
 
 const SERVICE_CATEGORIES = ['Residential', 'Commercial', 'Industrial', 'Maintenance', 'Storage', 'Agricultural'];
 
-const DEFAULT_IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1509391366360-5157625bf958?auto=format&fit=crop&q=80&w=800';
 
-const formatImageUrl = (url) => {
-  if (!url) return DEFAULT_IMAGE_FALLBACK;
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
-  if (url.startsWith('/uploads')) return `${baseUrl}${url}`;
-  return `${baseUrl}/uploads/${url}`;
-};
 
 const AdminServices = () => {
   const [services, setServices] = useState([]);
@@ -62,12 +52,7 @@ const AdminServices = () => {
     fullDesc: '',
     benefits: '',
     isActive: true,
-    image: '',
   });
-
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
-  const fileInputRef = useRef(null);
 
   // Delete Confirmation Modal State
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -134,10 +119,7 @@ const AdminServices = () => {
       fullDesc: '',
       benefits: '',
       isActive: true,
-      image: '',
     });
-    setImageFile(null);
-    setImagePreview('');
     setIsModalOpen(true);
   };
 
@@ -154,38 +136,8 @@ const AdminServices = () => {
       fullDesc: service.fullDesc || '',
       benefits: Array.isArray(service.benefits) ? service.benefits.join(', ') : (service.benefits || ''),
       isActive: service.isActive !== undefined ? service.isActive : true,
-      image: service.image || '',
     });
-    setImageFile(null);
-    setImagePreview(service.image ? formatImageUrl(service.image) : '');
     setIsModalOpen(true);
-  };
-
-  // Handle Image File Selection
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 15 * 1024 * 1024) {
-        toast.error('File size must be under 15MB');
-        return;
-      }
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Remove Selected Image
-  const handleRemoveImage = () => {
-    setImageFile(null);
-    setImagePreview('');
-    setFormData(prev => ({ ...prev, image: '' }));
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
   };
 
   // Submit Form (Create / Update)
@@ -217,11 +169,6 @@ const AdminServices = () => {
         .filter(Boolean);
       submitData.append('benefits', JSON.stringify(benefitsArray));
 
-      if (imageFile) {
-        submitData.append('image', imageFile);
-      } else if (formData.image) {
-        submitData.append('image', formData.image.trim());
-      }
 
       if (editingService) {
         const { data } = await api.put(`/services/${editingService._id}`, submitData, {
@@ -496,7 +443,6 @@ const AdminServices = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50/90 text-gray-600 border-b border-gray-200 text-xs font-accent font-bold uppercase tracking-wider">
-                  <th className="py-3.5 px-4 w-16 text-center">Image</th>
                   <th className="py-3.5 px-4">Service & Overview</th>
                   <th className="py-3.5 px-4">Category</th>
                   <th className="py-3.5 px-4">Pricing</th>
@@ -510,19 +456,6 @@ const AdminServices = () => {
                 {filteredServices.map((s) => {
                   return (
                     <tr key={s._id} className="hover:bg-gray-50/70 transition-colors group">
-                      {/* Image Thumbnail */}
-                      <td className="py-3.5 px-4 text-center">
-                        <div className="w-14 h-11 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 mx-auto relative group-hover:shadow-sm">
-                          <img
-                            src={formatImageUrl(s.image)}
-                            alt={s.title}
-                            onError={(e) => {
-                              e.currentTarget.src = DEFAULT_IMAGE_FALLBACK;
-                            }}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      </td>
 
                       {/* Title & Short Description */}
                       <td className="py-3.5 px-4 max-w-xs">
@@ -608,23 +541,20 @@ const AdminServices = () => {
               className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:border-red hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
             >
               <div>
-                <div className="relative h-44 overflow-hidden bg-gray-100">
-                  <img
-                    src={formatImageUrl(s.image)}
-                    alt={s.title}
-                    onError={(e) => {
-                      e.currentTarget.src = DEFAULT_IMAGE_FALLBACK;
-                    }}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3 bg-black/85 backdrop-blur-sm text-white text-[11px] font-accent font-bold px-2.5 py-1 uppercase rounded-md shadow-sm">
-                    {s.category}
+                <div className="p-4 bg-gradient-to-r from-gray-900 to-black text-white flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg bg-red text-white flex items-center justify-center font-bold text-xs shrink-0">
+                      <FiZap size={14} />
+                    </span>
+                    <span className="text-xs font-accent font-bold uppercase tracking-wider text-gray-300">
+                      {s.category}
+                    </span>
                   </div>
-                  <div className={`absolute top-3 right-3 text-[10px] font-accent font-bold px-2.5 py-0.5 uppercase rounded-md shadow-sm ${
-                    s.isActive ? 'bg-green-500 text-white' : 'bg-gray-400 text-white'
+                  <span className={`text-[10px] font-accent font-bold px-2.5 py-0.5 uppercase rounded-md shadow-sm ${
+                    s.isActive ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
                   }`}>
                     {s.isActive ? 'Active' : 'Inactive'}
-                  </div>
+                  </span>
                 </div>
 
                 <div className="p-5">
@@ -797,67 +727,6 @@ const AdminServices = () => {
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
               </label>
-            </div>
-
-            {/* Image upload */}
-            <div className="md:col-span-2 space-y-2">
-              <label className="block font-accent font-semibold text-xs uppercase tracking-wider text-gray-700">
-                Service Image
-              </label>
-
-              {imagePreview ? (
-                <div className="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-100 h-44 w-full group">
-                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="px-3 py-1.5 bg-white text-black text-xs font-accent font-bold uppercase rounded-btn hover:bg-gray-100 flex items-center gap-1.5"
-                    >
-                      <FiUploadCloud size={14} /> Change
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleRemoveImage}
-                      className="px-3 py-1.5 bg-red text-white text-xs font-accent font-bold uppercase rounded-btn hover:bg-red-700 flex items-center gap-1.5"
-                    >
-                      <FiTrash2 size={14} /> Remove
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-gray-300 hover:border-red rounded-xl p-5 text-center cursor-pointer transition-colors bg-gray-50/50 hover:bg-red-50/20"
-                >
-                  <div className="w-10 h-10 rounded-full bg-red-50 text-red mx-auto flex items-center justify-center mb-2">
-                    <FiUploadCloud size={20} />
-                  </div>
-                  <p className="text-sm font-heading font-bold text-black mb-0.5">Click to upload service image</p>
-                  <p className="text-xs text-gray-500 font-body">Supports JPG, PNG, WEBP (Max 15MB)</p>
-                </div>
-              )}
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-
-              <div className="pt-1">
-                <input
-                  type="url"
-                  placeholder="Or enter image URL: https://..."
-                  value={formData.image}
-                  onChange={(e) => {
-                    setFormData({ ...formData, image: e.target.value });
-                    if (!imageFile) setImagePreview(e.target.value);
-                  }}
-                  className="w-full px-3 py-2 text-xs bg-white border border-gray-200 rounded-btn font-mono"
-                />
-              </div>
             </div>
           </div>
 
