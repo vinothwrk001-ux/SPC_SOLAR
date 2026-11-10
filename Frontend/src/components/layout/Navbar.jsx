@@ -134,10 +134,6 @@ const Navbar = () => {
                   Solar Calculator
                 </Button>
               </Link>
-
-              <Link to="/admin/login" className="text-white/30 hover:text-white text-[10px] uppercase tracking-widest ml-1 font-accent font-bold transition-colors" title="Admin Portal">
-                Admin
-              </Link>
             </div>
 
             {/* ---- HAMBURGER ---- */}
@@ -220,14 +216,6 @@ const Navbar = () => {
                     </Button>
                   </Link>
                 </div>
-
-                <Link
-                  to="/admin/login"
-                  onClick={() => setIsOpen(false)}
-                  className="text-center text-white/30 text-[10px] font-accent tracking-widest uppercase hover:text-white/60 transition-colors py-0.5"
-                >
-                  Admin Login
-                </Link>
               </motion.div>
             </nav>
           </motion.div>
