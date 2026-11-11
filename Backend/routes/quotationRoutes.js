@@ -26,9 +26,14 @@ const quotationStorage = multer.diskStorage({
     cb(null, quotationsDir);
   },
   filename(req, file, cb) {
-    const rawRef = req.body.refNo || 'QUOTE';
+    // If client supplied a valid originalname matching .pdf, preserve and sanitize it
+    if (file.originalname && file.originalname.toLowerCase().endsWith('.pdf')) {
+      const sanitized = path.basename(file.originalname).replace(/[^a-zA-Z0-9_.-]/g, '_');
+      return cb(null, sanitized);
+    }
+    const rawRef = req.body?.refNo || 'QUOTE';
     const cleanRef = rawRef.replace(/[^a-zA-Z0-9_-]/g, '');
-    const cleanName = (req.body.customerName || '').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const cleanName = (req.body?.customerName || '').replace(/[^a-zA-Z0-9_-]/g, '_');
     const namePart = cleanName ? `_${cleanName}` : '';
     cb(null, `SPC_Solar_Quotation_${cleanRef}${namePart}.pdf`);
   }

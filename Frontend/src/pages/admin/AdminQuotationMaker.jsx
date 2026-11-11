@@ -421,13 +421,14 @@ const AdminQuotationMaker = () => {
         publicUrl = `${base}/uploads/quotations/${fileName}`;
       }
 
-      // 4. Construct message matching the Intro from User's Picture 3 + PDF link
-      const intro = `Hello *${formData.toName}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):`;
-      const pdfLinkMsg = `\n\n📄 *Official Quotation PDF:*\n${publicUrl}`;
-      const summaryMsg = `\n\n⚡ *System Size:* ${formData.kwSize} KW (${formData.systemType})\n💵 *Net Investment:* ₹${grandTotal.toLocaleString('en-IN')}`;
-      const closingMsg = `\n\nPlease find your official 2-page quotation PDF attached. Let us know if you have any questions!\n\n📞 Contact: ${contactStr}\n🌐 ${webStr}`;
+      // 4. Construct message matching the Intro from User's Picture 3 + PDF link (NO Net Investment or System Size)
+      const hasRealName = formData.toName && !['CUSTOMER NAME', 'OFFLINE CUSTOMER', 'CUSTOMER'].includes(formData.toName.toUpperCase().trim());
+      const greetingLine = hasRealName ? `Hello *${formData.toName}*!\n\n` : '';
+      const intro = `${greetingLine}Greetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):`;
+      const pdfLinkMsg = `\n\n*Official Quotation PDF:*\n${publicUrl}`;
+      const closingMsg = `\n\nPlease find your official 2-page quotation PDF attached below. Let us know if you have any questions!\n\nContact: ${contactStr}\n${webStr}`;
 
-      const fullMessage = `${intro}${pdfLinkMsg}${summaryMsg}${closingMsg}`;
+      const fullMessage = `${intro}${pdfLinkMsg}${closingMsg}`;
 
       setLastPdfInfo({
         fileName,
@@ -472,8 +473,10 @@ const AdminQuotationMaker = () => {
       console.error('Failed to generate PDF for WhatsApp:', err);
       toast.error('Could not auto-generate PDF. Opening WhatsApp with quotation details.', { id: toastId });
 
-      // Fallback message with Intro from Picture 3
-      const fallbackMsg = `Hello *${formData.toName}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):\n\n⚡ *System Size:* ${formData.kwSize} KW (${formData.systemType})\n💵 *Net Investment:* ₹${grandTotal.toLocaleString('en-IN')}\n\n📞 Contact: ${contactStr}\n🌐 ${webStr}`;
+      // Fallback message with Intro (NO Net Investment)
+      const hasRealName = formData.toName && !['CUSTOMER NAME', 'OFFLINE CUSTOMER', 'CUSTOMER'].includes(formData.toName.toUpperCase().trim());
+      const greetingLine = hasRealName ? `Hello *${formData.toName}*!\n\n` : '';
+      const fallbackMsg = `${greetingLine}Greetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):\n\nPlease find your official 2-page quotation PDF attached below. Let us know if you have any questions!\n\nContact: ${contactStr}\n${webStr}`;
       const targetUrl = cleanPhone 
         ? `https://wa.me/${phoneWithCode}?text=${encodeURIComponent(fallbackMsg)}`
         : `https://wa.me/?text=${encodeURIComponent(fallbackMsg)}`;
@@ -1415,18 +1418,22 @@ const AdminQuotationMaker = () => {
             </div>
           </div>
 
-          <div className="space-y-2.5 text-xs text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-200">
+          <div className="space-y-3 text-xs text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-200">
             <div className="flex items-start gap-2">
               <span className="font-bold text-emerald-600 mt-0.5">✓</span>
-              <span><strong>Official 2-Page PDF Downloaded:</strong> <code className="bg-white px-1.5 py-0.5 rounded border border-gray-300 text-gray-800 font-mono text-[11px]">{lastPdfInfo?.fileName}</code> has been saved to your downloads.</span>
+              <span><strong>Official PDF Downloaded:</strong> <code className="bg-white px-1.5 py-0.5 rounded border border-gray-300 text-gray-800 font-mono text-[11px] font-bold">{lastPdfInfo?.fileName}</code> is saved on your device.</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="font-bold text-emerald-600 mt-0.5">✓</span>
-              <span><strong>Intro & Direct PDF Link Attached:</strong> Formatted with the official SPC Solar greeting & instant document link.</span>
+              <span><strong>WhatsApp Message Prefilled:</strong> Official SPC Solar greeting and direct document link (pricing details hidden).</span>
             </div>
-            <div className="flex items-start gap-2 bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-amber-900">
-              <span className="text-amber-600 font-bold text-sm">💡</span>
-              <span><strong>To send the PDF document file in WhatsApp Web:</strong> Simply drag & drop the downloaded PDF file from your browser's download bar directly into the WhatsApp chat window, or click the paperclip icon!</span>
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl space-y-1.5 text-blue-950">
+              <div className="font-bold flex items-center gap-1.5 text-blue-900 text-xs">
+                <span>📎</span> How to send the PDF document below your message:
+              </div>
+              <p className="text-[11.5px] leading-relaxed text-blue-800">
+                In WhatsApp Web, simply <strong>drag and drop</strong> the downloaded PDF file from your browser's download bar directly onto the WhatsApp chat, or click the <strong>📎 (Attach &gt; Document)</strong> icon to send it right below your message!
+              </p>
             </div>
           </div>
 

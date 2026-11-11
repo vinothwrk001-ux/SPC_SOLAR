@@ -121,7 +121,8 @@ export async function generateQuotationPdf(refNo = 'QUOTE', customerName = 'CUST
   pdf.addImage(img2, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
 
   const cleanRef = (refNo || 'QUOTE').replace(/[^a-zA-Z0-9_-]/g, '');
-  const cleanName = (customerName || '').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+  const isDefaultName = !customerName || ['CUSTOMER NAME', 'OFFLINE CUSTOMER', 'CUSTOMER'].includes(customerName.toUpperCase().trim());
+  const cleanName = isDefaultName ? '' : customerName.trim().replace(/[^a-zA-Z0-9_-]/g, '_');
   const fileName = `SPC_Solar_Quotation_${cleanRef}${cleanName ? '_' + cleanName : ''}.pdf`;
 
   const pdfBlob = pdf.output('blob');
@@ -141,10 +142,11 @@ export async function generateQuotationPdf(refNo = 'QUOTE', customerName = 'CUST
 export async function uploadQuotationPdfToServer({ pdfBlob, fileName, refNo, customerName, phone }) {
   try {
     const formData = new FormData();
-    formData.append('pdf', pdfBlob, fileName);
+    // Put metadata fields before file so multipart parsers receive body params first
     if (refNo) formData.append('refNo', refNo);
     if (customerName) formData.append('customerName', customerName);
     if (phone) formData.append('phone', phone);
+    formData.append('pdf', pdfBlob, fileName);
 
     const response = await api.post('/quotations/upload-pdf', formData, {
       headers: {

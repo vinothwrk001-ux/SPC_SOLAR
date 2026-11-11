@@ -66,14 +66,13 @@ const AdminQuotations = () => {
     const phoneWithCode = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
     const refStr = quote.quotationNumber || quote._id ? ` (*Ref: ${quote.quotationNumber || quote._id}*)` : '';
 
-    const intro = `Hello *${quote.customerName || quote.name || 'Valued Customer'}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation${refStr}:`;
-    const pdfPart = quote.pdfUrl ? `\n\n📄 *Official Quotation PDF:*\n${quote.pdfUrl}` : '';
-    const capPart = (quote.systemCapacity || quote.recommendedKW) ? `\n\n⚡ *System Size:* ${quote.systemCapacity || (quote.recommendedKW + ' KW')}` : '';
-    const costVal = quote.finalPayable || quote.netCost || quote.totalAmount || quote.estimatedCost;
-    const costPart = costVal ? `\n💵 *Estimated Net Investment:* ₹${costVal.toLocaleString('en-IN')}` : '';
-    const closing = `\n\nPlease find your proposal details above. Let us know if you have any questions!\n\n📞 Contact: 80987 44044 (Office) / 84896 44044\n🌐 https://spcsolarcbe.com`;
+    const hasRealName = quote.customerName || quote.name;
+    const greeting = hasRealName ? `Hello *${quote.customerName || quote.name}*!\n\n` : '';
+    const intro = `${greeting}Greetings from *SPC Solar Technology*!\nHere is your customized quotation${refStr}:`;
+    const pdfPart = quote.pdfUrl ? `\n\n*Official Quotation PDF:*\n${quote.pdfUrl}` : '';
+    const closing = `\n\nPlease find your official 2-page quotation PDF attached below. Let us know if you have any questions!\n\nContact: 80987 44044 (Office), 84896 44044\nhttps://spcsolarcbe.com`;
 
-    const msg = `${intro}${pdfPart}${capPart}${costPart}${closing}`;
+    const msg = `${intro}${pdfPart}${closing}`;
 
     try {
       await api.post(`/quotations/${quote._id}/send`, { method: 'whatsapp' });
