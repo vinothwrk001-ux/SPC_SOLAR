@@ -54,6 +54,53 @@ const deleteQuotation = async (req, res) => {
 const sendQuotation = async (req, res) => {
   // Logic for sending PDF via WhatsApp/Email to be implemented
   res.json({ message: 'Sent successfully' });
-}
+};
 
-module.exports = { getQuotations, getQuotationById, createQuotation, updateQuotationStatus, deleteQuotation, sendQuotation };
+const uploadQuotationPdf = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No PDF file uploaded' });
+    }
+
+    const filename = req.file.filename;
+    const relativeUrl = `/uploads/quotations/${filename}`;
+    
+    // Determine public URL
+    const clientUrl = (process.env.CLIENT_URL || 'https://spcsolarcbe.com').replace(/\/$/, '');
+    const publicUrl = `${clientUrl}${relativeUrl}`;
+
+    // If quotation ref or phone is provided, find and update or mark sent
+    if (req.body.refNo) {
+      await Quotation.findOneAndUpdate(
+        { 
+          $or: [
+            { adminNotes: { $regex: req.body.refNo } },
+            { phone: req.body.phone, name: req.body.customerName }
+          ]
+        },
+        { pdfUrl: publicUrl, sentViaWhatsApp: true },
+        { sort: { createdAt: -1 } }
+      ).catch(() => {});
+    }
+
+    res.json({
+      message: 'PDF uploaded successfully',
+      url: relativeUrl,
+      publicUrl,
+      filename
+    });
+  } catch (error) {
+    console.error('Error uploading quotation PDF:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { 
+  getQuotations, 
+  getQuotationById, 
+  createQuotation, 
+  updateQuotationStatus, 
+  deleteQuotation, 
+  sendQuotation,
+  uploadQuotationPdf
+};

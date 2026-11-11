@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+import Modal from '../../components/ui/Modal';
 import Logo from '../../assets/Logo.png';
 import toast from 'react-hot-toast';
 import { 
@@ -19,9 +20,15 @@ import {
   FiTrash2,
   FiCheck,
   FiGlobe,
-  FiPhone
+  FiPhone,
+  FiDownload,
+  FiCopy,
+  FiExternalLink,
+  FiCheckCircle,
+  FiLoader
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
+import { generateQuotationPdf, uploadQuotationPdfToServer } from '../../utils/quotationPdfGenerator';
 
 const AdminQuotationMaker = () => {
   const [searchParams] = useSearchParams();
@@ -30,6 +37,9 @@ const AdminQuotationMaker = () => {
   const [leads, setLeads] = useState([]);
   const [selectedLeadId, setSelectedLeadId] = useState(searchParams.get('leadId') || '');
   const [savingQuote, setSavingQuote] = useState(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [whatsAppModalOpen, setWhatsAppModalOpen] = useState(false);
+  const [lastPdfInfo, setLastPdfInfo] = useState(null);
 
   const initialRefNo = `QSP${Math.floor(1000 + Math.random() * 9000)}`;
 
@@ -356,21 +366,120 @@ const AdminQuotationMaker = () => {
     }
   };
 
-  const handleSendWhatsApp = () => {
+  const handleDownloadPdf = async () => {
+    setIsGeneratingPdf(true);
+    const toastId = toast.loading('Generating official 2-page quotation PDF...');
+    try {
+      const { pdf, fileName } = await generateQuotationPdf(formData.refNo, formData.toName);
+      pdf.save(fileName);
+      toast.success(`PDF downloaded: ${fileName}`, { id: toastId });
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      toast.error('Failed to generate PDF. You can also use the Print Dialog button.', { id: toastId });
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
+  const handleSendWhatsApp = async () => {
     const rawPhone = formData.phone || '';
     const cleanPhone = rawPhone.replace(/\D/g, '');
     const phoneWithCode = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
 
     const contactStr = formData.companyPhone || '80987 44044 (Office) / 84896 44044';
     const webStr = formData.companyWebsite || 'https://spcsolarcbe.com';
-    const gstStr = formData.companyGstNo ? `\n🏛️ *GST No:* ${formData.companyGstNo}` : '';
 
-    const message = `Hello *${formData.toName}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):\n\n⚡ *System Size:* ${formData.kwSize} KW (${formData.systemType})\n📦 *PV Modules:* ${formData.panelQty} Nos (${formData.panelMake.replace(/\n/g, ' ')})\n🔌 *Inverter:* ${formData.inverterCapacity} KVA (${formData.inverterMake.replace(/\n/g, ' ')})\n\n💵 *Total System Cost:* ₹${total.toLocaleString()}\n🏛️ *Govt Subsidy:* -₹${subsidy.toLocaleString()}\n🧾 *Net Investment:* *₹${grandTotal.toLocaleString()}*${gstStr}\n\n💳 *Payment Milestones:*\n1. Material Dispatch / Advance (${formData.advPercent}%): ₹${term1.toLocaleString()}\n2. Second Stage (${formData.secPercent}%): ₹${term2.toLocaleString()}\n3. Work Completion (${formData.thirdPercent}%): ₹${term3.toLocaleString()}\n\n📞 Contact: ${contactStr}\n🌐 Website: ${webStr}`;
+    setIsGeneratingPdf(true);
+    const toastId = toast.loading('Preparing 2-page PDF & WhatsApp message...');
 
-    if (cleanPhone) {
-      window.open(`https://wa.me/${phoneWithCode}?text=${encodeURIComponent(message)}`, '_blank');
-    } else {
-      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    try {
+      // 1. Generate high-resolution official 2-page PDF
+      const { pdf, pdfBlob, pdfFile, fileName } = await generateQuotationPdf(formData.refNo, formData.toName);
+
+      // 2. Trigger automatic local download so user has the file immediately
+      pdf.save(fileName);
+
+      // 3. Upload to server to get permanent public link
+      let publicUrl = '';
+      try {
+        const uploadRes = await uploadQuotationPdfToServer({
+          pdfBlob,
+          fileName,
+          refNo: formData.refNo,
+          customerName: formData.toName,
+          phone: cleanPhone
+        });
+        if (uploadRes && uploadRes.publicUrl) {
+          publicUrl = uploadRes.publicUrl;
+        }
+      } catch (uploadErr) {
+        console.warn('Backend PDF upload warning:', uploadErr);
+      }
+
+      if (!publicUrl) {
+        const base = typeof window !== 'undefined' ? window.location.origin : 'https://spcsolarcbe.com';
+        publicUrl = `${base}/uploads/quotations/${fileName}`;
+      }
+
+      // 4. Construct message matching the Intro from User's Picture 3 + PDF link
+      const intro = `Hello *${formData.toName}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):`;
+      const pdfLinkMsg = `\n\n📄 *Official Quotation PDF:*\n${publicUrl}`;
+      const summaryMsg = `\n\n⚡ *System Size:* ${formData.kwSize} KW (${formData.systemType})\n💵 *Net Investment:* ₹${grandTotal.toLocaleString('en-IN')}`;
+      const closingMsg = `\n\nPlease find your official 2-page quotation PDF attached. Let us know if you have any questions!\n\n📞 Contact: ${contactStr}\n🌐 ${webStr}`;
+
+      const fullMessage = `${intro}${pdfLinkMsg}${summaryMsg}${closingMsg}`;
+
+      setLastPdfInfo({
+        fileName,
+        publicUrl,
+        message: fullMessage,
+        phoneWithCode,
+        customerName: formData.toName,
+        pdfBlob,
+        pdf
+      });
+
+      // 5. Try Native Web Share API if supported (e.g. mobile devices that can share files directly into WhatsApp)
+      let sharedViaWebShare = false;
+      if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        try {
+          await navigator.share({
+            title: `SPC Solar Quotation - ${formData.refNo}`,
+            text: fullMessage,
+            files: [pdfFile]
+          });
+          sharedViaWebShare = true;
+          toast.success('Shared successfully via WhatsApp / Apps!', { id: toastId });
+        } catch (shareErr) {
+          console.log('Native share cancelled or dismissed:', shareErr);
+        }
+      }
+
+      // 6. Direct WhatsApp Click-to-Chat if not already sent via native share
+      if (!sharedViaWebShare) {
+        const targetUrl = cleanPhone 
+          ? `https://wa.me/${phoneWithCode}?text=${encodeURIComponent(fullMessage)}`
+          : `https://wa.me/?text=${encodeURIComponent(fullMessage)}`;
+        
+        window.open(targetUrl, '_blank');
+        toast.success('PDF downloaded & WhatsApp chat opened!', { id: toastId });
+      }
+
+      // 7. Open guide modal for quick drag-and-drop into WhatsApp Web
+      setWhatsAppModalOpen(true);
+
+    } catch (err) {
+      console.error('Failed to generate PDF for WhatsApp:', err);
+      toast.error('Could not auto-generate PDF. Opening WhatsApp with quotation details.', { id: toastId });
+
+      // Fallback message with Intro from Picture 3
+      const fallbackMsg = `Hello *${formData.toName}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation (*Ref: ${formData.refNo}*):\n\n⚡ *System Size:* ${formData.kwSize} KW (${formData.systemType})\n💵 *Net Investment:* ₹${grandTotal.toLocaleString('en-IN')}\n\n📞 Contact: ${contactStr}\n🌐 ${webStr}`;
+      const targetUrl = cleanPhone 
+        ? `https://wa.me/${phoneWithCode}?text=${encodeURIComponent(fallbackMsg)}`
+        : `https://wa.me/?text=${encodeURIComponent(fallbackMsg)}`;
+      window.open(targetUrl, '_blank');
+    } finally {
+      setIsGeneratingPdf(false);
     }
   };
 
@@ -412,25 +521,59 @@ const AdminQuotationMaker = () => {
           <Button 
             variant="outline" 
             onClick={handleSaveQuotation}
-            disabled={savingQuote}
+            disabled={savingQuote || isGeneratingPdf}
             className="text-xs flex items-center gap-1.5 border-blue-300 text-blue-700 hover:bg-blue-50"
           >
             <FiSave /> {savingQuote ? 'Saving...' : 'Save to System'}
           </Button>
 
           <button
+            type="button"
             onClick={handleSendWhatsApp}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-btn text-xs font-bold font-accent shadow-sm transition-colors"
+            disabled={isGeneratingPdf}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-btn text-xs font-bold font-accent shadow-sm transition-colors disabled:opacity-60 cursor-pointer"
+            title="Generate official PDF & send via WhatsApp with Introduction"
           >
-            <FaWhatsapp size={15} /> Send WhatsApp
+            {isGeneratingPdf ? (
+              <>
+                <FiLoader className="animate-spin" size={15} />
+                <span>Preparing PDF...</span>
+              </>
+            ) : (
+              <>
+                <FaWhatsapp size={15} />
+                <span>Send WhatsApp</span>
+              </>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDownloadPdf}
+            disabled={isGeneratingPdf}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-btn text-xs font-bold font-accent shadow-sm transition-colors disabled:opacity-60 cursor-pointer"
+            title="Download crisp 2-page PDF quotation directly"
+          >
+            {isGeneratingPdf ? (
+              <>
+                <FiLoader className="animate-spin" size={15} />
+                <span>Generating...</span>
+              </>
+            ) : (
+              <>
+                <FiDownload size={15} />
+                <span>Download PDF</span>
+              </>
+            )}
           </button>
 
           <Button 
-            variant="primary" 
+            variant="outline" 
             onClick={handlePrint} 
-            className="text-xs flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white shadow-md"
+            className="text-xs flex items-center gap-1.5 text-gray-700 hover:bg-gray-100"
+            title="Open browser print dialog"
           >
-            <FiPrinter /> Print / Save as PDF
+            <FiPrinter /> Print Dialog
           </Button>
         </div>
       </div>
@@ -1251,6 +1394,110 @@ const AdminQuotationMaker = () => {
           }
         }
       `}</style>
+
+      {/* WhatsApp PDF Delivery Assistant Modal */}
+      <Modal
+        isOpen={whatsAppModalOpen}
+        onClose={() => setWhatsAppModalOpen(false)}
+        title="Quotation PDF & WhatsApp Delivery"
+        size="md"
+      >
+        <div className="p-5 space-y-4 font-body">
+          <div className="flex items-center gap-3 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl">
+            <div className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0">
+              <FaWhatsapp size={22} />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-emerald-950">WhatsApp Chat Ready!</h4>
+              <p className="text-xs text-emerald-700">
+                Recipient: <strong className="text-emerald-900">{lastPdfInfo?.customerName || formData.toName}</strong> ({lastPdfInfo?.phoneWithCode ? `+${lastPdfInfo.phoneWithCode}` : 'No phone'})
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2.5 text-xs text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-200">
+            <div className="flex items-start gap-2">
+              <span className="font-bold text-emerald-600 mt-0.5">✓</span>
+              <span><strong>Official 2-Page PDF Downloaded:</strong> <code className="bg-white px-1.5 py-0.5 rounded border border-gray-300 text-gray-800 font-mono text-[11px]">{lastPdfInfo?.fileName}</code> has been saved to your downloads.</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="font-bold text-emerald-600 mt-0.5">✓</span>
+              <span><strong>Intro & Direct PDF Link Attached:</strong> Formatted with the official SPC Solar greeting & instant document link.</span>
+            </div>
+            <div className="flex items-start gap-2 bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-amber-900">
+              <span className="text-amber-600 font-bold text-sm">💡</span>
+              <span><strong>To send the PDF document file in WhatsApp Web:</strong> Simply drag & drop the downloaded PDF file from your browser's download bar directly into the WhatsApp chat window, or click the paperclip icon!</span>
+            </div>
+          </div>
+
+          {lastPdfInfo?.publicUrl && (
+            <div className="text-xs space-y-1">
+              <span className="text-gray-500 font-medium">Direct PDF Link:</span>
+              <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-lg border border-gray-200 font-mono text-[11px] text-blue-700 truncate">
+                <span className="truncate flex-1">{lastPdfInfo.publicUrl}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(lastPdfInfo.publicUrl);
+                    toast.success('PDF link copied!');
+                  }}
+                  className="text-gray-600 hover:text-black font-sans text-xs px-2 py-0.5 bg-white border border-gray-300 rounded shadow-xs"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center justify-end gap-2 pt-3 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={() => {
+                if (lastPdfInfo?.message) {
+                  navigator.clipboard.writeText(lastPdfInfo.message);
+                  toast.success('Message text copied!');
+                }
+              }}
+              className="px-3 py-2 text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center gap-1.5 transition-colors"
+            >
+              <FiCopy size={13} /> Copy Message
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (lastPdfInfo?.pdf) {
+                  lastPdfInfo.pdf.save(lastPdfInfo.fileName);
+                  toast.success('PDF downloaded again!');
+                }
+              }}
+              className="px-3 py-2 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg flex items-center gap-1.5 transition-colors"
+            >
+              <FiDownload size={13} /> Download PDF Again
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (lastPdfInfo?.phoneWithCode) {
+                  window.open(`https://wa.me/${lastPdfInfo.phoneWithCode}?text=${encodeURIComponent(lastPdfInfo.message)}`, '_blank');
+                }
+              }}
+              className="px-4 py-2 text-xs font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
+            >
+              <FaWhatsapp size={14} /> Open WhatsApp
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setWhatsAppModalOpen(false)}
+              className="px-3 py-2 text-xs font-bold text-gray-600 hover:text-gray-900 rounded-lg"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

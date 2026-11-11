@@ -62,6 +62,19 @@ const AdminQuotations = () => {
   };
 
   const handleSendWhatsApp = async (quote) => {
+    const cleanPhone = (quote.customerPhone || quote.phone || '').replace(/\D/g, '');
+    const phoneWithCode = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
+    const refStr = quote.quotationNumber || quote._id ? ` (*Ref: ${quote.quotationNumber || quote._id}*)` : '';
+
+    const intro = `Hello *${quote.customerName || quote.name || 'Valued Customer'}*! ☀️\n\nGreetings from *SPC Solar Technology*!\nHere is your customized quotation${refStr}:`;
+    const pdfPart = quote.pdfUrl ? `\n\n📄 *Official Quotation PDF:*\n${quote.pdfUrl}` : '';
+    const capPart = (quote.systemCapacity || quote.recommendedKW) ? `\n\n⚡ *System Size:* ${quote.systemCapacity || (quote.recommendedKW + ' KW')}` : '';
+    const costVal = quote.finalPayable || quote.netCost || quote.totalAmount || quote.estimatedCost;
+    const costPart = costVal ? `\n💵 *Estimated Net Investment:* ₹${costVal.toLocaleString('en-IN')}` : '';
+    const closing = `\n\nPlease find your proposal details above. Let us know if you have any questions!\n\n📞 Contact: 80987 44044 (Office) / 84896 44044\n🌐 https://spcsolarcbe.com`;
+
+    const msg = `${intro}${pdfPart}${capPart}${costPart}${closing}`;
+
     try {
       await api.post(`/quotations/${quote._id}/send`, { method: 'whatsapp' });
       toast.success('Sent via WhatsApp!');
@@ -70,10 +83,12 @@ const AdminQuotations = () => {
       }
     } catch (error) {
       // Fallback direct WhatsApp web
-      const cleanPhone = (quote.customerPhone || '').replace(/\D/g, '');
-      const phoneWithCode = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
-      const msg = `Hello ${quote.customerName || 'there'}! Here is your custom solar proposal from SPC Solar for ${quote.systemCapacity || 'your installation'}. Estimated Cost: ₹${(quote.finalPayable || quote.totalAmount || 0).toLocaleString('en-IN')}. Please reply if you have questions!`;
+    }
+
+    if (cleanPhone) {
       window.open(`https://wa.me/${phoneWithCode}?text=${encodeURIComponent(msg)}`, '_blank');
+    } else {
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
     }
   };
 
