@@ -1174,7 +1174,7 @@ const AdminQuotationMaker = () => {
                         <th className="py-1 px-3 border-b border-r border-gray-300 text-left">Capital Expenditure (per MWp)</th>
                         <th className="py-1 px-2 border-b border-r border-gray-300 w-20">Qty</th>
                         <th className="py-1 px-3 border-b border-r border-gray-300 w-44">Make</th>
-                        <th className="py-1 px-3 border-b border-gray-300 w-28">INR</th>
+                        <th className="py-1 px-3 border-b border-gray-300 w-36 whitespace-nowrap">INR</th>
                       </tr>
                     </thead>
                     <tbody className="text-gray-800 text-[9.5px]">
@@ -1251,23 +1251,23 @@ const AdminQuotationMaker = () => {
                       {/* Financial Totals */}
                       <tr className="bg-gray-50 text-gray-900 font-bold border-b border-gray-300">
                         <td className="py-1 px-3 border-r border-gray-300 text-right uppercase tracking-wider text-[9.5px]" colSpan="4">TOTAL SYSTEM COST</td>
-                        <td className="py-1 px-3 text-right font-bold text-black text-[10.5px]">₹ {formatINR(total)}</td>
+                        <td className="py-1 px-3 text-right font-bold text-black text-[10.5px] whitespace-nowrap">₹ {formatINR(total)}</td>
                       </tr>
                       {subsidy > 0 && (
                         <tr className="bg-emerald-50 text-emerald-800 font-bold border-b border-gray-300">
                           <td className="py-0.5 px-3 border-r border-gray-300 text-right uppercase tracking-wider text-[9.5px] text-emerald-700" colSpan="4">CENTRAL GOVT. SUBSIDY</td>
-                          <td className="py-0.5 px-3 text-right text-emerald-700 font-bold text-[10.5px]">- ₹ {formatINR(subsidy)}</td>
+                          <td className="py-0.5 px-3 text-right text-emerald-700 font-bold text-[10.5px] whitespace-nowrap">- ₹ {formatINR(subsidy)}</td>
                         </tr>
                       )}
                       {gst > 0 && (
                         <tr className="bg-gray-50 text-gray-900 font-semibold border-b border-gray-300">
                           <td className="py-0.5 px-3 border-r border-gray-300 text-right uppercase tracking-wider text-[9.5px]" colSpan="4">GST {formData.gstPercent}%</td>
-                          <td className="py-0.5 px-3 text-right text-gray-900 text-[10.5px]">₹ {formatINR(gst)}</td>
+                          <td className="py-0.5 px-3 text-right text-gray-900 text-[10.5px] whitespace-nowrap">₹ {formatINR(gst)}</td>
                         </tr>
                       )}
                       <tr className="bg-red-50 text-red-600 font-black text-xs border-b border-t-2 border-red-500">
                         <td className="py-1.5 px-3 border-r border-gray-300 text-right uppercase tracking-widest text-red-600 text-xs sm:text-[12.5px]" colSpan="4">GRAND TOTAL (NET INVESTMENT)</td>
-                        <td className="py-1.5 px-3 text-right text-red-600 font-black text-sm sm:text-base">₹ {formatINR(grandTotal)}</td>
+                        <td className="py-1.5 px-3 text-right text-red-600 font-black text-xs sm:text-sm whitespace-nowrap">₹ {formatINR(grandTotal)}</td>
                       </tr>
 
                       {/* Payment Terms */}
@@ -1278,19 +1278,19 @@ const AdminQuotationMaker = () => {
                       {formData.advPercent > 0 && (
                         <tr className="bg-gray-50/80 text-gray-800 text-[9px] border-b border-gray-200">
                           <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-medium" colSpan="4">ADVANCE PAYMENT ({formData.advPercent}%)</td>
-                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {formatINR(term1)}</td>
+                          <td className="py-0.5 px-3 text-right text-black font-bold whitespace-nowrap">₹ {formatINR(term1)}</td>
                         </tr>
                       )}
                       {formData.secPercent > 0 && (
                         <tr className="bg-gray-50/80 text-gray-800 text-[9px] border-b border-gray-200">
                           <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-medium" colSpan="4">SECOND STAGE PAYMENT ({formData.secPercent}%)</td>
-                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {formatINR(term2)}</td>
+                          <td className="py-0.5 px-3 text-right text-black font-bold whitespace-nowrap">₹ {formatINR(term2)}</td>
                         </tr>
                       )}
                       {formData.thirdPercent > 0 && (
                         <tr className="bg-gray-50/80 text-gray-800 text-[9px]">
                           <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-medium" colSpan="4">WORK COMPLETION PAYMENT ({formData.thirdPercent}%)</td>
-                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {formatINR(term3)}</td>
+                          <td className="py-0.5 px-3 text-right text-black font-bold whitespace-nowrap">₹ {formatINR(term3)}</td>
                         </tr>
                       )}
                     </tbody>
