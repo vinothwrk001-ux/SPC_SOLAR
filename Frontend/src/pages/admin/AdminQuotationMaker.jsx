@@ -60,6 +60,7 @@ const AdminQuotationMaker = () => {
     inverterMake: 'TATA/EASTMAN/ADDO',
     pricePerKw: 48000,
     gstPercent: 5,
+    isSubsidyEnabled: (Number(searchParams.get('kw')) || 100) <= 10,
     subsidyAmount: 0,
     advPercent: 10,
     secPercent: 70,
@@ -215,7 +216,7 @@ const AdminQuotationMaker = () => {
       else if (kwNum >= 3 && kwNum <= 10) defaultSubsidy = 78000;
       else defaultSubsidy = 0;
     }
-    const subsidyAmount = preset ? preset.subsidy : defaultSubsidy;
+    const presetSubsidy = preset ? preset.subsidy : defaultSubsidy;
 
     // GST Percent:
     // Residential ON GRID <= 10 kW has 0% GST (inclusive in package)
@@ -250,19 +251,29 @@ const AdminQuotationMaker = () => {
     const panelMake = preset ? preset.panelMake : defaultPanelMake;
     const inverterMake = preset ? preset.inverterMake : defaultInverterMake;
 
-    setFormData(prev => ({
-      ...prev,
-      panelQty,
-      panelMake,
-      inverterCapacity,
-      inverterMake,
-      pricePerKw,
-      gstPercent,
-      subsidyAmount,
-      advPercent,
-      secPercent,
-      thirdPercent,
-    }));
+    setFormData(prev => {
+      // Respect user's explicit subsidy toggle if set, otherwise default to enabled for residential <= 10 kW ON GRID
+      const shouldEnable = prev.isSubsidyEnabled !== undefined
+        ? prev.isSubsidyEnabled
+        : (isOnGrid && kwNum <= 10);
+
+      const subsidyAmount = shouldEnable ? presetSubsidy : 0;
+
+      return {
+        ...prev,
+        panelQty,
+        panelMake,
+        inverterCapacity,
+        inverterMake,
+        pricePerKw,
+        gstPercent,
+        isSubsidyEnabled: shouldEnable,
+        subsidyAmount,
+        advPercent,
+        secPercent,
+        thirdPercent,
+      };
+    });
   }, [formData.kwSize, formData.systemType]);
 
   const handleLeadSelect = (leadId) => {
@@ -342,6 +353,33 @@ const AdminQuotationMaker = () => {
     toast.success(nextState ? 'Scanner Section Enabled' : 'Scanner Section Disabled & Removed from Proposal');
   };
 
+  const toggleSubsidy = () => {
+    setFormData(prev => {
+      const nextState = !prev.isSubsidyEnabled;
+      let newSubsidy = prev.subsidyAmount;
+      if (nextState) {
+        // Turning ON: if subsidy was 0 or empty, restore standard subsidy
+        if (!newSubsidy || Number(newSubsidy) === 0) {
+          const kwNum = Number(prev.kwSize) || 0;
+          if (prev.systemType === 'ON GRID') {
+            if (kwNum === 1) newSubsidy = 30000;
+            else if (kwNum === 2) newSubsidy = 60000;
+            else if (kwNum >= 3 && kwNum <= 10) newSubsidy = 78000;
+            else newSubsidy = 78000;
+          } else {
+            newSubsidy = 78000;
+          }
+        }
+      }
+      return {
+        ...prev,
+        isSubsidyEnabled: nextState,
+        subsidyAmount: nextState ? (newSubsidy || 78000) : 0,
+      };
+    });
+    toast.success(!formData.isSubsidyEnabled ? 'Govt Subsidy Applied (Enabled)' : 'Govt Subsidy Disabled (Removed from Calculation)');
+  };
+
   const handleQrUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -387,6 +425,7 @@ const AdminQuotationMaker = () => {
       inverterMake: 'EASTMAN/TATA',
       pricePerKw: 66900,
       gstPercent: 0,
+      isSubsidyEnabled: true,
       subsidyAmount: 78000,
       advPercent: 80,
       secPercent: 20,
@@ -398,7 +437,7 @@ const AdminQuotationMaker = () => {
   const kw = Number(formData.kwSize) || 0;
   const price = Number(formData.pricePerKw) || 0;
   const total = Math.round(kw * price);
-  const subsidy = Number(formData.subsidyAmount) || 0;
+  const subsidy = formData.isSubsidyEnabled ? (Number(formData.subsidyAmount) || 0) : 0;
   const gst = Math.round(total * ((Number(formData.gstPercent) || 0) / 100));
   const grandTotal = total - subsidy + gst;
 
@@ -719,7 +758,49 @@ const AdminQuotationMaker = () => {
         </div>
 
         <Input label="Price Per KW (Rs)" name="pricePerKw" type="number" value={formData.pricePerKw} onChange={handleChange} />
-        <Input label="Govt Subsidy Amount (Rs)" name="subsidyAmount" type="number" value={formData.subsidyAmount} onChange={handleChange} />
+        
+        {/* Govt Subsidy Amount with Enable / Disable Toggle Button */}
+        <div className="flex flex-col w-full mb-4">
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="font-sans font-semibold text-xs uppercase tracking-wider text-gray-700">
+              Govt Subsidy (Rs)
+            </label>
+            <button
+              type="button"
+              onClick={toggleSubsidy}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all shadow-xs cursor-pointer ${
+                formData.isSubsidyEnabled
+                  ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              }`}
+              title={formData.isSubsidyEnabled ? 'Click to disable subsidy calculation' : 'Click to enable subsidy calculation'}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${formData.isSubsidyEnabled ? 'bg-emerald-200 animate-pulse' : 'bg-gray-400'}`}></span>
+              {formData.isSubsidyEnabled ? 'ON (Applied)' : 'OFF (No Subsidy)'}
+            </button>
+          </div>
+          <div className="relative">
+            <input
+              type="number"
+              name="subsidyAmount"
+              value={formData.isSubsidyEnabled ? formData.subsidyAmount : 0}
+              onChange={handleChange}
+              disabled={!formData.isSubsidyEnabled}
+              placeholder="0"
+              className={`w-full px-4 py-3 text-sm font-sans outline-none transition-all duration-200 rounded-md border ${
+                formData.isSubsidyEnabled
+                  ? 'bg-white text-black border-gray-200 hover:border-gray-400 focus:border-black'
+                  : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+              }`}
+            />
+            {!formData.isSubsidyEnabled && (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-500 uppercase tracking-wider pointer-events-none bg-gray-200 px-2 py-0.5 rounded">
+                Subsidy OFF
+              </span>
+            )}
+          </div>
+        </div>
+
         <Input label="GST %" name="gstPercent" type="number" value={formData.gstPercent} onChange={handleChange} />
         <Input label="Panel Qty (NOS)" name="panelQty" type="number" value={formData.panelQty} onChange={handleChange} />
         <Input label="Panel Make" name="panelMake" value={formData.panelMake} onChange={handleChange} />
