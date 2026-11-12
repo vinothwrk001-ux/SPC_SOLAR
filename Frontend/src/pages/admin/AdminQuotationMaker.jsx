@@ -126,6 +126,10 @@ const AdminQuotationMaker = () => {
     8: { panelQty: 15, panelMake: 'EASTMAN/ADDO\nEMMVEE/LUMINOUS/\nKIRLOSHKAR/UTL', inverterCapacity: 8, inverterMake: 'EASTMAN/ADDO', pricePerKw: 64275, subsidy: 78000, gst: 0, adv: 20, sec: 70, third: 10 },
     9: { panelQty: 16, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 10, inverterMake: 'EASTMAN/ADDO', pricePerKw: 62544.44, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
     10: { panelQty: 18, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 10, inverterMake: 'EASTMAN/ADDO', pricePerKw: 62000, subsidy: 78000, gst: 0, adv: 80, sec: 20, third: 0 },
+    11: { panelQty: 20, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 11, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    12: { panelQty: 22, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 12, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    13: { panelQty: 24, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 13, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    14: { panelQty: 25, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 14, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
     15: { panelQty: 27, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE\nLUMINOUS/\nKIRLOSHKAR', inverterCapacity: 15, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
     20: { panelQty: 36, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 20, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
     25: { panelQty: 46, panelMake: 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR', inverterCapacity: 25, inverterMake: 'TATA\nEASTMAN/ADDO', pricePerKw: 55000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
@@ -150,7 +154,12 @@ const AdminQuotationMaker = () => {
     7: { panelQty: 12, panelMake: 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR', inverterCapacity: 7, inverterMake: 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY', pricePerKw: 80000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
     8: { panelQty: 14, panelMake: 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR', inverterCapacity: 8, inverterMake: 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY', pricePerKw: 80000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
     9: { panelQty: 16, panelMake: 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR', inverterCapacity: 9, inverterMake: 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY', pricePerKw: 80000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
-    10: { panelQty: 17, panelMake: 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR', inverterCapacity: 10, inverterMake: 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY', pricePerKw: 80000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 }
+    10: { panelQty: 17, panelMake: 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR', inverterCapacity: 10, inverterMake: 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY', pricePerKw: 80000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    11: { panelQty: 19, panelMake: 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR', inverterCapacity: 11, inverterMake: 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY', pricePerKw: 80000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    12: { panelQty: 21, panelMake: 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR', inverterCapacity: 12, inverterMake: 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY', pricePerKw: 80000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    13: { panelQty: 22, panelMake: 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR', inverterCapacity: 13, inverterMake: 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY', pricePerKw: 80000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    14: { panelQty: 24, panelMake: 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR', inverterCapacity: 14, inverterMake: 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY', pricePerKw: 80000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 },
+    15: { panelQty: 26, panelMake: 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR', inverterCapacity: 15, inverterMake: 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY', pricePerKw: 80000, subsidy: 0, gst: 5, adv: 10, sec: 70, third: 20 }
   };
 
   useEffect(() => {
@@ -167,28 +176,93 @@ const AdminQuotationMaker = () => {
   }, []);
 
   useEffect(() => {
-    let data = null;
-    if (formData.systemType === 'ON GRID' && ON_GRID_DATA[formData.kwSize]) {
-      data = ON_GRID_DATA[formData.kwSize];
-    } else if (formData.systemType === 'OFF GRID' && OFF_GRID_DATA[formData.kwSize]) {
-      data = OFF_GRID_DATA[formData.kwSize];
-    }
+    const kwNum = Number(formData.kwSize);
+    if (!kwNum || kwNum <= 0) return;
 
-    if (data) {
-      setFormData(prev => ({
-        ...prev,
-        panelQty: data.panelQty,
-        panelMake: data.panelMake,
-        inverterCapacity: data.inverterCapacity,
-        inverterMake: data.inverterMake,
-        pricePerKw: data.pricePerKw,
-        gstPercent: data.gst,
-        subsidyAmount: data.subsidy,
-        advPercent: data.adv,
-        secPercent: data.sec,
-        thirdPercent: data.third,
-      }));
+    const isOnGrid = formData.systemType === 'ON GRID';
+    const isOffGrid = formData.systemType === 'OFF GRID';
+    const panelWatts = isOffGrid ? 580 : 550;
+
+    const preset = isOnGrid ? ON_GRID_DATA[kwNum] : (isOffGrid ? OFF_GRID_DATA[kwNum] : null);
+
+    // Solar Engineering Formula for Panel Qty: Math.round((KW * 1000) / panelWatts)
+    const formulaPanelQty = Math.max(1, Math.round((kwNum * 1000) / panelWatts));
+    const panelQty = preset ? preset.panelQty : formulaPanelQty;
+
+    // Inverter Capacity: preset or defaults to kwNum
+    const inverterCapacity = preset ? preset.inverterCapacity : kwNum;
+
+    // Price Per KW:
+    // If preset exists, use preset price; otherwise fallback based on standard commercial / residential slabs:
+    let defaultPricePerKw = 55000;
+    if (isOnGrid) {
+      if (kwNum <= 10) defaultPricePerKw = 65000;
+      else if (kwNum <= 25) defaultPricePerKw = 55000;
+      else if (kwNum <= 50) defaultPricePerKw = 53000;
+      else defaultPricePerKw = 48000;
+    } else {
+      defaultPricePerKw = kwNum <= 1 ? 90000 : 80000;
     }
+    const pricePerKw = preset ? preset.pricePerKw : defaultPricePerKw;
+
+    // Govt Subsidy:
+    // Only ON GRID Residential (1 to 10 kW) gets PM Surya Ghar subsidy
+    // >10 kW is Commercial (0 subsidy). OFF GRID has 0 subsidy.
+    let defaultSubsidy = 0;
+    if (isOnGrid) {
+      if (kwNum === 1) defaultSubsidy = 30000;
+      else if (kwNum === 2) defaultSubsidy = 60000;
+      else if (kwNum >= 3 && kwNum <= 10) defaultSubsidy = 78000;
+      else defaultSubsidy = 0;
+    }
+    const subsidyAmount = preset ? preset.subsidy : defaultSubsidy;
+
+    // GST Percent:
+    // Residential ON GRID <= 10 kW has 0% GST (inclusive in package)
+    // Commercial ON GRID (>10 kW) has 5% GST
+    // OFF GRID has 5% GST
+    let defaultGst = 5;
+    if (isOnGrid && kwNum <= 10) {
+      defaultGst = 0;
+    }
+    const gstPercent = preset ? preset.gst : defaultGst;
+
+    // Payment Milestones:
+    // For small residential (<= 10 kW): 80% Adv, 20% Second, 0% Third (or 100% for 1kW)
+    // For commercial / custom (> 10 kW): 10% Adv, 70% Second, 20% Third
+    let defaultAdv = kwNum <= 1 ? 100 : (kwNum <= 10 ? 80 : 10);
+    let defaultSec = kwNum <= 1 ? 0 : (kwNum <= 10 ? 20 : 70);
+    let defaultThird = kwNum <= 10 ? 0 : 20;
+
+    const advPercent = preset ? preset.adv : defaultAdv;
+    const secPercent = preset ? preset.sec : defaultSec;
+    const thirdPercent = preset ? preset.third : defaultThird;
+
+    // Panel Make & Inverter Make defaults
+    const defaultPanelMake = isOnGrid
+      ? 'EASTMAN/ADDO\nWAAREE/EMMVEE/LUMINOUS/\nKIRLOSHKAR'
+      : 'ADDO/EASTMAN\nEMMVEE/UTL\nVIKRAM SOLAR\nWAAREE\nKIRLOASKAR';
+
+    const defaultInverterMake = isOnGrid
+      ? (kwNum <= 10 ? 'EASTMAN/ADDO\nTATA' : 'TATA\nEASTMAN/ADDO')
+      : 'SPC SOLAR\nLITHIYAM\nBATTERY/\nNEXION ENERGY';
+
+    const panelMake = preset ? preset.panelMake : defaultPanelMake;
+    const inverterMake = preset ? preset.inverterMake : defaultInverterMake;
+
+    setFormData(prev => ({
+      ...prev,
+      panelQty,
+      panelMake,
+      inverterCapacity,
+      inverterMake,
+      pricePerKw,
+      gstPercent,
+      subsidyAmount,
+      advPercent,
+      secPercent,
+      thirdPercent,
+    }));
   }, [formData.kwSize, formData.systemType]);
 
   const handleLeadSelect = (leadId) => {
