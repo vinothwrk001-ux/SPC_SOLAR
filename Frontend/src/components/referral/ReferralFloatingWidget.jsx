@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiGift, FiArrowRight, FiX } from 'react-icons/fi';
 
-const ReferralFloatingWidget = () => {
+const ReferralFloatingWidget = ({ embedded = false }) => {
   // Closed by default; opens only when the user touches/clicks the icon
   const [isMinimized, setIsMinimized] = useState(true);
   const location = useLocation();
@@ -21,9 +21,8 @@ const ReferralFloatingWidget = () => {
     navigate('/services#referral-program');
   };
 
-  return (
-    <div className={`fixed ${isQuotationPage ? 'bottom-16 sm:bottom-5' : 'bottom-3 sm:bottom-5'} right-2.5 sm:right-6 z-40 select-none flex flex-col items-end`}>
-      <AnimatePresence mode="wait">
+  const content = (
+    <AnimatePresence mode="wait">
         {!isMinimized ? (
           <motion.div
             key="expanded"
@@ -100,6 +99,15 @@ const ReferralFloatingWidget = () => {
           </motion.button>
         )}
       </AnimatePresence>
+  );
+
+  if (embedded) {
+    return content;
+  }
+
+  return (
+    <div className={`fixed ${isQuotationPage ? 'bottom-16 sm:bottom-5' : 'bottom-3 sm:bottom-5'} right-2.5 sm:right-6 z-40 select-none flex flex-col items-end`}>
+      {content}
     </div>
   );
 };
