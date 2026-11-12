@@ -333,6 +333,7 @@ const AdminQuotationMaker = () => {
   const term3 = Math.round(grandTotal * (Number(formData.thirdPercent) || 0) / 100);
   
   const displayedPerKw = kw > 0 ? Math.round((total - subsidy) / kw) : 0;
+  const formatINR = (val) => Math.round(Number(val) || 0).toLocaleString('en-IN');
 
   const handleSaveQuotation = async () => {
     setSavingQuote(true);
@@ -1095,46 +1096,46 @@ const AdminQuotationMaker = () => {
                       {/* Financial Totals */}
                       <tr className="bg-gray-50 text-gray-900 font-bold border-b border-gray-300">
                         <td className="py-1 px-3 border-r border-gray-300 text-right uppercase tracking-wider text-[9.5px]" colSpan="4">TOTAL SYSTEM COST</td>
-                        <td className="py-1 px-3 text-right font-bold text-black text-[10.5px]">₹ {total.toLocaleString()}</td>
+                        <td className="py-1 px-3 text-right font-bold text-black text-[10.5px]">₹ {formatINR(total)}</td>
                       </tr>
                       {subsidy > 0 && (
                         <tr className="bg-emerald-50 text-emerald-800 font-bold border-b border-gray-300">
                           <td className="py-0.5 px-3 border-r border-gray-300 text-right uppercase tracking-wider text-[9.5px] text-emerald-700" colSpan="4">CENTRAL GOVT. SUBSIDY</td>
-                          <td className="py-0.5 px-3 text-right text-emerald-700 font-bold text-[10.5px]">- ₹ {subsidy.toLocaleString()}</td>
+                          <td className="py-0.5 px-3 text-right text-emerald-700 font-bold text-[10.5px]">- ₹ {formatINR(subsidy)}</td>
                         </tr>
                       )}
                       {gst > 0 && (
                         <tr className="bg-gray-50 text-gray-900 font-semibold border-b border-gray-300">
                           <td className="py-0.5 px-3 border-r border-gray-300 text-right uppercase tracking-wider text-[9.5px]" colSpan="4">GST {formData.gstPercent}%</td>
-                          <td className="py-0.5 px-3 text-right text-gray-900 text-[10.5px]">₹ {gst.toLocaleString()}</td>
+                          <td className="py-0.5 px-3 text-right text-gray-900 text-[10.5px]">₹ {formatINR(gst)}</td>
                         </tr>
                       )}
                       <tr className="bg-red-50 text-red-600 font-black text-xs border-b border-t-2 border-red-500">
                         <td className="py-1.5 px-3 border-r border-gray-300 text-right uppercase tracking-widest text-red-600 text-xs sm:text-[12.5px]" colSpan="4">GRAND TOTAL (NET INVESTMENT)</td>
-                        <td className="py-1.5 px-3 text-right text-red-600 font-black text-sm sm:text-base">₹ {grandTotal.toLocaleString()}</td>
+                        <td className="py-1.5 px-3 text-right text-red-600 font-black text-sm sm:text-base">₹ {formatINR(grandTotal)}</td>
                       </tr>
 
                       {/* Payment Terms */}
                       <tr className="text-gray-700 text-[9px] border-b border-gray-200 bg-white">
-                        <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-semibold" colSpan="4">RATE PER KW: ₹ {displayedPerKw.toLocaleString()} / KW</td>
+                        <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-semibold" colSpan="4">RATE PER KW: ₹ {formatINR(displayedPerKw)} / KW</td>
                         <td className="py-0.5 px-3"></td>
                       </tr>
                       {formData.advPercent > 0 && (
                         <tr className="bg-gray-50/80 text-gray-800 text-[9px] border-b border-gray-200">
                           <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-medium" colSpan="4">ADVANCE PAYMENT ({formData.advPercent}%)</td>
-                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {term1.toLocaleString()}</td>
+                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {formatINR(term1)}</td>
                         </tr>
                       )}
                       {formData.secPercent > 0 && (
                         <tr className="bg-gray-50/80 text-gray-800 text-[9px] border-b border-gray-200">
                           <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-medium" colSpan="4">SECOND STAGE PAYMENT ({formData.secPercent}%)</td>
-                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {term2.toLocaleString()}</td>
+                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {formatINR(term2)}</td>
                         </tr>
                       )}
                       {formData.thirdPercent > 0 && (
                         <tr className="bg-gray-50/80 text-gray-800 text-[9px]">
                           <td className="py-0.5 px-3 border-r border-gray-200 text-left uppercase tracking-wider font-medium" colSpan="4">WORK COMPLETION PAYMENT ({formData.thirdPercent}%)</td>
-                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {term3.toLocaleString()}</td>
+                          <td className="py-0.5 px-3 text-right text-black font-bold">₹ {formatINR(term3)}</td>
                         </tr>
                       )}
                     </tbody>
